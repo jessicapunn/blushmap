@@ -107,8 +107,9 @@
       "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4"
     }
   },
-  "description": "BlushMap — AI-powered skin analysis and makeup recommendations",
+  "description": "BlushMap \u2014 AI-powered skin analysis and makeup recommendations",
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "_buildCacheBust": "2026-04-10T22:52"
 }
