@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* BlushMap — warm rose-gold palette, luxury beauty aesthetic */
+    --background: 30 20% 97%;
+    --foreground: 20 15% 15%;
+
+    --card: 30 18% 98%;
+    --card-foreground: 20 15% 15%;
+
+    --popover: 30 18% 98%;
+    --popover-foreground: 20 15% 15%;
+
+    --primary: 340 45% 45%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 30 25% 93%;
+    --secondary-foreground: 20 15% 25%;
+
+    --muted: 30 15% 92%;
+    --muted-foreground: 20 8% 50%;
+
+    --accent: 340 30% 90%;
+    --accent-foreground: 340 45% 35%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 30 15% 87%;
+    --input: 30 15% 87%;
+    --ring: 340 45% 45%;
+
+    --radius: 0.5rem;
+
+    /* Custom tokens */
+    --color-rose: #b5476a;
+    --color-rose-light: #e8c5cf;
+    --color-gold: #c9944a;
+    --color-gold-light: #f0dfc0;
+    --color-sage: #7a9b7a;
+    --color-cream: #f7f4ef;
+    --color-warm-dark: #2a1e1b;
+
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+
+    --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+    --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+    --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+    --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+    --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+    --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+
+    --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    --shadow-sm: 0 1px 3px oklch(0.3 0.02 10 / 0.08);
+    --shadow-md: 0 4px 16px oklch(0.3 0.02 10 / 0.10);
+    --shadow-lg: 0 12px 40px oklch(0.3 0.02 10 / 0.15);
+  }
+
+  .dark {
+    --background: 20 15% 8%;
+    --foreground: 30 15% 90%;
+    --card: 20 12% 11%;
+    --card-foreground: 30 15% 90%;
+    --popover: 20 12% 11%;
+    --popover-foreground: 30 15% 90%;
+    --primary: 340 50% 60%;
+    --primary-foreground: 20 15% 8%;
+    --secondary: 20 10% 18%;
+    --secondary-foreground: 30 15% 80%;
+    --muted: 20 10% 16%;
+    --muted-foreground: 30 8% 55%;
+    --accent: 340 20% 22%;
+    --accent-foreground: 340 50% 70%;
+    --border: 20 10% 20%;
+    --input: 20 10% 20%;
+    --ring: 340 50% 60%;
+  }
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--space-16);
+  }
+  body {
+    min-height: 100dvh;
+    font-family: var(--font-body);
+    font-size: var(--text-base);
+    line-height: 1.65;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    line-height: 1.15;
+  }
+  img, video, canvas { display: block; max-width: 100%; }
+  input, button, textarea, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  p { text-wrap: pretty; max-width: 72ch; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rose);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-body); }
+
+  .gradient-rose {
+    background: linear-gradient(135deg, hsl(340 45% 45%), hsl(20 60% 55%));
+  }
+  .gradient-cream {
+    background: linear-gradient(180deg, hsl(30 25% 96%), hsl(340 20% 94%));
+  }
+  .text-gradient-rose {
+    background: linear-gradient(135deg, hsl(340 55% 42%), hsl(20 65% 50%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Skeleton shimmer */
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  .skeleton {
+    background: linear-gradient(90deg, hsl(var(--muted)) 25%, hsl(var(--secondary)) 50%, hsl(var(--muted)) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 6px;
+  }
+
+  /* Zone badge colours */
+  .zone-full-face { background: hsl(340 30% 90%); color: hsl(340 50% 35%); }
+  .zone-t-zone { background: hsl(30 40% 88%); color: hsl(30 60% 30%); }
+  .zone-cheeks { background: hsl(350 40% 90%); color: hsl(350 50% 35%); }
+  .zone-under-eyes { background: hsl(200 30% 88%); color: hsl(200 50% 30%); }
+  .zone-forehead { background: hsl(270 25% 88%); color: hsl(270 40% 35%); }
+}
