@@ -1,5 +1,5 @@
 [phases.setup]
-nixPkgs = ["nodejs_20", "npm-10_x"]
+nixPkgs = ["nodejs_20"]
 
 [phases.install]
 cmds = ["npm install --include=dev"]
@@ -8,4 +8,4 @@ cmds = ["npm install --include=dev"]
 cmds = ["npm run build"]
 
 [start]
-cmd = "node dist/index.cjs"
+cmd = "NODE_ENV=production tsx server/index.ts"
