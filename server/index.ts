@@ -22,6 +22,15 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
+// Redirect blushmap.co.uk → blushmap.com (301 permanent)
+app.use((req, res, next) => {
+  const host = req.hostname;
+  if (host && host.endsWith(".co.uk")) {
+    return res.redirect(301, `https://blushmap.com${req.originalUrl}`);
+  }
+  next();
+});
+
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
