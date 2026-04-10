@@ -4,10 +4,10 @@ import { rm, readFile } from "fs/promises";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
+// NOTE: @anthropic-ai/sdk, @libsql/client, jimp are intentionally NOT in the allowlist
+// so esbuild marks them as external — Railway's npm ci installs them at runtime
 const allowlist = [
-  "@anthropic-ai/sdk",
   "@google/generative-ai",
-  "@libsql/client",
   "axios",
   "cors",
   "date-fns",
@@ -16,7 +16,6 @@ const allowlist = [
   "express",
   "express-rate-limit",
   "express-session",
-  "jimp",
   "jsonwebtoken",
   "memorystore",
   "multer",
