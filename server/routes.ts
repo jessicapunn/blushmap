@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { storage } from "./storage";
 import Anthropic from "@anthropic-ai/sdk";
 import multer from "multer";
-import sharp from "sharp";
+import Jimp from "jimp";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
@@ -91,17 +91,24 @@ function classifyError(err: any): GlowError {
 
 // ---------- Image preprocessing ----------
 async function preprocessImage(buffer: Buffer, mimetype: string): Promise<{ base64: string; mediaType: string }> {
-  // Resize to max 800px on longest side, convert to JPEG for consistency
-  const processed = await sharp(buffer)
-    .rotate() // auto-orient from EXIF
-    .resize(800, 800, { fit: "inside", withoutEnlargement: true })
-    .jpeg({ quality: 88 })
-    .toBuffer();
-
-  return {
-    base64: processed.toString("base64"),
-    mediaType: "image/jpeg",
-  };
+  try {
+    const image = await Jimp.read(buffer);
+    // Resize to max 800px on longest side
+    if (image.width > 800 || image.height > 800) {
+      image.scaleToFit({ w: 800, h: 800 });
+    }
+    const processed = await image.getBuffer("image/jpeg");
+    return {
+      base64: processed.toString("base64"),
+      mediaType: "image/jpeg",
+    };
+  } catch {
+    // If jimp fails, return original as-is
+    return {
+      base64: buffer.toString("base64"),
+      mediaType: "image/jpeg",
+    };
+  }
 }
 
 // ---------- Product catalog ----------
@@ -368,7 +375,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       }
 
       // ── Step 3: Save initial record ──
-      const record = storage.createAnalysis({
+      const record = await storage.createAnalysis({
         sessionId,
         captureMethod,
         preferences: JSON.stringify(preferences),
@@ -450,7 +457,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         return { ...rec, product };
       }).filter((r: any) => r.product);
 
-      storage.updateAnalysis(record.id, {
+      await storage.updateAnalysis(record.id, {
         skinTone: skinAnalysis.skinTone,
         undertone: skinAnalysis.undertone,
         skinType: skinAnalysis.skinType,
@@ -479,10 +486,10 @@ export async function registerRoutes(httpServer: any, app: Express) {
   });
 
   // Get a saved analysis
-  app.get("/api/analysis/:id", (req, res) => {
+  app.get("/api/analysis/:id", async (req, res) => {
     const id = parseInt(req.params.id);
     if (isNaN(id)) return res.status(400).json({ error: "Invalid ID" });
-    const record = storage.getAnalysis(id);
+    const record = await storage.getAnalysis(id);
     if (!record) return res.status(404).json({ error: "Not found" });
     res.json(record);
   });

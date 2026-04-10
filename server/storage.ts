@@ -1,50 +1,61 @@
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
+import { drizzle } from "drizzle-orm/libsql";
+import { createClient } from "@libsql/client";
 import { analyses, type InsertAnalysis, type Analysis } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
-const sqlite = new Database("blushmap.db");
-const db = drizzle(sqlite);
+const client = createClient({
+  url: process.env.DATABASE_URL || "file:blushmap.db",
+});
 
-// Create tables
-sqlite.exec(`
-  CREATE TABLE IF NOT EXISTS analyses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id TEXT NOT NULL,
-    image_data TEXT,
-    capture_method TEXT NOT NULL DEFAULT 'upload',
-    skin_tone TEXT,
-    undertone TEXT,
-    skin_type TEXT,
-    concerns TEXT,
-    face_shape TEXT,
-    face_zones TEXT,
-    preferences TEXT,
-    analysis_result TEXT,
-    recommendations TEXT,
-    created_at INTEGER NOT NULL DEFAULT 0
-  )
-`);
+const db = drizzle(client);
+
+// Create table on startup
+async function initDb() {
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS analyses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id TEXT NOT NULL,
+      image_data TEXT,
+      capture_method TEXT NOT NULL DEFAULT 'upload',
+      skin_tone TEXT,
+      undertone TEXT,
+      skin_type TEXT,
+      concerns TEXT,
+      face_shape TEXT,
+      face_zones TEXT,
+      preferences TEXT,
+      analysis_result TEXT,
+      recommendations TEXT,
+      created_at INTEGER NOT NULL DEFAULT 0
+    )
+  `);
+}
+
+// Run init immediately
+initDb().catch(console.error);
 
 export interface IStorage {
-  createAnalysis(data: InsertAnalysis): Analysis;
-  getAnalysis(id: number): Analysis | undefined;
-  updateAnalysis(id: number, data: Partial<InsertAnalysis>): Analysis | undefined;
+  createAnalysis(data: InsertAnalysis): Promise<Analysis>;
+  getAnalysis(id: number): Promise<Analysis | undefined>;
+  updateAnalysis(id: number, data: Partial<InsertAnalysis>): Promise<Analysis | undefined>;
 }
 
 export const storage: IStorage = {
-  createAnalysis(data) {
-    return db.insert(analyses).values({
+  async createAnalysis(data) {
+    const result = await db.insert(analyses).values({
       ...data,
       createdAt: Date.now(),
-    }).returning().get();
+    }).returning();
+    return result[0];
   },
 
-  getAnalysis(id) {
-    return db.select().from(analyses).where(eq(analyses.id, id)).get();
+  async getAnalysis(id) {
+    const result = await db.select().from(analyses).where(eq(analyses.id, id));
+    return result[0];
   },
 
-  updateAnalysis(id, data) {
-    return db.update(analyses).set(data).where(eq(analyses.id, id)).returning().get();
+  async updateAnalysis(id, data) {
+    const result = await db.update(analyses).set(data).where(eq(analyses.id, id)).returning();
+    return result[0];
   },
 };
