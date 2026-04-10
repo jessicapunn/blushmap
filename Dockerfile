@@ -17,5 +17,5 @@ RUN npx vite build
 # Expose port
 EXPOSE 5000
 
-# Start server with tsx
+# Start server with tsx (NODE_ENV set via Railway env vars)
 CMD ["node_modules/.bin/tsx", "server/index.ts"]
