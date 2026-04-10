@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@libsql/client": "^0.17.2",
@@ -75,8 +76,7 @@
     "wouter": "^3.3.5",
     "ws": "^8.18.0",
     "zod": "^3.24.2",
-    "zod-validation-error": "^3.4.0",
-    "@anthropic-ai/sdk": "^0.39.0"
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
@@ -107,7 +107,7 @@
       "@esbuild-kit/esm-loader": "npm:tsx@^4.20.4"
     }
   },
-  "description": "BlushMap \u2014 AI-powered skin analysis and makeup recommendations",
+  "description": "BlushMap — AI-powered skin analysis and makeup recommendations",
   "engines": {
     "node": ">=20.0.0"
   }
