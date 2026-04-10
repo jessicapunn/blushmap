@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { storage } from "./storage";
 import Anthropic from "@anthropic-ai/sdk";
 import multer from "multer";
-import Jimp from "jimp";
+import { Jimp } from "jimp";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 
