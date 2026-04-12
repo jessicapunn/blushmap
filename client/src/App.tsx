@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Home from "@/pages/Home";
 import Analyse from "@/pages/Analyse";
 import Results from "@/pages/Results";
+import Scanner from "@/pages/Scanner";
+import ScanResult from "@/pages/ScanResult";
 import NotFound from "@/pages/not-found";
 
 export default function App() {
@@ -16,6 +18,8 @@ export default function App() {
           <Route path="/" component={Home} />
           <Route path="/analyse" component={Analyse} />
           <Route path="/results/:id" component={Results} />
+          <Route path="/scanner" component={Scanner} />
+          <Route path="/scan-result" component={ScanResult} />
           <Route component={NotFound} />
         </Switch>
       </Router>

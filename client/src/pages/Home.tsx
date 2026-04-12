@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { ArrowRight, Camera, Upload, Sparkles, ShieldCheck, Star } from "lucide-react";
+import { ArrowRight, Camera, Upload, Sparkles, ShieldCheck, Star, ScanLine, CheckCircle, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -17,11 +17,18 @@ export default function Home() {
             </svg>
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", fontWeight: 600 }}>BlushMap</span>
           </div>
-          <Link href="/analyse">
-            <Button size="sm" className="gradient-rose text-white border-0 hover:opacity-90">
-              Try for free
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link href="/scanner">
+              <Button size="sm" variant="outline" className="gap-1.5">
+                <ScanLine size={15} /> Scan
+              </Button>
+            </Link>
+            <Link href="/analyse">
+              <Button size="sm" className="gradient-rose text-white border-0 hover:opacity-90">
+                Analyse skin
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -124,6 +131,75 @@ export default function Home() {
             {["Organic", "Cruelty-free", "Vegan", "Korean beauty", "SPF included", "Fragrance-free", "Budget-friendly", "Luxury", "No white cast", "Anti-aging"].map(tag => (
               <span key={tag} className="px-4 py-2 rounded-full text-sm border" style={{ background: "hsl(var(--accent))", borderColor: "hsl(var(--border))", color: "hsl(var(--accent-foreground))" }}>{tag}</span>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ingredient Scanner section */}
+      <section className="py-20 px-6" style={{ background: "linear-gradient(160deg, hsl(340 25% 96%), hsl(30 25% 97%))" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-5 border" style={{ background: "hsl(340 30% 94%)", borderColor: "hsl(340 30% 82%)", color: "hsl(340 50% 40%)" }}>
+                <ScanLine size={12} /> New feature
+              </div>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.6rem)", lineHeight: 1.15, marginBottom: "1rem" }}>
+                Know exactly what's in your products
+              </h2>
+              <p className="text-muted-foreground mb-6" style={{ fontSize: "1.05rem", lineHeight: 1.7 }}>
+                Scan any beauty or skincare barcode. Our AI analyses every ingredient, flags harmful chemicals, and gives your product a score out of 100 — just like Yuka.
+              </p>
+              <ul className="space-y-3 mb-8">
+                {[
+                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Instant ingredient breakdown with safety ratings" },
+                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Score from 0–100 based on ingredient quality" },
+                  { icon: <AlertTriangle size={16} style={{ color: "#FF9800" }} />, text: "Flags parabens, SLS, allergens & irritants" },
+                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Works on makeup, skincare, haircare & more" },
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-sm">
+                    {item.icon} <span>{item.text}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link href="/scanner">
+                <Button size="lg" className="gradient-rose text-white border-0 hover:opacity-90 gap-2">
+                  <ScanLine size={18} /> Scan a product
+                </Button>
+              </Link>
+            </div>
+            {/* Score demo card */}
+            <div className="flex justify-center">
+              <div className="w-72 rounded-2xl border shadow-lg p-6 text-center" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+                <p className="text-xs text-muted-foreground mb-1">CeraVe</p>
+                <p className="font-semibold mb-4" style={{ fontFamily: "var(--font-display)" }}>Moisturising Cream</p>
+                <div className="relative w-28 h-28 mx-auto mb-3">
+                  <svg width="112" height="112" className="-rotate-90">
+                    <circle cx="56" cy="56" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+                    <circle cx="56" cy="56" r="44" fill="none" stroke="#4CAF50" strokeWidth="8"
+                      strokeDasharray={`${2 * Math.PI * 44}`}
+                      strokeDashoffset={`${2 * Math.PI * 44 * (1 - 0.82)}`}
+                      strokeLinecap="round" />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-3xl font-bold" style={{ color: "#4CAF50" }}>82</span>
+                    <span className="text-xs text-muted-foreground">/100</span>
+                  </div>
+                </div>
+                <span className="text-sm font-semibold" style={{ color: "#4CAF50" }}>Good</span>
+                <div className="flex justify-center gap-2 mt-4">
+                  <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(120 30% 93%)", color: "#2E7D32" }}>12 good</span>
+                  <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(38 50% 93%)", color: "#E65100" }}>2 caution</span>
+                </div>
+                <div className="mt-4 text-left space-y-1">
+                  {[{n:"Ceramides",r:"good"},{n:"Hyaluronic Acid",r:"good"},{n:"Parfum",r:"caution"}].map((ing,i)=>(
+                    <div key={i} className="flex items-center gap-2 text-xs">
+                      {ing.r==="good" ? <CheckCircle size={12} style={{color:"#4CAF50"}} /> : <AlertTriangle size={12} style={{color:"#FF9800"}} />}
+                      <span className="text-muted-foreground">{ing.n}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

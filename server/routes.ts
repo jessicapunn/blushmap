@@ -498,4 +498,121 @@ export async function registerRoutes(httpServer: any, app: Express) {
   app.get("/api/products", (_req, res) => {
     res.json(PRODUCT_CATALOG);
   });
+
+  // ── Barcode lookup ──
+  app.get("/api/barcode/:code", async (req, res) => {
+    const { code } = req.params;
+    try {
+      // Fetch from Open Beauty Facts
+      const response = await fetch(`https://world.openbeautyfacts.org/api/v2/product/${code}.json`);
+      const data = await response.json() as any;
+
+      if (!data || data.status === 0) {
+        return res.status(404).json({ error: "Product not found", code });
+      }
+
+      const p = data.product || {};
+      res.json({
+        barcode: code,
+        productName: p.product_name || p.product_name_en || null,
+        brand: p.brands || null,
+        ingredientsText: p.ingredients_text || p.ingredients_text_en || null,
+        image: p.image_front_url || p.image_url || null,
+        categories: p.categories || null,
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: "Lookup failed", detail: err.message });
+    }
+  });
+
+  // ── Ingredient score via Claude ──
+  app.post("/api/score-ingredients", async (req, res) => {
+    const { productName, brand, ingredientsText, barcode } = req.body;
+
+    if (!ingredientsText && !productName) {
+      return res.status(400).json({ error: "ingredientsText or productName required" });
+    }
+
+    try {
+      const anthropic = getAnthropicClient();
+      const userContent = `Product: ${productName || "Unknown"}
+Brand: ${brand || "Unknown"}
+Barcode: ${barcode || "Unknown"}
+Ingredients: ${ingredientsText || "Not available — score based on product name and brand reputation only"}`;
+
+      const msg = await anthropic.messages.create({
+        model: "claude-sonnet-4-5",
+        max_tokens: 3000,
+        messages: [{ role: "user", content: `${INGREDIENT_SCORE_PROMPT}\n\n${userContent}` }],
+      });
+
+      const rawText = (msg.content[0] as any).text.trim();
+      const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "");
+      const result = JSON.parse(cleaned);
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: "Scoring failed", detail: err.message });
+    }
+  });
 }
+
+// ─────────────────────────────────────────────
+// BARCODE SCANNER — ingredient scoring
+// ─────────────────────────────────────────────
+
+const INGREDIENT_SCORE_PROMPT = `You are an expert cosmetic chemist and clean beauty analyst, similar to the Yuka app.
+
+Given the following cosmetic/beauty product information, analyse the ingredients and return ONLY valid JSON with this exact structure:
+
+{
+  "productName": "full product name",
+  "brand": "brand name",
+  "score": 73,
+  "scoreLabel": "Good",
+  "scoreColour": "#4CAF50",
+  "summary": "2-3 sentence plain English overview of this product's ingredient quality",
+  "ingredients": [
+    {
+      "name": "Aqua",
+      "inci": "Water",
+      "role": "Solvent",
+      "rating": "good",
+      "concern": null,
+      "detail": "Universal solvent — safe and essential"
+    },
+    {
+      "name": "Parfum",
+      "inci": "Fragrance",
+      "role": "Fragrance",
+      "rating": "caution",
+      "concern": "Potential allergen",
+      "detail": "Synthetic fragrance blend — can trigger reactions in sensitive skin"
+    }
+  ],
+  "pros": ["Fragrance-free", "Rich in ceramides", "Dermatologist tested"],
+  "cons": ["Contains parabens", "High alcohol content"],
+  "certifications": ["cruelty-free", "vegan"],
+  "bestFor": ["dry skin", "sensitive skin"],
+  "avoid": ["rosacea", "fragrance allergy"],
+  "overallVerdict": "A well-formulated moisturiser with strong barrier-repair ingredients. Suitable for most skin types."
+}
+
+Score guide:
+- 85-100: Excellent (dark green) #2E7D32
+- 70-84: Good (green) #4CAF50  
+- 50-69: Average (amber) #FF9800
+- 25-49: Poor (orange-red) #F44336
+- 0-24: Hazardous (red) #B71C1C
+
+scoreLabel: "Excellent" | "Good" | "Average" | "Poor" | "Hazardous"
+
+For ingredient rating: "good" | "caution" | "poor"
+
+Score based on:
+- Presence of known irritants/harmful ingredients (parabens, SLS, formaldehyde releasers, certain alcohols)
+- Quality of beneficial actives
+- Fragrance/allergen risk
+- Overall formulation standard
+
+Return ONLY the JSON object, no markdown.`;
+
