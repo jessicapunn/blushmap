@@ -24,7 +24,6 @@ interface GlowError {
 
 function classifyError(err: any): GlowError {
   const msg = (err?.message || err?.toString() || "").toLowerCase();
-  const status = err?.status || err?.statusCode || 500;
 
   if (msg.includes("401") || msg.includes("authentication") || msg.includes("invalid or expired")) {
     return {
@@ -112,6 +111,7 @@ async function preprocessImage(buffer: Buffer, mimetype: string): Promise<{ base
 }
 
 // ---------- Product catalog ----------
+// Each product now includes: keyIngredients[] and alternatives { budget, luxury, organic }
 const PRODUCT_CATALOG = [
   {
     id: "p1", name: "CeraVe Moisturising Cream", brand: "CeraVe", category: "moisturiser",
@@ -121,6 +121,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=CeraVe+Moisturising+Cream&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "cheeks", "forehead"],
     suitableFor: ["dry", "combination", "sensitive"],
+    keyIngredients: [
+      { name: "Ceramides NP, AP, EOP", benefit: "Restore and strengthen the skin barrier" },
+      { name: "Hyaluronic Acid", benefit: "Draws moisture deep into the skin" },
+      { name: "Niacinamide", benefit: "Calms redness and improves skin texture" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Simple Kind to Skin Moisturiser", brand: "Simple", price: "£5.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Simple+Kind+to+Skin+Moisturiser&tag=${AFFILIATE_TAG}`,
+        reason: "Fragrance-free, hypoallergenic formula at a fraction of the price.",
+      },
+      luxury: {
+        name: "La Mer Crème de la Mer", brand: "La Mer", price: "£145.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=La+Mer+Creme+de+la+Mer&tag=${AFFILIATE_TAG}`,
+        reason: "Legendary Miracle Broth™ delivers unrivalled barrier repair and radiance.",
+      },
+      organic: {
+        name: "Pai Skincare Chamomile & Rosehip Calming Day Cream", brand: "Pai Skincare", price: "£39.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Pai+Skincare+Chamomile+Rosehip+Day+Cream&tag=${AFFILIATE_TAG}`,
+        reason: "Certified organic, perfect for reactive and sensitive skin types.",
+      },
+    },
   },
   {
     id: "p2", name: "Neutrogena Hydro Boost Gel-Cream", brand: "Neutrogena", category: "moisturiser",
@@ -130,6 +152,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Neutrogena+Hydro+Boost+Gel+Cream&tag=${AFFILIATE_TAG}`,
     zones: ["t-zone", "full-face"],
     suitableFor: ["oily", "combination", "normal"],
+    keyIngredients: [
+      { name: "Purified Hyaluronic Acid", benefit: "Quenches skin and locks in moisture" },
+      { name: "Dimethicone", benefit: "Creates a smooth, non-greasy skin barrier" },
+      { name: "Olive Extract", benefit: "Antioxidant protection for daily hydration" },
+    ],
+    alternatives: {
+      budget: {
+        name: "The Ordinary Natural Moisturising Factors", brand: "The Ordinary", price: "£5.50",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=The+Ordinary+Natural+Moisturising+Factors&tag=${AFFILIATE_TAG}`,
+        reason: "Minimal, science-backed hydration without the premium price tag.",
+      },
+      luxury: {
+        name: "Dior Hydra Life Gel Crème", brand: "Dior", price: "£58.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Dior+Hydra+Life+Gel+Creme&tag=${AFFILIATE_TAG}`,
+        reason: "Luxurious aqua-gel texture with wild rose microbiome support.",
+      },
+      organic: {
+        name: "Green People Moisturiser", brand: "Green People", price: "£24.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Green+People+Organic+Moisturiser&tag=${AFFILIATE_TAG}`,
+        reason: "98% natural, certified organic — lightweight hydration without nasties.",
+      },
+    },
   },
   {
     id: "p3", name: "Tatcha The Water Cream", brand: "Tatcha", category: "moisturiser",
@@ -139,6 +183,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Tatcha+Water+Cream&tag=${AFFILIATE_TAG}`,
     zones: ["t-zone", "full-face"],
     suitableFor: ["oily", "combination"],
+    keyIngredients: [
+      { name: "Japanese Wild Rose", benefit: "Minimises enlarged pores and controls oil" },
+      { name: "Hadasei-3™ Complex", benefit: "Bio-fermented green tea, rice, algae for glow" },
+      { name: "Leopard Lily Extract", benefit: "Tightens and blurs the appearance of pores" },
+    ],
+    alternatives: {
+      budget: {
+        name: "e.l.f. Holy Hydration Face Cream", brand: "e.l.f.", price: "£12.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=elf+Holy+Hydration+Face+Cream&tag=${AFFILIATE_TAG}`,
+        reason: "Vegan, cruelty-free oil-control moisturiser at a budget-friendly price.",
+      },
+      luxury: {
+        name: "SK-II Facial Treatment Essence", brand: "SK-II", price: "£89.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=SKII+Facial+Treatment+Essence&tag=${AFFILIATE_TAG}`,
+        reason: "Iconic Pitera™ essence — the gold standard for luminous, poreless skin.",
+      },
+      organic: {
+        name: "Herbivore Botanicals Lapis Facial Oil", brand: "Herbivore", price: "£42.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Herbivore+Lapis+Facial+Oil&tag=${AFFILIATE_TAG}`,
+        reason: "100% natural, blue tansy + squalane oil for balancing oily skin.",
+      },
+    },
   },
   {
     id: "p4", name: "The Ordinary Niacinamide 10% + Zinc 1%", brand: "The Ordinary", category: "serum",
@@ -148,6 +214,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=The+Ordinary+Niacinamide+10&tag=${AFFILIATE_TAG}`,
     zones: ["t-zone", "cheeks"],
     suitableFor: ["oily", "combination", "blemish-prone"],
+    keyIngredients: [
+      { name: "Niacinamide 10%", benefit: "Reduces pore size and controls sebum production" },
+      { name: "Zinc PCA 1%", benefit: "Antibacterial — fights blemishes and balances oil" },
+      { name: "Tamarindus Indica", benefit: "Polysaccharide that supports surface hydration" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Revolution Skincare 10% Niacinamide", brand: "Revolution Skincare", price: "£4.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Revolution+Skincare+Niacinamide&tag=${AFFILIATE_TAG}`,
+        reason: "Near-identical formulation at an even lower price point.",
+      },
+      luxury: {
+        name: "Paula's Choice 10% Niacinamide Booster", brand: "Paula's Choice", price: "£42.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Paulas+Choice+Niacinamide+Booster&tag=${AFFILIATE_TAG}`,
+        reason: "Higher-performance formula with skin-smoothing peptides and antioxidants.",
+      },
+      organic: {
+        name: "Avalon Organics Vitamin C Renewal Serum", brand: "Avalon Organics", price: "£18.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Avalon+Organics+Vitamin+C+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "USDA certified organic serum for brightening and pore refinement.",
+      },
+    },
   },
   {
     id: "p5", name: "SkinCeuticals C E Ferulic", brand: "SkinCeuticals", category: "serum",
@@ -157,6 +245,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=SkinCeuticals+CE+Ferulic&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "dark-spots"],
     suitableFor: ["normal", "dry", "combination", "mature"],
+    keyIngredients: [
+      { name: "Vitamin C (L-Ascorbic Acid) 15%", benefit: "Neutralises free radicals and visibly brightens" },
+      { name: "Vitamin E (Alpha-Tocopherol) 1%", benefit: "Antioxidant that boosts Vitamin C efficacy" },
+      { name: "Ferulic Acid 0.5%", benefit: "Stabilises Vitamin C and doubles photoprotection" },
+    ],
+    alternatives: {
+      budget: {
+        name: "The Inkey List Vitamin C Serum", brand: "The Inkey List", price: "£9.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=The+Inkey+List+Vitamin+C+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "Delivers stable Vitamin C brightening at a fraction of the luxury price.",
+      },
+      luxury: {
+        name: "Sisley Supremÿa At Night", brand: "Sisley", price: "£360.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Sisley+Supremya+Night+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "Ultra-premium anti-ageing serum with chronobiology-inspired formula.",
+      },
+      organic: {
+        name: "Trilogy Rosehip Oil", brand: "Trilogy", price: "£19.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Trilogy+Certified+Organic+Rosehip+Oil&tag=${AFFILIATE_TAG}`,
+        reason: "Certified organic rosehip oil — naturally rich in Vitamin C and retinol.",
+      },
+    },
   },
   {
     id: "p6", name: "Paula's Choice BHA Exfoliant", brand: "Paula's Choice", category: "serum",
@@ -166,6 +276,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Paulas+Choice+BHA+Exfoliant&tag=${AFFILIATE_TAG}`,
     zones: ["t-zone", "nose", "chin"],
     suitableFor: ["oily", "combination", "blemish-prone"],
+    keyIngredients: [
+      { name: "Salicylic Acid 2%", benefit: "Oil-soluble acid that dissolves inside pores" },
+      { name: "Green Tea Extract", benefit: "Anti-inflammatory antioxidant to calm blemishes" },
+      { name: "Methylpropanediol", benefit: "Enhances penetration for deeper exfoliation" },
+    ],
+    alternatives: {
+      budget: {
+        name: "The Ordinary Salicylic Acid 2% Solution", brand: "The Ordinary", price: "£6.30",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=The+Ordinary+Salicylic+Acid+2&tag=${AFFILIATE_TAG}`,
+        reason: "Simple, effective BHA at the lowest possible price point.",
+      },
+      luxury: {
+        name: "Drunk Elephant T.L.C. Framboos Glycolic Night Serum", brand: "Drunk Elephant", price: "£78.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Drunk+Elephant+Framboos+Glycolic+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "A luxurious AHA/BHA blend for overnight resurfacing and brightening.",
+      },
+      organic: {
+        name: "Acnecide Face Wash with Willow Bark", brand: "Acnecide", price: "£14.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=willow+bark+natural+BHA+cleanser&tag=${AFFILIATE_TAG}`,
+        reason: "Willow bark extract — the natural source of salicin (BHA precursor).",
+      },
+    },
   },
   {
     id: "p7", name: "La Roche-Posay Anthelios SPF 50+", brand: "La Roche-Posay", category: "spf",
@@ -175,6 +307,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=La+Roche+Posay+Anthelios+SPF50&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "neck"],
     suitableFor: ["all", "sensitive"],
+    keyIngredients: [
+      { name: "Mexoryl SX & XL", benefit: "La Roche-Posay's patented broad-spectrum UV filters" },
+      { name: "Thermal Spring Water", benefit: "Calms and soothes sensitive or reactive skin" },
+      { name: "Tinosorb S", benefit: "Next-generation UVA filter for superior protection" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Bondi Sands Fragrance Free SPF 50", brand: "Bondi Sands", price: "£9.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Bondi+Sands+SPF50+Fragrance+Free&tag=${AFFILIATE_TAG}`,
+        reason: "Lightweight, non-greasy SPF50 at a supermarket-friendly price.",
+      },
+      luxury: {
+        name: "Ultrasun Face Anti-Age SPF50+", brand: "Ultrasun", price: "£36.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Ultrasun+Face+Anti+Age+SPF50&tag=${AFFILIATE_TAG}`,
+        reason: "Swiss-engineered once-a-day SPF with anti-pigmentation actives.",
+      },
+      organic: {
+        name: "Green People Organic Sun Lotion SPF30", brand: "Green People", price: "£22.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Green+People+Organic+Sun+Lotion&tag=${AFFILIATE_TAG}`,
+        reason: "Certified organic mineral SPF using non-nano zinc oxide only.",
+      },
+    },
   },
   {
     id: "p8", name: "Black Girl Sunscreen SPF 30", brand: "Black Girl Sunscreen", category: "spf",
@@ -184,6 +338,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Black+Girl+Sunscreen+SPF30&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "neck"],
     suitableFor: ["all", "oily", "combination"],
+    keyIngredients: [
+      { name: "Avocado Oil", benefit: "Rich emollient that nourishes and moisturises deeply" },
+      { name: "Cacao Butter", benefit: "Antioxidant-rich butter that enhances glow" },
+      { name: "Jojoba Oil", benefit: "Regulates sebum while providing lightweight hydration" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Altruist Dermatologist SPF50", brand: "Altruist", price: "£1.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Altruist+SPF50+Sunscreen&tag=${AFFILIATE_TAG}`,
+        reason: "One of the best-value SPFs on the market with minimal white cast.",
+      },
+      luxury: {
+        name: "Fenty Skin Hydra Vizor SPF30", brand: "Fenty Skin", price: "£35.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Fenty+Skin+Hydra+Vizor+SPF30&tag=${AFFILIATE_TAG}`,
+        reason: "Universal finish SPF by Rihanna, designed to disappear on all skin tones.",
+      },
+      organic: {
+        name: "Shade Sunscreen SPF30 Tinted", brand: "Shade", price: "£26.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Shade+Tinted+Sunscreen+SPF30&tag=${AFFILIATE_TAG}`,
+        reason: "Natural mineral SPF with earthy tints that complement deeper skin tones.",
+      },
+    },
   },
   {
     id: "p9", name: "NARS Natural Radiant Longwear Foundation", brand: "NARS", category: "foundation",
@@ -193,6 +369,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=NARS+Natural+Radiant+Foundation&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "under-eyes"],
     suitableFor: ["normal", "dry", "combination"],
+    keyIngredients: [
+      { name: "Amino Acid Complex", benefit: "Conditions skin for a healthy, plump appearance" },
+      { name: "SPF 12", benefit: "Low-level UV protection built into the formula" },
+      { name: "Light-diffusing Pigments", benefit: "Scatter light to blur imperfections" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Maybelline Fit Me Dewy + Smooth Foundation", brand: "Maybelline", price: "£9.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Maybelline+Fit+Me+Dewy+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Skin-like natural finish in a wide shade range for under £10.",
+      },
+      luxury: {
+        name: "Charlotte Tilbury Airbrush Flawless Foundation", brand: "Charlotte Tilbury", price: "£44.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Charlotte+Tilbury+Airbrush+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Blurs pores and imperfections with a luminous, long-wearing finish.",
+      },
+      organic: {
+        name: "ILIA True Skin Serum Foundation", brand: "ILIA", price: "£46.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=ILIA+True+Skin+Serum+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Clean beauty foundation with active skincare ingredients in every drop.",
+      },
+    },
   },
   {
     id: "p10", name: "Fenty Beauty Pro Filt'r Foundation", brand: "Fenty Beauty", category: "foundation",
@@ -202,6 +400,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Fenty+Beauty+Pro+Filtr+Foundation&tag=${AFFILIATE_TAG}`,
     zones: ["full-face"],
     suitableFor: ["oily", "combination"],
+    keyIngredients: [
+      { name: "Sebum-Absorbing Powder", benefit: "Controls shine for up to 24 hours" },
+      { name: "Glycerin", benefit: "Hydrates without adding heaviness or grease" },
+      { name: "Pro-Filt'r Technology", benefit: "Blur filter effect that softens pores and lines" },
+    ],
+    alternatives: {
+      budget: {
+        name: "L'Oréal Infallible 24H Fresh Wear Foundation", brand: "L'Oréal", price: "£12.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=LOreal+Infallible+24H+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Transfer-proof, 24-hour matte formula with a broad shade range.",
+      },
+      luxury: {
+        name: "Armani Beauty Luminous Silk Foundation", brand: "Armani Beauty", price: "£52.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Armani+Luminous+Silk+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Iconic silky-matte finish that lets skin breathe while looking flawless.",
+      },
+      organic: {
+        name: "Ere Perez Oat Milk Foundation", brand: "Ere Perez", price: "£35.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Ere+Perez+Oat+Milk+Foundation&tag=${AFFILIATE_TAG}`,
+        reason: "Natural, vegan foundation with soothing oat extract and a semi-matte finish.",
+      },
+    },
   },
   {
     id: "p11", name: "RMS Beauty Un Cover-Up Concealer", brand: "RMS Beauty", category: "concealer",
@@ -211,6 +431,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=RMS+Beauty+Concealer&tag=${AFFILIATE_TAG}`,
     zones: ["under-eyes", "dark-spots"],
     suitableFor: ["all", "sensitive", "dry"],
+    keyIngredients: [
+      { name: "Raw Coconut Oil", benefit: "Nourishes and softens the delicate under-eye area" },
+      { name: "Jojoba Oil", benefit: "Mimics skin's natural sebum for seamless blending" },
+      { name: "Beeswax", benefit: "Sets the formula for long-wearing coverage" },
+    ],
+    alternatives: {
+      budget: {
+        name: "e.l.f. Hydrating Camo Concealer", brand: "e.l.f.", price: "£8.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=elf+Hydrating+Camo+Concealer&tag=${AFFILIATE_TAG}`,
+        reason: "Vegan, cruelty-free medium coverage concealer in 20+ shades.",
+      },
+      luxury: {
+        name: "NARS Radiant Creamy Concealer", brand: "NARS", price: "£27.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=NARS+Radiant+Creamy+Concealer&tag=${AFFILIATE_TAG}`,
+        reason: "Award-winning concealer that brightens, covers, and never creases.",
+      },
+      organic: {
+        name: "Ere Perez Aloe Vera Concealer", brand: "Ere Perez", price: "£23.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Ere+Perez+Aloe+Vera+Concealer&tag=${AFFILIATE_TAG}`,
+        reason: "Natural, plant-based concealer with soothing aloe for sensitive skin.",
+      },
+    },
   },
   {
     id: "p12", name: "ILIA Super Serum Skin Tint SPF 40", brand: "ILIA", category: "tinted-spf",
@@ -220,6 +462,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=ILIA+Super+Serum+Skin+Tint&tag=${AFFILIATE_TAG}`,
     zones: ["full-face"],
     suitableFor: ["all", "sensitive"],
+    keyIngredients: [
+      { name: "Hyaluronic Acid", benefit: "Intensely hydrates for a plump, dewy finish" },
+      { name: "Niacinamide", benefit: "Minimises the appearance of pores and even skin tone" },
+      { name: "Zinc Oxide SPF 40", benefit: "Mineral UV protection that sits beautifully on skin" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Revolution Skincare Tinted Moisturiser SPF30", brand: "Revolution", price: "£8.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Revolution+Skincare+Tinted+Moisturiser+SPF30&tag=${AFFILIATE_TAG}`,
+        reason: "Affordable SPF-infused tint that blurs and protects in one step.",
+      },
+      luxury: {
+        name: "Chanel Les Beiges Water-Fresh Tint", brand: "Chanel", price: "£57.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Chanel+Les+Beiges+Water+Fresh+Tint&tag=${AFFILIATE_TAG}`,
+        reason: "Iconic skin tint that gives a lit-from-within natural radiance.",
+      },
+      organic: {
+        name: "Pai Skincare Tinted Lip & Cheek Balm", brand: "Pai Skincare", price: "£22.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Pai+Skincare+Tinted+Balm&tag=${AFFILIATE_TAG}`,
+        reason: "Certified organic multi-use balm for a natural, no-makeup makeup look.",
+      },
+    },
   },
   {
     id: "p13", name: "COSRX Snail Mucin 96% Power Repairing Essence", brand: "COSRX", category: "essence",
@@ -229,6 +493,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=COSRX+Snail+Mucin+96&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "scarring", "dark-spots"],
     suitableFor: ["all", "sensitive", "dry"],
+    keyIngredients: [
+      { name: "Snail Secretion Filtrate 96%", benefit: "Repairs damaged skin and fades post-acne marks" },
+      { name: "Sodium Hyaluronate", benefit: "Deeply hydrates and plumps skin cells" },
+      { name: "Allantoin", benefit: "Soothes irritation and promotes skin healing" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Some By Mi Snail Truecica Miracle Repair Serum", brand: "Some By Mi", price: "£14.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Some+By+Mi+Snail+Repair+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "Korean snail serum with cica and tea tree for blemish-prone skin.",
+      },
+      luxury: {
+        name: "Estée Lauder Advanced Night Repair Serum", brand: "Estée Lauder", price: "£85.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Estee+Lauder+Advanced+Night+Repair+Serum&tag=${AFFILIATE_TAG}`,
+        reason: "Legendary overnight repair serum that rivals snail mucin's regenerative power.",
+      },
+      organic: {
+        name: "Sukin Rosehip Facial Dry Oil", brand: "Sukin", price: "£14.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Sukin+Rosehip+Facial+Dry+Oil&tag=${AFFILIATE_TAG}`,
+        reason: "Certified natural rosehip oil — a plant-based route to scar fading.",
+      },
+    },
   },
   {
     id: "p14", name: "Some By Mi AHA BHA PHA 30 Days Miracle Toner", brand: "Some By Mi", category: "toner",
@@ -238,6 +524,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Some+By+Mi+AHA+BHA+Toner&tag=${AFFILIATE_TAG}`,
     zones: ["full-face", "t-zone"],
     suitableFor: ["oily", "combination", "blemish-prone"],
+    keyIngredients: [
+      { name: "AHA (Glycolic + Lactic Acid)", benefit: "Exfoliates surface dead cells for a brighter tone" },
+      { name: "BHA (Salicylic Acid)", benefit: "Clears clogged pores and targets breakouts" },
+      { name: "PHA (Gluconolactone)", benefit: "Gentler acid that moisturises while exfoliating" },
+    ],
+    alternatives: {
+      budget: {
+        name: "Pixi Glow Tonic", brand: "Pixi", price: "£14.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Pixi+Glow+Tonic+Exfoliating+Toner&tag=${AFFILIATE_TAG}`,
+        reason: "Cult-favourite glycolic toner that brightens and smooths for under £15.",
+      },
+      luxury: {
+        name: "Tatcha The Essence", brand: "Tatcha", price: "£72.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Tatcha+The+Essence&tag=${AFFILIATE_TAG}`,
+        reason: "Japanese fermented ingredients in a luxurious skin-plumping essence.",
+      },
+      organic: {
+        name: "Thayers Witch Hazel Toner", brand: "Thayers", price: "£10.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Thayers+Witch+Hazel+Toner&tag=${AFFILIATE_TAG}`,
+        reason: "Natural witch hazel toner that tightens pores and balances oily skin.",
+      },
+    },
   },
   {
     id: "p15", name: "Kiehl's Creamy Eye Treatment with Avocado", brand: "Kiehl's", category: "eye-cream",
@@ -247,6 +555,28 @@ const PRODUCT_CATALOG = [
     affiliateUrl: `https://www.amazon.co.uk/s?k=Kiehls+Creamy+Eye+Treatment&tag=${AFFILIATE_TAG}`,
     zones: ["under-eyes"],
     suitableFor: ["dry", "normal", "mature"],
+    keyIngredients: [
+      { name: "Avocado Oil", benefit: "Ultra-rich emollient that deeply nourishes fine lines" },
+      { name: "Shea Butter", benefit: "Intensely moisturises and softens the under-eye area" },
+      { name: "Beta-Carotene", benefit: "Antioxidant protection against environmental ageing" },
+    ],
+    alternatives: {
+      budget: {
+        name: "The Inkey List Caffeine Eye Cream", brand: "The Inkey List", price: "£8.99",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=The+Inkey+List+Caffeine+Eye+Cream&tag=${AFFILIATE_TAG}`,
+        reason: "Caffeine-powered depuffing eye cream for under a tenner.",
+      },
+      luxury: {
+        name: "La Mer Eye Concentrate", brand: "La Mer", price: "£175.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=La+Mer+Eye+Concentrate&tag=${AFFILIATE_TAG}`,
+        reason: "The ultimate luxury eye treatment with Miracle Broth™ for visible lifting.",
+      },
+      organic: {
+        name: "Pai Skincare Eye Balm", brand: "Pai Skincare", price: "£35.00",
+        affiliateUrl: `https://www.amazon.co.uk/s?k=Pai+Skincare+Eye+Balm&tag=${AFFILIATE_TAG}`,
+        reason: "Certified organic peptide-rich eye balm for sensitive under-eye skin.",
+      },
+    },
   },
 ];
 
@@ -615,4 +945,3 @@ Score based on:
 - Overall formulation standard
 
 Return ONLY the JSON object, no markdown.`;
-

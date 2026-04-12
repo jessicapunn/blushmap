@@ -41,19 +41,23 @@
     --color-gold: #c9944a;
     --color-gold-light: #f0dfc0;
     --color-sage: #7a9b7a;
+    --color-sage-deep: #5a8a5a;
     --color-cream: #f7f4ef;
     --color-warm-dark: #2a1e1b;
 
+    /* Typography */
     --font-display: 'Cormorant Garamond', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
 
-    --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-    --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-    --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-    --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-    --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+    /* Type scale */
+    --text-xs: clamp(0.72rem, 0.68rem + 0.2vw, 0.82rem);
+    --text-sm: clamp(0.875rem, 0.82rem + 0.28vw, 0.975rem);
+    --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.1rem);
+    --text-lg: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    --text-xl: clamp(1.4rem, 1.1rem + 1vw, 2rem);
     --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
 
+    /* Spacing */
     --space-1: 0.25rem;
     --space-2: 0.5rem;
     --space-3: 0.75rem;
@@ -63,10 +67,15 @@
     --space-12: 3rem;
     --space-16: 4rem;
 
+    /* Motion */
     --transition-interactive: 180ms cubic-bezier(0.16, 1, 0.3, 1);
-    --shadow-sm: 0 1px 3px oklch(0.3 0.02 10 / 0.08);
-    --shadow-md: 0 4px 16px oklch(0.3 0.02 10 / 0.10);
-    --shadow-lg: 0 12px 40px oklch(0.3 0.02 10 / 0.15);
+    --transition-slow: 350ms cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(42, 30, 27, 0.07);
+    --shadow-md: 0 4px 16px rgba(42, 30, 27, 0.09);
+    --shadow-lg: 0 12px 40px rgba(42, 30, 27, 0.13);
+    --shadow-rose: 0 4px 20px rgba(181, 71, 106, 0.2);
   }
 
   .dark {
@@ -135,8 +144,12 @@
   .font-display { font-family: var(--font-display); }
   .font-body { font-family: var(--font-body); }
 
+  /* Gradient utilities */
   .gradient-rose {
     background: linear-gradient(135deg, hsl(340 45% 45%), hsl(20 60% 55%));
+  }
+  .gradient-rose-soft {
+    background: linear-gradient(135deg, hsl(340 30% 93%), hsl(30 35% 92%));
   }
   .gradient-cream {
     background: linear-gradient(180deg, hsl(30 25% 96%), hsl(340 20% 94%));
@@ -146,6 +159,46 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  /* Eyebrow / label text */
+  .label-editorial {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--color-rose);
+  }
+
+  /* Section rhythm */
+  .section-py { padding-top: 5rem; padding-bottom: 5rem; }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3vw, 2.8rem);
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+
+  /* Card elevation states */
+  .card-hover {
+    transition: box-shadow var(--transition-interactive), transform var(--transition-interactive);
+  }
+  .card-hover:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  /* Ingredient chip */
+  .ingredient-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-interactive);
   }
 
   /* Skeleton shimmer */
@@ -160,10 +213,34 @@
     border-radius: 6px;
   }
 
+  /* Fade-in animation */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up {
+    animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Pulse ring — for active states */
+  @keyframes pulseRing {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 0.2; transform: scale(1.15); }
+  }
+  .pulse-ring {
+    animation: pulseRing 2s ease-in-out infinite;
+  }
+
   /* Zone badge colours */
   .zone-full-face { background: hsl(340 30% 90%); color: hsl(340 50% 35%); }
   .zone-t-zone { background: hsl(30 40% 88%); color: hsl(30 60% 30%); }
   .zone-cheeks { background: hsl(350 40% 90%); color: hsl(350 50% 35%); }
   .zone-under-eyes { background: hsl(200 30% 88%); color: hsl(200 50% 30%); }
   .zone-forehead { background: hsl(270 25% 88%); color: hsl(270 40% 35%); }
+
+  /* Alternative tab colours */
+  .alt-tab-budget { --tab-color: #4a9b6a; }
+  .alt-tab-luxury { --tab-color: #c9944a; }
+  .alt-tab-organic { --tab-color: #5a8a5a; }
+  .alt-tab-pick { --tab-color: #b5476a; }
 }
