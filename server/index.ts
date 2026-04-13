@@ -22,11 +22,12 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-// Redirect www.blushmap.com and blushmap.co.uk → blushmap.com (301 permanent)
+// Redirect blushmap.co.uk → www.blushmap.com (301 permanent)
+// Note: www.blushmap.com IS the canonical domain — do NOT redirect away from it
 app.use((req, res, next) => {
   const host = req.hostname;
-  if (host && (host === "www.blushmap.com" || host.endsWith(".co.uk"))) {
-    return res.redirect(301, `https://blushmap.com${req.originalUrl}`);
+  if (host && host.endsWith(".co.uk")) {
+    return res.redirect(301, `https://www.blushmap.com${req.originalUrl}`);
   }
   next();
 });
