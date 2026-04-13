@@ -216,7 +216,12 @@ export async function registerRoutes(httpServer: any, app: Express) {
       const imageDataLen = req.body?.imageData?.length || 0;
       log(`imageData length: ${imageDataLen}`);
 
-      const preferences: string[] = req.body.preferences ? JSON.parse(req.body.preferences) : [];
+      const preferences: string[] = (() => {
+        const p = req.body.preferences;
+        if (!p) return [];
+        if (Array.isArray(p)) return p;
+        try { return JSON.parse(p); } catch { return []; }
+      })();
       const captureMethod: string = req.body.captureMethod || "upload";
       const sessionId = req.body.sessionId || `session_${Date.now()}`;
       log(`captureMethod=${captureMethod}, preferences=${preferences.join(",")}`);
