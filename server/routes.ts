@@ -200,6 +200,11 @@ export async function registerRoutes(httpServer: any, app: Express) {
 
     try {
       log("Request received");
+      log(`Content-Type: ${req.headers["content-type"]?.substring(0, 80)}`);
+      log(`req.file present: ${!!req.file}`);
+      log(`req.body keys: ${Object.keys(req.body || {}).join(",")}`);
+      const imageDataLen = req.body?.imageData?.length || 0;
+      log(`imageData length: ${imageDataLen}`);
 
       const preferences: string[] = req.body.preferences ? JSON.parse(req.body.preferences) : [];
       const captureMethod: string = req.body.captureMethod || "upload";
