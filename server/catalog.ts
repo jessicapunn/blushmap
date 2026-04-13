@@ -20,79 +20,59 @@ export interface Product {
   bestSeller?: boolean; newIn?: boolean;
 }
 
-// ── Per-product official images ──────────────────────────────────────────────
+// ── Per-product images (Unsplash editorial — hotlink-safe, no CORS issues) ──
+// Using Unsplash images mapped to match each product type/colour/brand
 const PIMG: Record<string, string> = {
-  // Moisturisers
-  cerave_cream:        "https://www.cerave.com/content/dam/cp-sites/personal-care/cerave-relaunch/products/moisturizers/moisturizing-cream/cerave-moisturizing-cream-340g-jar.jpg",
-  neutrogena_hydro:    "https://www.neutrogena.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-neutrogena-master/default/dw2be9e001/products/large/6811046_Neutrogena_Hydro_Boost_Water_Gel_1.7oz.jpg",
-  tatcha_water:        "https://www.tatcha.com/dw/image/v2/BFBK_PRD/on/demandware.static/-/Sites-tatcha-master-catalog/default/dw8b0e5bdf/images/large/P-WATR-01-001-01.jpg",
-  drunk_lala:          "https://www.drunkelephant.com/dw/image/v2/AAQX_PRD/on/demandware.static/-/Sites-drunk-elephant-master/default/dw7c0a88fc/images/large/B-LALA-01-075-01.jpg",
-  // Serums
-  ordinary_niacin:     "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dw4d7bbd1f/images/products/the-ordinary/NIAZ10.png",
-  skinceuticals_ce:    "https://www.skinceuticals.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-acd-skinceuticals-master/default/dw2d3a6a09/2021/Products/skinceuticals-ce-ferulic-30ml.jpg",
-  paula_vit_c:         "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw5d40d49f/images/large/2669_large.jpg",
-  ordinary_ha:         "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dwbf8ec5e7/images/products/the-ordinary/HABF2.png",
-  // SPF
-  ultrasun_face:       "https://www.ultrasun.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/u/l/ultrasun_face_spf50_50ml.jpg",
-  la_roche_uv:         "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/uvidea-xl-melt-in-cream-spf50/la-roche-posay-productpage-uvidea-xl-melt-in-cream-spf50-50ml.png",
-  // Foundation  
-  charlotte_flawless:  "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw6e2be08c/images/large/CTFGLS-FAIR-30-front.jpg",
-  nars_natural:        "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw23e1ffa7/assets/NARS_NATURAL_RADIANT_LONGWEAR_FOUNDATION_TIN_TEASER_SYC_FAIR_DEAUVILLE.jpg",
-  fenty_pro:           "https://fentybeauty.com/cdn/shop/files/FENTY-BEAUTY-PRO-FILTR-SOFT-MATTE-LONGWEAR-FOUNDATION-100W_360x.jpg",
+  // Moisturisers — clean white jar aesthetic
+  cerave_cream:        "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80&auto=format&fit=crop",
+  neutrogena_hydro:    "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400&q=80&auto=format&fit=crop",
+  tatcha_water:        "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80&auto=format&fit=crop",
+  drunk_lala:          "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&q=80&auto=format&fit=crop",
+  // Serums — dropper bottle aesthetic
+  ordinary_niacin:     "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80&auto=format&fit=crop",
+  skinceuticals_ce:    "https://images.unsplash.com/photo-1617220303901-d5ceea5b4d6e?w=400&q=80&auto=format&fit=crop",
+  paula_vit_c:         "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80&auto=format&fit=crop",
+  ordinary_ha:         "https://images.unsplash.com/photo-1576426863848-c21f53c60b19?w=400&q=80&auto=format&fit=crop",
+  // SPF — light texture
+  la_roche_uv:         "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=400&q=80&auto=format&fit=crop",
+  ultrasun_face:       "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80&auto=format&fit=crop",
+  la_roche_tinted:     "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=400&q=80&auto=format&fit=crop",
+  // Foundation
+  charlotte_flawless:  "https://images.unsplash.com/photo-1567721913486-6585f069b332?w=400&q=80&auto=format&fit=crop",
+  nars_natural:        "https://images.unsplash.com/photo-1590156562745-5e36e44ab9e2?w=400&q=80&auto=format&fit=crop",
+  fenty_pro:           "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80&auto=format&fit=crop",
   // Concealer
-  nars_radiant:        "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw3e877ee9/assets/NARS_PRODUCT_IMAGE_RADIANT_CREAMY_CONCEALER_RS18_CHANTILLY.jpg",
-  maybelline_fit:      "https://www.maybelline.co.uk/-/media/project/loreal/brand-sites/mny/emea/uk/face/concealer/fit-me-concealer/maybelline-fit-me-concealer.png",
+  nars_radiant:        "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400&q=80&auto=format&fit=crop",
+  maybelline_fit:      "https://images.unsplash.com/photo-1631214499182-e37c7dc30a3a?w=400&q=80&auto=format&fit=crop",
   // Toner
-  pyunkang_ess:        "https://pyunkangyul.com/cdn/shop/products/essence-toner-200ml_800x.jpg",
-  paula_bha:           "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw53a45b85/images/large/2010_large.jpg",
+  pyunkang_ess:        "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&q=80&auto=format&fit=crop",
+  paula_bha:           "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=400&q=80&auto=format&fit=crop",
   // Eye cream
-  olay_eyes:           "https://www.olay.co.uk/-/media/olay/pictures/products/eye-cream/olay-eyes-pro-retinol-eye-treatment.png",
-  origins_gin:         "https://www.origins.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-origins-master/default/dw57e55e50/2021/products/AEY601/origins-ginzing-brightening-eye-cream-0.5-oz.jpg",
+  olay_eyes:           "https://images.unsplash.com/photo-1583241475880-083f84372725?w=400&q=80&auto=format&fit=crop",
+  origins_gin:         "https://images.unsplash.com/photo-1600428853876-fb622f69cfc3?w=400&q=80&auto=format&fit=crop",
   // Cleanser
-  caudalie_instant:    "https://www.caudalie.com/media/catalog/product/cache/c/image/9df78eab33525d08d6e5fb8d27136e95/v/i/vinoperfect-instant-brightening-cleansing-foam-150ml-caudalie.jpg",
-  la_roche_foam:       "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/effaclar-purifying-foaming-gel/la-roche-posay-face-wash-effaclar-purifying-foaming-gel.png",
+  caudalie_instant:    "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?w=400&q=80&auto=format&fit=crop",
+  la_roche_foam:       "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80&auto=format&fit=crop",
   // Retinol
-  paula_1pct:          "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw8a8a9a5b/images/large/7700_large.jpg",
-  roc_retinol:         "https://www.boots.com/media/catalog/product/r/o/roc-retinol-correxion-line-smoothing-serum.jpg",
+  paula_1pct:          "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400&q=80&auto=format&fit=crop",
+  roc_retinol:         "https://images.unsplash.com/photo-1617220370916-7e6c63e08d3e?w=400&q=80&auto=format&fit=crop",
   // Mask
-  glow_recipe:         "https://glowrecipe.com/cdn/shop/products/GR-Watermelon-Glow-Pore-Tight-Toner-118ml_360x.jpg",
-  origins_charcoal:    "https://www.origins.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-origins-master/default/dw5a9d7b7e/2021/products/AKXQ01/origins-clear-improvement-active-charcoal-mask-75ml.jpg",
-  // Lips
-  charlotte_liner:     "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw9e8d8d6e/images/large/CTHLL-PILLOWTALK-front.jpg",
-  mac_ruby:            "https://www.maccosmetics.co.uk/media/export/cms/products/640x600/mac_sku_MF3Y01_640x600_0.jpg",
+  glow_recipe:         "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=80&auto=format&fit=crop",
+  origins_charcoal:    "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80&auto=format&fit=crop",
+  // Lips — pink/rose tones
+  charlotte_liner:     "https://images.unsplash.com/photo-1586495777744-4e6232bf2d22?w=400&q=80&auto=format&fit=crop",
+  mac_ruby:            "https://images.unsplash.com/photo-1631730358585-38a4935cbec4?w=400&q=80&auto=format&fit=crop",
   // Blush
-  nars_orgasm:         "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw3d3d0b7a/assets/NARS_PRODUCT_IMAGE_BLUSH_ORGASM.jpg",
-  rare_blush:          "https://rarebeauty.com/cdn/shop/products/soft-pinch-liquid-blush-happy_800x.jpg",
+  nars_orgasm:         "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80&auto=format&fit=crop",
+  rare_blush:          "https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=400&q=80&auto=format&fit=crop",
   // Primer
-  benefit_porefessional: "https://www.benefitcosmetics.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-benefit-master-catalog/default/dw7e4e3e8d/images/products/porefessional/porefessional-face-primer.jpg",
+  benefit_porefessional: "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=400&q=80&auto=format&fit=crop",
   // Highlighter
-  charlotte_beam:      "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw6e8b5e6e/images/large/CTBEAM-MOONBEAM-front.jpg",
+  charlotte_beam:      "https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80&auto=format&fit=crop",
   // Spot treatment
-  ordinary_azelaic:    "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dw5c4d8b4a/images/products/the-ordinary/ABAS10.png",
-  // SPF tinted
-  la_roche_tinted:     "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/anthelios-uvmune-400-tinted-fluid-spf50/la-roche-posay-anthelios-uvmune-400-invisible-tinted-fluid-spf50.png",
-};
-
-// Fallback per-category (Unsplash editorial beauty photography)
-const IMGS = {
-  moisturiser: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&q=85",
-  serum:       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=85",
-  spf:         "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=500&q=85",
-  foundation:  "https://images.unsplash.com/photo-1567721913486-6585f069b332?w=500&q=85",
-  concealer:   "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=500&q=85",
-  toner:       "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&q=85",
-  eyecream:    "https://images.unsplash.com/photo-1583241475880-083f84372725?w=500&q=85",
-  cleanser:    "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?w=500&q=85",
-  retinol:     "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=500&q=85",
-  mask:        "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=500&q=85",
-  lip:         "https://images.unsplash.com/photo-1586495777744-4e6232bf2d22?w=500&q=85",
-  blush:       "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=85",
-  primer:      "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=500&q=85",
-  highlighter: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=85",
-  powder:      "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=500&q=85",
-  essence:     "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=85",
-  body:        "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=500&q=85",
-};
+  ordinary_azelaic:    "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80&auto=format&fit=crop",
+}
+// IMGS fallback no longer needed — all products use PIMG keys directly
 
 export const PRODUCT_CATALOG: Product[] = [
   // ── MOISTURISERS ─────────────────────────────────────────────────────────

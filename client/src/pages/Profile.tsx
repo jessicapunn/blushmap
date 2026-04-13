@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { BlushMapLogoInline } from "@/components/BlushMapLogo";
+import { NavBar } from "@/components/NavBar";
 import {
   Heart, ShoppingBag, ScanLine, TrendingUp, User, LogOut,
   Camera, Clock, Sparkles, ChevronRight, Star, CheckCircle,
@@ -77,20 +78,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen" style={{ background: "#fff8f9" }}>
-      {/* Nav */}
-      <header className="sticky top-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.96)", backdropFilter: "blur(16px)", borderColor: "#f0ccd6" }}>
-        <div className="max-w-5xl mx-auto px-5 h-15 flex items-center gap-3 py-3">
-          <Link href="/"><button className="flex items-center gap-1.5 text-sm" style={{ color: "#9b6674" }}><ArrowLeft size={14} /> Home</button></Link>
-          <span style={{ color: "#f0ccd6" }}>·</span>
-          <span className="text-sm font-semibold" style={{ color: "#1a0a0e" }}>My Profile</span>
-          <div className="flex-1" />
-          <button onClick={() => logout().then(() => window.location.href = "/")}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors hover:bg-red-50"
-            style={{ color: "#c9506e", border: "1px solid #f0ccd6" }}>
-            <LogOut size={12} /> Log out
-          </button>
-        </div>
-      </header>
+      <NavBar />
 
       <div className="max-w-5xl mx-auto px-5 py-8">
         {/* Profile header */}

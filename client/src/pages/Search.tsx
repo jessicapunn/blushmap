@@ -2,7 +2,7 @@ import { useState, useCallback } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, Star, Sparkles, TrendingUp, Zap, X } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, ShoppingCart, Star, Sparkles, TrendingUp, Zap, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -120,45 +120,7 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen" style={{ background: "hsl(var(--background))", fontFamily: "var(--font-body)" }}>
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b backdrop-blur-md" style={{ background: "hsl(var(--background) / 0.94)", borderColor: "hsl(var(--border))" }}>
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center gap-4">
-          <Link href="/">
-            <button className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm">
-              <ArrowLeft size={16} />
-            </button>
-          </Link>
-          {/* Search bar */}
-          <div className="flex-1 relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search products, ingredients, brands, skin concerns…"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm focus:outline-none focus:ring-2 transition-all"
-              style={{
-                background: "hsl(var(--muted) / 0.5)",
-                borderColor: "hsl(var(--border))",
-                fontFamily: "var(--font-body)",
-                "--tw-ring-color": "var(--color-rose)",
-              } as any}
-              autoFocus
-              data-testid="search-input"
-            />
-          </div>
-          <button
-            onClick={() => setShowFilters(f => !f)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border text-sm font-medium transition-colors"
-            style={{
-              background: showFilters ? "hsl(345 40% 93%)" : "hsl(var(--card))",
-              borderColor: showFilters ? "hsl(345 40% 75%)" : "hsl(var(--border))",
-              color: showFilters ? "var(--color-rose)" : "hsl(var(--foreground))",
-            }}
-          >
-            <SlidersHorizontal size={14} /> Filters
-          </button>
-        </div>
-      </header>
+      <NavBar />
 
       <main className="max-w-6xl mx-auto px-6 py-8">
         {/* Quick filter pills */}

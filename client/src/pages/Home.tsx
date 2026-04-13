@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
+import { useBasket } from "@/lib/basket";
 import { AuthModal } from "@/components/AuthModal";
+import { BasketDrawer } from "@/components/BasketDrawer";
 import { BlushMapLogoInline } from "@/components/BlushMapLogo";
 import { Link } from "wouter";
-import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag, Mail, X, Loader2, User as UserIcon, LogIn } from "lucide-react";
+import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag, Mail, X, Loader2, User as UserIcon, LogIn, ShoppingCart, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -258,15 +260,18 @@ export default function Home() {
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [showBasket, setShowBasket] = useState(false);
   const { user } = useAuth();
+  const { count: basketCount } = useBasket();
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "var(--font-body)", background: "hsl(var(--background))" }}>
 
       {/* ── Modals ── */}
-      {showSignup && <EmailSignupModal onClose={() => setShowSignup(false)} />}
-      {showAuth   && <AuthModal onClose={() => setShowAuth(false)} />}
+      {showSignup  && <EmailSignupModal onClose={() => setShowSignup(false)} />}
+      {showAuth    && <AuthModal onClose={() => setShowAuth(false)} />}
+      <BasketDrawer open={showBasket} onClose={() => setShowBasket(false)} />
 
       {/* ── Nav ── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.95)", backdropFilter: "blur(20px)", borderColor: "hsl(var(--border))" }}>
@@ -285,16 +290,21 @@ export default function Home() {
               </span>
             </div>
           </Link>
-          {/* Nav links (desktop) — Scan is first and highlighted */}
-          <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+          {/* Nav links (desktop) — Scan + Analyse both prominent */}
+          <nav className="hidden md:flex items-center gap-1.5 text-sm font-medium">
             <Link href="/scanner">
-              <span className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-semibold tracking-wide transition-all hover:opacity-90 cursor-pointer" style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+              <span className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold tracking-wide transition-all hover:opacity-90 cursor-pointer" style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
                 <ScanLine size={13} /> SCAN
               </span>
             </Link>
             <Link href="/analyse">
+              <span className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-bold tracking-wide transition-all hover:opacity-90 cursor-pointer" style={{ background: "linear-gradient(135deg, #c9944a, #b07830)" }}>
+                <Sparkles size={13} /> ANALYSE
+              </span>
+            </Link>
+            <Link href="/try-on">
               <span className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors cursor-pointer hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))" }}>
-                <Sparkles size={12} /> Analyse
+                ✨ Try-on
               </span>
             </Link>
             <Link href="/search">
@@ -316,14 +326,26 @@ export default function Home() {
                 <LogIn size={12} /> Log in
               </button>
             )}
+            {/* Basket icon */}
+            <button onClick={() => setShowBasket(true)}
+              className="relative flex items-center justify-center w-9 h-9 rounded-full transition-colors hover:bg-pink-50"
+              style={{ border: "1.5px solid #f0ccd6" }}>
+              <ShoppingCart size={14} style={{ color: "#c9506e" }} />
+              {basketCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-4.5 h-4.5 flex items-center justify-center text-[9px] font-bold text-white rounded-full"
+                  style={{ background: "#c9506e", minWidth: 16, height: 16, lineHeight: 1 }}>
+                  {basketCount}
+                </span>
+              )}
+            </button>
             <Link href="/scanner">
-              <Button size="sm" className="gap-1.5 text-xs text-white border-0 md:hidden" style={{ background: "var(--color-rose)" }}>
-                <ScanLine size={13} /> Scan
+              <Button size="sm" className="gap-1.5 text-xs text-white border-0" style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+                <ScanLine size={12} /> Scan
               </Button>
             </Link>
             <Link href="/analyse">
-              <Button size="sm" className="gap-1.5 text-xs text-white border-0 hidden md:flex" style={{ background: "var(--color-rose)" }}>
-                <Sparkles size={12} /> Analyse skin
+              <Button size="sm" className="gap-1.5 text-xs text-white border-0 hidden sm:flex" style={{ background: "linear-gradient(135deg, #c9944a, #b07830)" }}>
+                <Sparkles size={12} /> Analyse
               </Button>
             </Link>
           </div>
