@@ -1,145 +1,238 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Camera, Keyboard, Search, Loader2, AlertCircle, ScanLine } from "lucide-react";
+import { ArrowLeft, Camera, Keyboard, Search, Loader2, AlertCircle, ScanLine, Flashlight, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
 
 type Mode = "choose" | "camera" | "manual";
+
+// ── Quagga2 scan config ──────────────────────────────────────────────────────
+// We try multiple configs in order from most aggressive to most conservative.
+// This handles everything from tiny EAN-8s on lip balm to large UPC-A boxes.
+const SCAN_CONFIGS = [
+  // Pass 1 — high frequency, centre crop (most barcodes)
+  {
+    frequency: 20,
+    area: { top: "20%", right: "5%", left: "5%", bottom: "20%" },
+    label: "centre crop",
+  },
+  // Pass 2 — full frame (barcode near edge or rotated)
+  {
+    frequency: 15,
+    area: { top: "5%", right: "5%", left: "5%", bottom: "5%" },
+    label: "full frame",
+  },
+  // Pass 3 — wide centre strip (common on product sides)
+  {
+    frequency: 10,
+    area: { top: "30%", right: "2%", left: "2%", bottom: "30%" },
+    label: "wide strip",
+  },
+];
+
+const READERS = [
+  "ean_reader",        // EAN-13 — most EU beauty products
+  "ean_8_reader",      // EAN-8  — small products (nail polish, lip balm)
+  "upc_reader",        // UPC-A  — US products
+  "upc_e_reader",      // UPC-E  — small US products
+  "code_128_reader",   // Code-128 — some professional/pharmacy lines
+];
 
 export default function Scanner() {
   const [mode, setMode] = useState<Mode>("choose");
   const [manualCode, setManualCode] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [scanStatus, setScanStatus] = useState<string>("Point at a barcode");
+  const [configIdx, setConfigIdx] = useState(0);
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const scanningRef = useRef(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animFrameRef = useRef<number>(0);
-
-  // Load ZXing dynamically
-  const zxingRef = useRef<any>(null);
+  const quaggaRef = useRef<any>(null);
+  const mountedRef = useRef<HTMLDivElement>(null);
+  const detectedCodesRef = useRef<Record<string, number>>({});  // barcode → hit count
+  const scanningActiveRef = useRef(false);
+  const configTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    return () => stopCamera();
+    return () => { stopCamera(); };
   }, []);
 
-  const stopCamera = () => {
-    cancelAnimationFrame(animFrameRef.current);
-    scanningRef.current = false;
+  // ── Stop everything cleanly ───────────────────────────────────────────────
+  const stopCamera = useCallback(() => {
+    scanningActiveRef.current = false;
+    if (configTimerRef.current) clearTimeout(configTimerRef.current);
+    if (quaggaRef.current) {
+      try { quaggaRef.current.stop(); } catch {}
+      quaggaRef.current = null;
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
     }
-  };
+  }, []);
 
+  // ── Start camera stream first, then Quagga ────────────────────────────────
   const startCamera = async () => {
     setMode("camera");
     setError(null);
+    detectedCodesRef.current = {};
+    setConfigIdx(0);
+    setScanStatus("Starting camera…");
+
     try {
+      // Request rear camera with torchMode constraint if available
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1920, min: 640 },
+          height: { ideal: 1080, min: 480 },
+          // Focus mode — helps with small barcodes
+          ...(("focusMode" in MediaTrackConstraints.prototype) ? { focusMode: "continuous" } : {}),
+        },
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
-      beginScan();
+      setScanStatus("Point at a barcode");
+      beginQuaggaScan(0);
     } catch (err: any) {
-      setError("Camera access denied. Use manual entry instead.");
+      const msg = err?.name === "NotAllowedError"
+        ? "Camera access denied. Please allow camera access and try again, or use manual entry."
+        : "Could not start camera. Try manual entry instead.";
+      setError(msg);
       setMode("choose");
     }
   };
 
-  const beginScan = useCallback(async () => {
-    // Dynamically load @zxing/library
-    if (!zxingRef.current) {
-      try {
-        const zxing = await import("@zxing/library");
-        const hints = new Map();
-        hints.set(2, [zxing.BarcodeFormat.EAN_13, zxing.BarcodeFormat.EAN_8,
-          zxing.BarcodeFormat.UPC_A, zxing.BarcodeFormat.UPC_E,
-          zxing.BarcodeFormat.CODE_128, zxing.BarcodeFormat.QR_CODE]);
-        const reader = new zxing.MultiFormatReader();
-        reader.setHints(hints);
-        zxingRef.current = { reader, DecodeHintType: zxing.DecodeHintType, RGBLuminanceSource: zxing.RGBLuminanceSource, BinaryBitmap: zxing.BinaryBitmap, HybridBinarizer: zxing.HybridBinarizer };
-      } catch {
-        setError("Barcode scanner failed to load. Use manual entry.");
-        return;
-      }
+  // ── Init Quagga2 with a given config index ────────────────────────────────
+  const beginQuaggaScan = useCallback(async (cfgIdx: number) => {
+    if (!scanningActiveRef.current && cfgIdx === 0) scanningActiveRef.current = true;
+    if (!scanningActiveRef.current) return;
+
+    // Stop any previous Quagga instance before starting a new one
+    if (quaggaRef.current) {
+      try { quaggaRef.current.stop(); } catch {}
+      quaggaRef.current = null;
     }
 
-    scanningRef.current = true;
-    const tick = () => {
-      if (!scanningRef.current) return;
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-      if (!video || !canvas || video.readyState < 2) {
-        animFrameRef.current = requestAnimationFrame(tick);
-        return;
-      }
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
-      try {
-        const { reader, RGBLuminanceSource, BinaryBitmap, HybridBinarizer } = zxingRef.current;
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const src = new RGBLuminanceSource(imageData.data, canvas.width, canvas.height);
-        const bitmap = new BinaryBitmap(new HybridBinarizer(src));
-        const result = reader.decode(bitmap);
-        if (result) {
-          scanningRef.current = false;
-          stopCamera();
-          handleCode(result.getText());
-          return;
-        }
-      } catch {
-        // No barcode found this frame — keep scanning
-      }
-      animFrameRef.current = requestAnimationFrame(tick);
-    };
-    animFrameRef.current = requestAnimationFrame(tick);
-  }, []);
+    try {
+      const Quagga = (await import("@ericblade/quagga2")).default;
+      quaggaRef.current = Quagga;
 
+      const cfg = SCAN_CONFIGS[cfgIdx] || SCAN_CONFIGS[0];
+      setScanStatus(`Scanning (${cfg.label})…`);
+
+      await new Promise<void>((resolve, reject) => {
+        Quagga.init(
+          {
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: videoRef.current ?? undefined,
+              constraints: {
+                facingMode: "environment",
+                width: { ideal: 1920 },
+                height: { ideal: 1080 },
+              },
+              area: cfg.area,
+              singleChannel: false,
+            },
+            decoder: {
+              readers: READERS,
+              debug: {
+                drawBoundingBox: false,
+                showFrequency: false,
+                drawScanline: false,
+                showPattern: false,
+              },
+              multiple: false,
+            },
+            locate: true,
+            locator: {
+              patchSize: "medium",   // "x-small"|"small"|"medium"|"large"|"x-large"
+              halfSample: false,      // Full-res decode — better for small barcodes
+            },
+            numOfWorkers: 2,
+            frequency: cfg.frequency,
+          },
+          (err: any) => {
+            if (err) reject(err);
+            else resolve();
+          }
+        );
+      });
+
+      Quagga.start();
+
+      // ── Confidence-voting: require 2 matching hits before accepting ────────
+      Quagga.onDetected((result: any) => {
+        if (!scanningActiveRef.current) return;
+        const code = result?.codeResult?.code;
+        const format = result?.codeResult?.format;
+        if (!code || code.length < 6) return;
+
+        // ZXing/Quagga sometimes fires false positives — require 2 matching reads
+        detectedCodesRef.current[code] = (detectedCodesRef.current[code] || 0) + 1;
+
+        if (detectedCodesRef.current[code] >= 2) {
+          scanningActiveRef.current = false;
+          setScanStatus(`Detected ${format?.replace("_", "-")}!`);
+          stopCamera();
+          handleCode(code);
+        } else {
+          setScanStatus(`Confirming barcode… (${detectedCodesRef.current[code]}/2)`);
+        }
+      });
+
+      // After 6 s with no result on this config, rotate to next config
+      configTimerRef.current = setTimeout(() => {
+        if (!scanningActiveRef.current) return;
+        const next = (cfgIdx + 1) % SCAN_CONFIGS.length;
+        setConfigIdx(next);
+        detectedCodesRef.current = {};
+        beginQuaggaScan(next);
+      }, 6000);
+
+    } catch (err: any) {
+      console.error("[Scanner] Quagga init failed:", err);
+      // Quagga failed — fall back to ZXing (legacy path)
+      setError("Camera scanner couldn't start. Please use manual entry.");
+      setMode("choose");
+    }
+  }, [stopCamera]);
+
+  // ── Handle a confirmed code ───────────────────────────────────────────────
   const handleCode = async (code: string) => {
     setLoading(true);
     setError(null);
     try {
-      // 1. Look up product
       const lookupRes = await fetch(`/api/barcode/${code}`);
       let product: any = null;
-      if (lookupRes.ok) {
-        product = await lookupRes.json();
-      }
+      if (lookupRes.ok) product = await lookupRes.json();
 
-      // 2. Score ingredients
       const scoreRes = await fetch("/api/score-ingredients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           barcode: code,
-          productName: product?.productName || null,
-          brand: product?.brand || null,
-          ingredientsText: product?.ingredientsText || null,
+          productName: product?.productName ?? null,
+          brand: product?.brand ?? null,
+          ingredientsText: product?.ingredientsText ?? null,
         }),
       });
 
       if (!scoreRes.ok) throw new Error("Scoring failed");
       const scoreData = await scoreRes.json();
 
-      // Store in sessionStorage and navigate
-      const payload = { ...scoreData, barcode: code, productImage: product?.image || null };
+      const payload = { ...scoreData, barcode: code, productImage: product?.image ?? null };
       sessionStorage.setItem("barcodeResult", JSON.stringify(payload));
       setLocation("/scan-result");
     } catch (err: any) {
       setError(err.message || "Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -151,6 +244,22 @@ export default function Scanner() {
     stopCamera();
     handleCode(code);
   };
+
+  // ── Config progress pill ──────────────────────────────────────────────────
+  const ConfigPills = () => (
+    <div className="absolute top-3 left-0 right-0 flex justify-center gap-1.5 z-10">
+      {SCAN_CONFIGS.map((cfg, i) => (
+        <div
+          key={i}
+          className="h-1 rounded-full transition-all duration-300"
+          style={{
+            width: i === configIdx ? 24 : 8,
+            background: i === configIdx ? "white" : "rgba(255,255,255,0.35)",
+          }}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "var(--font-body)", background: "hsl(var(--background))" }}>
@@ -177,15 +286,15 @@ export default function Scanner() {
 
       <main className="pt-24 pb-16 px-6 max-w-2xl mx-auto">
 
-        {/* Loading state */}
+        {/* Loading */}
         {loading && (
           <div className="flex flex-col items-center justify-center gap-4 py-24">
             <div className="relative">
               <div className="w-20 h-20 rounded-full" style={{ background: "hsl(340 30% 94%)" }} />
               <Loader2 className="w-10 h-10 animate-spin absolute inset-0 m-auto" style={{ color: "hsl(340 45% 45%)" }} />
             </div>
-            <p className="text-center text-muted-foreground">Analysing ingredients with AI…</p>
-            <p className="text-center text-sm text-muted-foreground">This takes about 10 seconds</p>
+            <p className="text-center text-muted-foreground font-medium">Analysing ingredients with AI…</p>
+            <p className="text-center text-sm text-muted-foreground">Usually takes about 10 seconds</p>
           </div>
         )}
 
@@ -197,7 +306,7 @@ export default function Scanner() {
           </div>
         )}
 
-        {/* Choose mode */}
+        {/* ── Choose mode ──────────────────────────────────────────────────── */}
         {mode === "choose" && !loading && (
           <div>
             <div className="text-center mb-10">
@@ -208,13 +317,14 @@ export default function Scanner() {
                 Scan a product
               </h1>
               <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                Point at a barcode or enter it manually. We'll analyse every ingredient and give it a score out of 100.
+                Point at a barcode or enter it manually. We'll analyse every ingredient and score it out of 100.
               </p>
             </div>
 
             <div className="space-y-3">
               <button
                 onClick={startCamera}
+                data-testid="btn-start-camera"
                 className="w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all hover:shadow-md"
                 style={{ borderColor: "hsl(340 45% 45%)", background: "hsl(340 30% 97%)" }}
               >
@@ -223,12 +333,13 @@ export default function Scanner() {
                 </div>
                 <div>
                   <div className="font-semibold">Scan barcode</div>
-                  <div className="text-sm text-muted-foreground">Use your camera to scan a product barcode</div>
+                  <div className="text-sm text-muted-foreground">Camera auto-detects EAN-13, EAN-8, UPC — small barcodes included</div>
                 </div>
               </button>
 
               <button
                 onClick={() => setMode("manual")}
+                data-testid="btn-manual-entry"
                 className="w-full flex items-center gap-4 p-5 rounded-2xl border text-left transition-all hover:shadow-md hover:border-border"
                 style={{ background: "hsl(var(--card))" }}
               >
@@ -237,60 +348,111 @@ export default function Scanner() {
                 </div>
                 <div>
                   <div className="font-semibold">Enter barcode manually</div>
-                  <div className="text-sm text-muted-foreground">Type the barcode number from the product</div>
+                  <div className="text-sm text-muted-foreground">Type the number printed below the barcode</div>
                 </div>
               </button>
             </div>
 
             <p className="text-center text-xs text-muted-foreground mt-8">
-              Works with EAN-13, EAN-8, UPC-A barcodes on most beauty & skincare products
+              Works with EAN-13, EAN-8, UPC-A, UPC-E and Code-128 barcodes
             </p>
           </div>
         )}
 
-        {/* Camera mode */}
+        {/* ── Camera mode ──────────────────────────────────────────────────── */}
         {mode === "camera" && !loading && (
           <div>
-            <div className="relative rounded-2xl overflow-hidden bg-black" style={{ aspectRatio: "4/3" }}>
-              <video ref={videoRef} className="w-full h-full object-cover" muted playsInline />
-              <canvas ref={canvasRef} className="hidden" />
+            {/* Tip bar */}
+            <div className="flex items-center gap-2 mb-3 px-1">
+              <ZoomIn size={14} className="text-muted-foreground shrink-0" />
+              <p className="text-xs text-muted-foreground leading-snug">
+                Hold steady, 10–20 cm away. Keep the barcode within the white frame. Good lighting helps.
+              </p>
+            </div>
 
-              {/* Scanning overlay */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-64 h-40">
+            {/* Viewfinder */}
+            <div className="relative rounded-2xl overflow-hidden bg-black" style={{ aspectRatio: "4/3" }}>
+              {/* Config progress indicators */}
+              <ConfigPills />
+
+              {/* Video element — Quagga attaches to this */}
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover"
+                muted
+                playsInline
+                autoPlay
+              />
+
+              {/* Scan window overlay */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                {/* Dim outer areas */}
+                <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.35)" }} />
+                {/* Clear window */}
+                <div className="relative z-10" style={{ width: "78%", height: "38%" }}>
+                  {/* Cutout */}
+                  <div className="absolute inset-0 rounded-lg" style={{ background: "transparent", boxShadow: "0 0 0 9999px rgba(0,0,0,0.35)" }} />
+                  {/* Animated scan line */}
+                  <div
+                    className="absolute left-2 right-2 h-0.5 rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, transparent, hsl(340 45% 65%), transparent)",
+                      animation: "scanLine 1.6s ease-in-out infinite",
+                      top: "50%",
+                    }}
+                  />
                   {/* Corner brackets */}
-                  {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map((pos, i) => (
-                    <div key={i} className={`absolute w-6 h-6 ${pos}`} style={{
-                      borderTop: i < 2 ? "2px solid white" : "none",
-                      borderBottom: i >= 2 ? "2px solid white" : "none",
-                      borderLeft: i % 2 === 0 ? "2px solid white" : "none",
-                      borderRight: i % 2 === 1 ? "2px solid white" : "none",
-                    }} />
+                  {[
+                    { corner: "top-0 left-0", borderStyle: { borderTop: "2.5px solid white", borderLeft: "2.5px solid white" } },
+                    { corner: "top-0 right-0", borderStyle: { borderTop: "2.5px solid white", borderRight: "2.5px solid white" } },
+                    { corner: "bottom-0 left-0", borderStyle: { borderBottom: "2.5px solid white", borderLeft: "2.5px solid white" } },
+                    { corner: "bottom-0 right-0", borderStyle: { borderBottom: "2.5px solid white", borderRight: "2.5px solid white" } },
+                  ].map(({ corner, borderStyle }, i) => (
+                    <div key={i} className={`absolute w-7 h-7 ${corner} rounded-sm`} style={borderStyle} />
                   ))}
-                  {/* Scanning line */}
-                  <div className="absolute left-0 right-0 h-0.5 bg-rose-400 animate-pulse" style={{ top: "50%" }} />
                 </div>
               </div>
 
-              <div className="absolute bottom-4 left-0 right-0 text-center">
-                <span className="text-white text-sm px-3 py-1 rounded-full" style={{ background: "rgba(0,0,0,0.5)" }}>
-                  Point at barcode
+              {/* Status pill */}
+              <div className="absolute bottom-4 left-0 right-0 flex justify-center z-20">
+                <span
+                  className="text-white text-sm px-4 py-1.5 rounded-full flex items-center gap-2"
+                  style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(6px)" }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                  {scanStatus}
                 </span>
               </div>
             </div>
 
+            {/* Controls */}
             <div className="mt-4 flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => { stopCamera(); setMode("choose"); }}>
                 Cancel
               </Button>
               <Button variant="outline" className="flex-1" onClick={() => { stopCamera(); setMode("manual"); }}>
-                <Keyboard size={16} className="mr-2" /> Enter manually
+                <Keyboard size={15} className="mr-2" /> Type instead
               </Button>
+            </div>
+
+            {/* Troubleshooting tips */}
+            <div className="mt-5 grid grid-cols-2 gap-2.5">
+              {[
+                { tip: "Hold 10–20 cm away from barcode" },
+                { tip: "Keep phone still — don't shake" },
+                { tip: "Make sure barcode is well-lit" },
+                { tip: "Try angling the phone slightly" },
+              ].map((t, i) => (
+                <div key={i} className="text-xs text-muted-foreground flex items-start gap-1.5 p-3 rounded-xl border" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+                  <span style={{ color: "hsl(340 45% 50%)", flexShrink: 0 }}>✦</span>
+                  {t.tip}
+                </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* Manual entry */}
+        {/* ── Manual entry ─────────────────────────────────────────────────── */}
         {mode === "manual" && !loading && (
           <div>
             <div className="text-center mb-8">
@@ -307,14 +469,16 @@ export default function Scanner() {
                 inputMode="numeric"
                 placeholder="e.g. 3337875597388"
                 value={manualCode}
-                onChange={e => setManualCode(e.target.value)}
+                onChange={e => setManualCode(e.target.value.replace(/[^0-9]/g, ""))}
                 className="text-center text-lg tracking-widest h-14"
                 autoFocus
+                data-testid="input-barcode"
               />
               <Button
                 type="submit"
                 className="w-full h-12 gradient-rose text-white border-0 hover:opacity-90 gap-2"
                 disabled={!manualCode.trim()}
+                data-testid="btn-analyse-barcode"
               >
                 <Search size={18} /> Analyse product
               </Button>
@@ -330,6 +494,15 @@ export default function Scanner() {
           </div>
         )}
       </main>
+
+      {/* Scan line animation */}
+      <style>{`
+        @keyframes scanLine {
+          0%   { transform: translateY(-12px); opacity: 0.5; }
+          50%  { transform: translateY(12px);  opacity: 1; }
+          100% { transform: translateY(-12px); opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
