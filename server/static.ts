@@ -23,7 +23,8 @@ export function serveStatic(app: Express) {
   }));
 
   // SPA catch-all — always serve index.html with no-cache headers
-  app.use("/(.*)", (_req: Request, res: Response) => {
+  // Note: app.use with no path matches everything (path-to-regexp v8 safe)
+  app.use((_req: Request, res: Response) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
