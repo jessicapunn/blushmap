@@ -279,7 +279,7 @@ export default function Scanner() {
               <path d="M9 18 Q14 22 19 18" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
               <circle cx="14" cy="9" r="1.5" fill="hsl(30 60% 80%)" />
             </svg>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 600 }}>Ingredient Scanner</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", fontWeight: 600 }}>Product Scanner</span>
           </div>
         </div>
       </header>
@@ -317,7 +317,7 @@ export default function Scanner() {
                 Scan a product
               </h1>
               <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                Point at a barcode or enter it manually. We'll analyse every ingredient and score it out of 100.
+                Scan any makeup, skincare or food product. Point at the barcode and we'll analyse every ingredient — scoring it out of 100 with pros, cons and safer alternatives.
               </p>
             </div>
 
@@ -333,7 +333,7 @@ export default function Scanner() {
                 </div>
                 <div>
                   <div className="font-semibold">Scan barcode</div>
-                  <div className="text-sm text-muted-foreground">Camera auto-detects EAN-13, EAN-8, UPC — small barcodes included</div>
+                  <div className="text-sm text-muted-foreground">Makeup · Skincare · Food — camera auto-detects EAN-13, EAN-8, UPC</div>
                 </div>
               </button>
 
@@ -348,13 +348,13 @@ export default function Scanner() {
                 </div>
                 <div>
                   <div className="font-semibold">Enter barcode manually</div>
-                  <div className="text-sm text-muted-foreground">Type the number printed below the barcode</div>
+                  <div className="text-sm text-muted-foreground">Type the number printed under any makeup, skincare or food barcode</div>
                 </div>
               </button>
             </div>
 
             <p className="text-center text-xs text-muted-foreground mt-8">
-              Works with EAN-13, EAN-8, UPC-A, UPC-E and Code-128 barcodes
+              Makeup · Skincare · Food & supplements — EAN-13, EAN-8, UPC-A, UPC-E, Code-128
             </p>
           </div>
         )}

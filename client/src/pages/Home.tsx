@@ -1,58 +1,201 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag } from "lucide-react";
+import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag, Mail, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
-// ── BlushMap Gemini constellation logo ───────────────────────────────────────
-// Gemini star map: Castor (left twin) + Pollux (right twin) with connecting lines
-// Stars: Castor=top-left head, Pollux=top-right head, then shoulders, waists, feet crossing
+// ── BlushMap constellation face logo ─────────────────────────────────────────
+// Inspired by: line-art face profile overlaid with constellation map + gold star nodes
+// The face outline is a minimal side profile; constellation points map the face zones
 function BlushMapLogo({ size = 36 }: { size?: number }) {
-  const r = "var(--color-rose)";
-  const g = "var(--color-gold)";
   return (
-    <svg width={size} height={size} viewBox="0 0 44 44" fill="none" aria-label="BlushMap — Gemini">
-      {/* ── Subtle outer circle ── */}
-      <circle cx="22" cy="22" r="20" stroke="var(--color-rose)" strokeWidth="0.6" opacity="0.2" />
+    <svg width={size} height={size} viewBox="0 0 56 72" fill="none" aria-label="BlushMap">
+      {/* ── Face outline (minimal line-art side profile) ── */}
+      <path
+        d="M28 4 C20 4 15 10 14 17 C13 22 14 26 13 30 C12 35 11 39 13 44 C15 50 20 54 26 56 C29 57 31 56 32 54"
+        stroke="#c9944a" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.45"
+      />
+      {/* Eye / brow suggestion */}
+      <path d="M19 24 C21 22 24 22 26 24" stroke="#c9944a" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.5"/>
+      {/* Lip suggestion */}
+      <path d="M21 48 C23 50 26 50 28 48" stroke="#c9944a" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.45"/>
 
-      {/* ── Gemini constellation lines ── */}
-      {/* Left twin (Castor side): head → shoulder → waist → foot */}
-      <line x1="10" y1="5"  x2="10" y2="13" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="10" y1="13" x2="8"  y2="21" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="8"  y1="21" x2="10" y2="30" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="10" y1="30" x2="12" y2="38" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      {/* ── Constellation lines connecting face-mapping points ── */}
+      <line x1="22" y1="10" x2="30" y2="8"  stroke="#c9944a" strokeWidth="0.75" opacity="0.6" strokeLinecap="round"/>
+      <line x1="30" y1="8"  x2="38" y2="14" stroke="#c9944a" strokeWidth="0.75" opacity="0.6" strokeLinecap="round"/>
+      <line x1="38" y1="14" x2="36" y2="22" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
+      <line x1="36" y1="22" x2="28" y2="20" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
+      <line x1="28" y1="20" x2="22" y2="10" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
+      <line x1="28" y1="20" x2="30" y2="30" stroke="#c9944a" strokeWidth="0.7"  opacity="0.45" strokeLinecap="round"/>
+      <line x1="30" y1="30" x2="36" y2="22" stroke="#c9944a" strokeWidth="0.7"  opacity="0.45" strokeLinecap="round"/>
+      <line x1="30" y1="30" x2="24" y2="36" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
+      <line x1="24" y1="36" x2="18" y2="30" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
+      <line x1="18" y1="30" x2="28" y2="20" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
+      <line x1="24" y1="36" x2="26" y2="46" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
+      <line x1="26" y1="46" x2="32" y2="42" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
+      <line x1="32" y1="42" x2="30" y2="30" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
 
-      {/* Right twin (Pollux side): head → shoulder → waist → foot */}
-      <line x1="34" y1="5"  x2="34" y2="13" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="34" y1="13" x2="36" y2="21" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="36" y1="21" x2="34" y2="30" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
-      <line x1="34" y1="30" x2="32" y2="38" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      {/* ── Star nodes — gold burst rings + solid cores ── */}
+      {/* Crown top — Castor-like bright star */}
+      <circle cx="30" cy="8"  r="4.5" fill="#c9944a" opacity="0.1"/>
+      <circle cx="30" cy="8"  r="2.8" fill="#c9944a" opacity="0.2"/>
+      <circle cx="30" cy="8"  r="1.6" fill="#c9944a"/>
+      {/* Four-point sparkle on crown */}
+      <line x1="30" y1="4.5" x2="30" y2="11.5" stroke="#c9944a" strokeWidth="0.6" opacity="0.5"/>
+      <line x1="26.5" y1="8" x2="33.5" y2="8" stroke="#c9944a" strokeWidth="0.6" opacity="0.5"/>
 
-      {/* Connecting bridge lines (twins joined at shoulder + waist) */}
-      <line x1="10" y1="13" x2="34" y2="13" stroke={r} strokeWidth="0.9" opacity="0.45" strokeLinecap="round"/>
-      <line x1="8"  y1="21" x2="36" y2="21" stroke={r} strokeWidth="0.9" opacity="0.45" strokeLinecap="round"/>
+      {/* Forehead right */}
+      <circle cx="38" cy="14" r="3.5" fill="#c9944a" opacity="0.12"/>
+      <circle cx="38" cy="14" r="1.4" fill="#c9944a"/>
+      <line x1="38" y1="11.2" x2="38" y2="16.8" stroke="#c9944a" strokeWidth="0.5" opacity="0.45"/>
+      <line x1="35.2" y1="14" x2="40.8" y2="14" stroke="#c9944a" strokeWidth="0.5" opacity="0.45"/>
 
-      {/* ── Star nodes ── */}
-      {/* Castor — bright, gold (α Gem) */}
-      <circle cx="10" cy="5"  r="2.2" fill={g} />
-      <circle cx="10" cy="5"  r="3.5" fill={g} opacity="0.15" />
-      {/* Pollux — bright, rose (β Gem, slightly brighter in reality) */}
-      <circle cx="34" cy="5"  r="2.4" fill={r} />
-      <circle cx="34" cy="5"  r="3.8" fill={r} opacity="0.15" />
-      {/* Shoulders */}
-      <circle cx="10" cy="13" r="1.5" fill={r} opacity="0.8" />
-      <circle cx="34" cy="13" r="1.5" fill={r} opacity="0.8" />
-      {/* Waists */}
-      <circle cx="8"  cy="21" r="1.2" fill={r} opacity="0.65" />
-      <circle cx="36" cy="21" r="1.2" fill={r} opacity="0.65" />
-      {/* Knees / lower */}
-      <circle cx="10" cy="30" r="1.2" fill={r} opacity="0.55" />
-      <circle cx="34" cy="30" r="1.2" fill={r} opacity="0.55" />
-      {/* Feet */}
-      <circle cx="12" cy="38" r="1"   fill={r} opacity="0.45" />
-      <circle cx="32" cy="38" r="1"   fill={r} opacity="0.45" />
+      {/* Temple */}
+      <circle cx="22" cy="10" r="1.2" fill="#c9944a" opacity="0.7"/>
+
+      {/* Eye zone centre */}
+      <circle cx="36" cy="22" r="3.2" fill="#c9944a" opacity="0.12"/>
+      <circle cx="36" cy="22" r="1.3" fill="#c9944a"/>
+
+      {/* Nose bridge */}
+      <circle cx="28" cy="20" r="2.8" fill="#c9944a" opacity="0.12"/>
+      <circle cx="28" cy="20" r="1.2" fill="#c9944a" opacity="0.85"/>
+
+      {/* Cheekbone */}
+      <circle cx="30" cy="30" r="3" fill="#c9944a" opacity="0.1"/>
+      <circle cx="30" cy="30" r="1.3" fill="#c9944a" opacity="0.8"/>
+
+      {/* Chin hollow */}
+      <circle cx="18" cy="30" r="1"   fill="#c9944a" opacity="0.6"/>
+      <circle cx="24" cy="36" r="2.5" fill="#c9944a" opacity="0.1"/>
+      <circle cx="24" cy="36" r="1.1" fill="#c9944a" opacity="0.75"/>
+
+      {/* Jaw */}
+      <circle cx="26" cy="46" r="2"   fill="#c9944a" opacity="0.1"/>
+      <circle cx="26" cy="46" r="1"   fill="#c9944a" opacity="0.6"/>
+      <circle cx="32" cy="42" r="1"   fill="#c9944a" opacity="0.55"/>
+
+      {/* Scatter micro-stars */}
+      <circle cx="42" cy="32" r="0.7" fill="#c9944a" opacity="0.4"/>
+      <circle cx="15" cy="42" r="0.6" fill="#c9944a" opacity="0.3"/>
+      <circle cx="44" cy="20" r="0.5" fill="#c9944a" opacity="0.35"/>
+      <circle cx="12" cy="20" r="0.5" fill="#c9944a" opacity="0.3"/>
     </svg>
+  );
+}
+
+// ── Email signup modal ────────────────────────────────────────────────────────
+function EmailSignupModal({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState<"form" | "success">("form");
+  const [email, setEmail] = useState("");
+  const [name, setName]   = useState("");
+  const [concerns, setConcerns] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const CONCERN_OPTIONS = [
+    "Acne & Blemishes", "Dryness", "Oiliness", "Sensitivity",
+    "Hyperpigmentation", "Anti-ageing", "Dullness", "Redness",
+  ];
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(""); setLoading(true);
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, name, skinConcerns: concerns.join(", ") }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Something went wrong."); return; }
+      setStep("success");
+    } catch {
+      setError("Network error — please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="relative w-full max-w-md rounded-2xl p-8 shadow-2xl" style={{ background: "#fff8f9", border: "1px solid #f0ccd6" }}>
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+          <X size={20} />
+        </button>
+
+        {step === "success" ? (
+          <div className="text-center py-4">
+            <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-5" style={{ background: "linear-gradient(135deg, #f9d0dc, #e8a0b0)" }}>
+              <Star size={28} style={{ color: "#c9506e" }} />
+            </div>
+            <h3 className="text-2xl mb-2" style={{ fontFamily: "var(--font-display)", color: "#1a0a0e" }}>You&apos;re on the list</h3>
+            <p className="text-sm" style={{ color: "#9b6674" }}>Expect curated offers, scan results and personalised product picks in your inbox.</p>
+            <button onClick={onClose} className="mt-6 w-full py-3 rounded-xl text-white text-sm font-medium transition-opacity hover:opacity-90" style={{ background: "var(--color-rose)" }}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <BlushMapLogo size={44} />
+              <h3 className="text-2xl mt-3 mb-1" style={{ fontFamily: "var(--font-display)", color: "#1a0a0e" }}>Stay in the glow</h3>
+              <p className="text-sm" style={{ color: "#9b6674" }}>Get personalised product picks, exclusive deals and your scan results delivered straight to your inbox.</p>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <input
+                  type="text" placeholder="First name (optional)" value={name}
+                  onChange={e => setName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                  style={{ background: "#fff", border: "1.5px solid #f0ccd6", color: "#1a0a0e" }}
+                />
+              </div>
+              <div>
+                <input
+                  type="email" placeholder="Your email address" value={email} required
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
+                  style={{ background: "#fff", border: "1.5px solid #f0ccd6", color: "#1a0a0e" }}
+                />
+              </div>
+              <div>
+                <p className="text-xs mb-2 font-medium" style={{ color: "#9b6674" }}>Skin concerns (optional — helps us personalise for you)</p>
+                <div className="flex flex-wrap gap-2">
+                  {CONCERN_OPTIONS.map(c => (
+                    <button
+                      key={c} type="button"
+                      onClick={() => setConcerns(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])}
+                      className="px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+                      style={{
+                        background: concerns.includes(c) ? "var(--color-rose)" : "#fff",
+                        color:      concerns.includes(c) ? "#fff" : "#9b6674",
+                        border:     `1.5px solid ${concerns.includes(c) ? "var(--color-rose)" : "#f0ccd6"}`,
+                      }}
+                    >{c}</button>
+                  ))}
+                </div>
+              </div>
+              {error && <p className="text-xs" style={{ color: "#c9506e" }}>{error}</p>}
+              <button
+                type="submit" disabled={loading}
+                className="w-full py-3.5 rounded-xl text-white text-sm font-medium flex items-center justify-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-60"
+                style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
+              >
+                {loading ? <Loader2 size={16} className="animate-spin" /> : <Mail size={15} />}
+                {loading ? "Signing you up…" : "Join the BlushMap edit"}
+              </button>
+              <p className="text-xs text-center" style={{ color: "#c0a0a8" }}>No spam. Unsubscribe anytime.</p>
+            </form>
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -189,45 +332,63 @@ const TESTIMONIALS = [
 
 export default function Home() {
   const [heroLoaded, setHeroLoaded] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "var(--font-body)", background: "hsl(var(--background))" }}>
 
+      {/* ── Email signup modal ── */}
+      {showSignup && <EmailSignupModal onClose={() => setShowSignup(false)} />}
+
       {/* ── Nav ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.92)", backdropFilter: "blur(16px)", borderColor: "hsl(var(--border))" }}>
+      <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.95)", backdropFilter: "blur(20px)", borderColor: "hsl(var(--border))" }}>
+        {/* Top announcement bar */}
+        <div className="w-full text-center py-1.5 text-xs font-medium tracking-wide cursor-pointer hover:opacity-80 transition-opacity" style={{ background: "linear-gradient(90deg, #c9506e, #a3324e)", color: "#fff" }} onClick={() => setShowSignup(true)}>
+          <Mail size={11} className="inline mr-1.5 -mt-0.5" />
+          Get personalised picks & exclusive offers in your inbox — join free
+        </div>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2.5 cursor-pointer">
-              <BlushMapLogo size={34} />
-              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--color-black)" }}>
+              <BlushMapLogo size={42} />
+              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.45rem", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--color-black)" }}>
                 BlushMap
               </span>
             </div>
           </Link>
-          {/* Nav links (desktop) */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>
-            <Link href="/search"><span className="hover:text-foreground transition-colors cursor-pointer">Products</span></Link>
-            <Link href="/scanner"><span className="hover:text-foreground transition-colors cursor-pointer">Scan</span></Link>
-            <Link href="/analyse"><span className="hover:text-foreground transition-colors cursor-pointer">Analyse</span></Link>
+          {/* Nav links (desktop) — Scan is first and highlighted */}
+          <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+            <Link href="/scanner">
+              <span className="flex items-center gap-1.5 px-4 py-2 rounded-full text-white text-xs font-semibold tracking-wide transition-all hover:opacity-90 cursor-pointer" style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+                <ScanLine size={13} /> SCAN
+              </span>
+            </Link>
+            <Link href="/analyse">
+              <span className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors cursor-pointer hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))" }}>
+                <Sparkles size={12} /> Analyse
+              </span>
+            </Link>
+            <Link href="/search">
+              <span className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors cursor-pointer hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))" }}>
+                <Search size={12} /> Products
+              </span>
+            </Link>
           </nav>
           {/* CTAs */}
           <div className="flex items-center gap-2">
-            <Link href="/search">
-              <Button size="sm" variant="ghost" className="gap-1.5 text-sm">
-                <Search size={14} />
-                <span className="hidden sm:inline">Search</span>
-              </Button>
-            </Link>
+            <button onClick={() => setShowSignup(true)} className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))", border: "1.5px solid #f0ccd6" }}>
+              <Mail size={12} /> Join
+            </button>
             <Link href="/scanner">
-              <Button size="sm" variant="outline" className="gap-1.5 text-sm hidden sm:flex">
-                <ScanLine size={14} /> Scan
+              <Button size="sm" className="gap-1.5 text-xs text-white border-0 md:hidden" style={{ background: "var(--color-rose)" }}>
+                <ScanLine size={13} /> Scan
               </Button>
             </Link>
             <Link href="/analyse">
-              <Button size="sm" className="gap-1.5 text-sm text-white border-0" style={{ background: "var(--color-rose)" }}>
-                <Sparkles size={13} /> Analyse skin
+              <Button size="sm" className="gap-1.5 text-xs text-white border-0 hidden md:flex" style={{ background: "var(--color-rose)" }}>
+                <Sparkles size={12} /> Analyse skin
               </Button>
             </Link>
           </div>
@@ -277,17 +438,20 @@ export default function Home() {
           </p>
 
           {/* CTA row */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
-            <Link href="/analyse">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14 flex-wrap">
+            <Link href="/scanner">
               <Button size="lg" className="gap-2 px-10 text-white border-0 shadow-lg font-semibold" style={{ background: "var(--color-rose)", boxShadow: "var(--shadow-pink)", fontSize: "1rem" }}>
-                Analyse my skin <ArrowRight size={18} />
+                <ScanLine size={18} /> Scan a product
               </Button>
             </Link>
-            <Link href="/search">
-              <Button size="lg" variant="outline" className="gap-2 px-8 font-semibold" style={{ fontSize: "1rem" }}>
-                <Search size={16} /> Browse products
+            <Link href="/analyse">
+              <Button size="lg" variant="outline" className="gap-2 px-8 font-semibold" style={{ fontSize: "1rem", borderColor: "var(--color-rose)", color: "var(--color-rose)" }}>
+                <Sparkles size={16} /> Analyse my skin
               </Button>
             </Link>
+            <button onClick={() => setShowSignup(true)} className="flex items-center gap-2 px-7 py-2 rounded-lg font-semibold transition-all hover:bg-pink-50" style={{ fontSize: "1rem", border: "1.5px solid #f0ccd6", color: "#c9506e" }}>
+              <Mail size={16} /> Get curated picks
+            </button>
           </div>
 
           {/* Trust stats */}
@@ -532,13 +696,18 @@ export default function Home() {
             Meet your perfect routine.
           </h2>
           <p style={{ color: "rgba(255,255,255,0.85)", marginBottom: "2.5rem", fontSize: "1.1rem", lineHeight: 1.75, maxWidth: "40ch", margin: "0 auto 2.5rem" }}>
-            Free. No sign-up. Results in under 30 seconds — with budget, luxury and organic alternatives for every skin type.
+            Scan makeup, skincare or food. Analyse your skin. Get personalised picks with affiliate links — free, forever.
           </p>
-          <Link href="/analyse">
-            <Button size="lg" variant="outline" className="font-semibold px-10 gap-2" style={{ background: "rgba(255,255,255,0.12)", borderColor: "rgba(255,255,255,0.4)", color: "white", fontSize: "1rem" }}>
-              Start your analysis <ArrowRight size={18} />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/scanner">
+              <Button size="lg" className="font-semibold px-10 gap-2" style={{ background: "rgba(255,255,255,0.18)", borderColor: "rgba(255,255,255,0.5)", color: "white", fontSize: "1rem", border: "1.5px solid rgba(255,255,255,0.4)" }}>
+                <ScanLine size={18} /> Scan a product
+              </Button>
+            </Link>
+            <button onClick={() => setShowSignup(true)} className="flex items-center justify-center gap-2 px-8 py-3 rounded-lg font-semibold transition-all" style={{ background: "rgba(255,255,255,0.12)", border: "1.5px solid rgba(255,255,255,0.35)", color: "white", fontSize: "1rem" }}>
+              <Mail size={16} /> Join for free offers
+            </button>
+          </div>
         </div>
       </section>
 
@@ -550,9 +719,10 @@ export default function Home() {
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--color-black)" }}>BlushMap</span>
           </div>
           <div className="flex items-center gap-6 text-xs">
-            <Link href="/search"><span className="hover:text-foreground cursor-pointer transition-colors">Products</span></Link>
-            <Link href="/scanner"><span className="hover:text-foreground cursor-pointer transition-colors">Scanner</span></Link>
+            <Link href="/scanner"><span className="hover:text-foreground cursor-pointer transition-colors font-semibold" style={{ color: "var(--color-rose)" }}>Scan</span></Link>
             <Link href="/analyse"><span className="hover:text-foreground cursor-pointer transition-colors">Analyse</span></Link>
+            <Link href="/search"><span className="hover:text-foreground cursor-pointer transition-colors">Products</span></Link>
+            <button onClick={() => setShowSignup(true)} className="hover:text-foreground cursor-pointer transition-colors" style={{ color: "var(--color-rose)", fontWeight: 500 }}>Join</button>
           </div>
           <p className="text-xs text-center sm:text-right" style={{ maxWidth: "32ch" }}>
             Some links are affiliate links — we may earn a small commission at no extra cost to you. © 2026 BlushMap

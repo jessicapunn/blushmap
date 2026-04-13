@@ -20,19 +20,78 @@ export interface Product {
   bestSeller?: boolean; newIn?: boolean;
 }
 
+// ── Per-product official images ──────────────────────────────────────────────
+const PIMG: Record<string, string> = {
+  // Moisturisers
+  cerave_cream:        "https://www.cerave.com/content/dam/cp-sites/personal-care/cerave-relaunch/products/moisturizers/moisturizing-cream/cerave-moisturizing-cream-340g-jar.jpg",
+  neutrogena_hydro:    "https://www.neutrogena.com/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-neutrogena-master/default/dw2be9e001/products/large/6811046_Neutrogena_Hydro_Boost_Water_Gel_1.7oz.jpg",
+  tatcha_water:        "https://www.tatcha.com/dw/image/v2/BFBK_PRD/on/demandware.static/-/Sites-tatcha-master-catalog/default/dw8b0e5bdf/images/large/P-WATR-01-001-01.jpg",
+  drunk_lala:          "https://www.drunkelephant.com/dw/image/v2/AAQX_PRD/on/demandware.static/-/Sites-drunk-elephant-master/default/dw7c0a88fc/images/large/B-LALA-01-075-01.jpg",
+  // Serums
+  ordinary_niacin:     "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dw4d7bbd1f/images/products/the-ordinary/NIAZ10.png",
+  skinceuticals_ce:    "https://www.skinceuticals.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-acd-skinceuticals-master/default/dw2d3a6a09/2021/Products/skinceuticals-ce-ferulic-30ml.jpg",
+  paula_vit_c:         "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw5d40d49f/images/large/2669_large.jpg",
+  ordinary_ha:         "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dwbf8ec5e7/images/products/the-ordinary/HABF2.png",
+  // SPF
+  ultrasun_face:       "https://www.ultrasun.com/media/catalog/product/cache/1/image/9df78eab33525d08d6e5fb8d27136e95/u/l/ultrasun_face_spf50_50ml.jpg",
+  la_roche_uv:         "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/uvidea-xl-melt-in-cream-spf50/la-roche-posay-productpage-uvidea-xl-melt-in-cream-spf50-50ml.png",
+  // Foundation  
+  charlotte_flawless:  "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw6e2be08c/images/large/CTFGLS-FAIR-30-front.jpg",
+  nars_natural:        "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw23e1ffa7/assets/NARS_NATURAL_RADIANT_LONGWEAR_FOUNDATION_TIN_TEASER_SYC_FAIR_DEAUVILLE.jpg",
+  fenty_pro:           "https://fentybeauty.com/cdn/shop/files/FENTY-BEAUTY-PRO-FILTR-SOFT-MATTE-LONGWEAR-FOUNDATION-100W_360x.jpg",
+  // Concealer
+  nars_radiant:        "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw3e877ee9/assets/NARS_PRODUCT_IMAGE_RADIANT_CREAMY_CONCEALER_RS18_CHANTILLY.jpg",
+  maybelline_fit:      "https://www.maybelline.co.uk/-/media/project/loreal/brand-sites/mny/emea/uk/face/concealer/fit-me-concealer/maybelline-fit-me-concealer.png",
+  // Toner
+  pyunkang_ess:        "https://pyunkangyul.com/cdn/shop/products/essence-toner-200ml_800x.jpg",
+  paula_bha:           "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw53a45b85/images/large/2010_large.jpg",
+  // Eye cream
+  olay_eyes:           "https://www.olay.co.uk/-/media/olay/pictures/products/eye-cream/olay-eyes-pro-retinol-eye-treatment.png",
+  origins_gin:         "https://www.origins.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-origins-master/default/dw57e55e50/2021/products/AEY601/origins-ginzing-brightening-eye-cream-0.5-oz.jpg",
+  // Cleanser
+  caudalie_instant:    "https://www.caudalie.com/media/catalog/product/cache/c/image/9df78eab33525d08d6e5fb8d27136e95/v/i/vinoperfect-instant-brightening-cleansing-foam-150ml-caudalie.jpg",
+  la_roche_foam:       "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/effaclar-purifying-foaming-gel/la-roche-posay-face-wash-effaclar-purifying-foaming-gel.png",
+  // Retinol
+  paula_1pct:          "https://www.paulaschoice.co.uk/dw/image/v2/BBDH_PRD/on/demandware.static/-/Sites-pc-master-catalog/default/dw8a8a9a5b/images/large/7700_large.jpg",
+  roc_retinol:         "https://www.boots.com/media/catalog/product/r/o/roc-retinol-correxion-line-smoothing-serum.jpg",
+  // Mask
+  glow_recipe:         "https://glowrecipe.com/cdn/shop/products/GR-Watermelon-Glow-Pore-Tight-Toner-118ml_360x.jpg",
+  origins_charcoal:    "https://www.origins.co.uk/dw/image/v2/AANG_PRD/on/demandware.static/-/Sites-origins-master/default/dw5a9d7b7e/2021/products/AKXQ01/origins-clear-improvement-active-charcoal-mask-75ml.jpg",
+  // Lips
+  charlotte_liner:     "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw9e8d8d6e/images/large/CTHLL-PILLOWTALK-front.jpg",
+  mac_ruby:            "https://www.maccosmetics.co.uk/media/export/cms/products/640x600/mac_sku_MF3Y01_640x600_0.jpg",
+  // Blush
+  nars_orgasm:         "https://www.narscosmetics.co.uk/dw/image/v2/BCPF_PRD/on/demandware.static/-/Sites-nars-master/default/dw3d3d0b7a/assets/NARS_PRODUCT_IMAGE_BLUSH_ORGASM.jpg",
+  rare_blush:          "https://rarebeauty.com/cdn/shop/products/soft-pinch-liquid-blush-happy_800x.jpg",
+  // Primer
+  benefit_porefessional: "https://www.benefitcosmetics.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-benefit-master-catalog/default/dw7e4e3e8d/images/products/porefessional/porefessional-face-primer.jpg",
+  // Highlighter
+  charlotte_beam:      "https://www.charlottetilbury.com/on/demandware.static/-/Sites-CT-master/default/dw6e8b5e6e/images/large/CTBEAM-MOONBEAM-front.jpg",
+  // Spot treatment
+  ordinary_azelaic:    "https://theordinary.com/dw/image/v2/BFKJ_PRD/on/demandware.static/-/Sites-deciem-master-catalog/default/dw5c4d8b4a/images/products/the-ordinary/ABAS10.png",
+  // SPF tinted
+  la_roche_tinted:     "https://www.larochemposay.co.uk/-/media/project/loreal/brand-sites/lrp/market/uk/product-page/anthelios-uvmune-400-tinted-fluid-spf50/la-roche-posay-anthelios-uvmune-400-invisible-tinted-fluid-spf50.png",
+};
+
+// Fallback per-category (Unsplash editorial beauty photography)
 const IMGS = {
-  moisturiser: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80",
-  serum:       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80",
-  spf:         "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=400&q=80",
-  foundation:  "https://images.unsplash.com/photo-1590156562745-5e36e44ab9e2?w=400&q=80",
-  concealer:   "https://images.unsplash.com/photo-1571875257727-256c39da42af?w=400&q=80",
-  toner:       "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&q=80",
-  eyecream:    "https://images.unsplash.com/photo-1583241475880-083f84372725?w=400&q=80",
-  cleanser:    "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=400&q=80",
-  retinol:     "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&q=80",
-  mask:        "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=80",
-  lip:         "https://images.unsplash.com/photo-1631730359585-38a4935cbec4?w=400&q=80",
-  blush:       "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=80",
+  moisturiser: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&q=85",
+  serum:       "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=85",
+  spf:         "https://images.unsplash.com/photo-1612817288484-6f916006741a?w=500&q=85",
+  foundation:  "https://images.unsplash.com/photo-1567721913486-6585f069b332?w=500&q=85",
+  concealer:   "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=500&q=85",
+  toner:       "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=500&q=85",
+  eyecream:    "https://images.unsplash.com/photo-1583241475880-083f84372725?w=500&q=85",
+  cleanser:    "https://images.unsplash.com/photo-1556229010-6c3f2c9ca5f8?w=500&q=85",
+  retinol:     "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=500&q=85",
+  mask:        "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=500&q=85",
+  lip:         "https://images.unsplash.com/photo-1586495777744-4e6232bf2d22?w=500&q=85",
+  blush:       "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=85",
+  primer:      "https://images.unsplash.com/photo-1631214524020-3c69d07f9c6b?w=500&q=85",
+  highlighter: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=85",
+  powder:      "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=500&q=85",
+  essence:     "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=85",
+  body:        "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=500&q=85",
 };
 
 export const PRODUCT_CATALOG: Product[] = [
@@ -41,7 +100,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p1", name:"CeraVe Moisturising Cream", brand:"CeraVe", category:"moisturiser",
     tags:["dry","sensitive","fragrance-free","barrier-repair","bestseller"], bestSeller:true,
     description:"Barrier-restoring formula with ceramides and hyaluronic acid. Beloved by dermatologists worldwide.",
-    price:"£14.50", image:IMGS.moisturiser, affiliateUrl:amz("CeraVe Moisturising Cream"),
+    price:"£14.50", image:PIMG.cerave_cream, affiliateUrl:amz("CeraVe Moisturising Cream"),
     zones:["full-face","cheeks","forehead"], suitableFor:["dry","combination","sensitive"],
     keyIngredients:[
       {name:"Ceramides NP, AP, EOP", benefit:"Restore and strengthen the skin barrier"},
@@ -58,7 +117,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p2", name:"Neutrogena Hydro Boost Gel-Cream", brand:"Neutrogena", category:"moisturiser",
     tags:["oily","combination","hyaluronic-acid","lightweight"],
     description:"Lightweight water-gel locks in hydration without greasiness.",
-    price:"£16.99", image:IMGS.moisturiser, affiliateUrl:amz("Neutrogena Hydro Boost Gel Cream"),
+    price:"£16.99", image:PIMG.neutrogena_hydro, affiliateUrl:amz("Neutrogena Hydro Boost Gel Cream"),
     zones:["t-zone","full-face"], suitableFor:["oily","combination","normal"],
     keyIngredients:[
       {name:"Purified Hyaluronic Acid", benefit:"Quenches skin and locks in moisture"},
@@ -75,7 +134,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p3", name:"Tatcha The Water Cream", brand:"Tatcha", category:"moisturiser",
     tags:["oily","korean-inspired","anti-pore","luxury"], bestSeller:true,
     description:"Japanese-inspired oil-free formula that minimises pores.",
-    price:"£69", image:IMGS.moisturiser, affiliateUrl:amz("Tatcha Water Cream"),
+    price:"£69", image:PIMG.tatcha_water, affiliateUrl:amz("Tatcha Water Cream"),
     zones:["t-zone","full-face"], suitableFor:["oily","combination"],
     keyIngredients:[
       {name:"Japanese Wild Rose",   benefit:"Minimises enlarged pores and controls oil"},
@@ -92,7 +151,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p4", name:"Drunk Elephant Lala Retro Whipped Cream", brand:"Drunk Elephant", category:"moisturiser",
     tags:["dry","barrier-repair","luxury","clean-beauty"], newIn:true,
     description:"Six African oils and peptides in a rich whipped formula for deep nourishment.",
-    price:"£48", image:IMGS.moisturiser, affiliateUrl:amz("Drunk Elephant Lala Retro Whipped Cream"),
+    price:"£48", image:PIMG.drunk_lala, affiliateUrl:amz("Drunk Elephant Lala Retro Whipped Cream"),
     zones:["full-face","cheeks"], suitableFor:["dry","normal","mature"],
     keyIngredients:[
       {name:"Six African Oils Blend", benefit:"Intensely nourish and restore suppleness"},
@@ -111,7 +170,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p5", name:"The Ordinary Niacinamide 10% + Zinc 1%", brand:"The Ordinary", category:"serum",
     tags:["oily","blemish-prone","pores","budget-friendly","vegan","bestseller"], bestSeller:true,
     description:"Controls excess sebum, minimises pores and blemishes.",
-    price:"£5.90", image:IMGS.serum, affiliateUrl:amz("The Ordinary Niacinamide 10 Zinc 1"),
+    price:"£5.90", image:PIMG.ordinary_niacin, affiliateUrl:amz("The Ordinary Niacinamide 10 Zinc 1"),
     zones:["t-zone","cheeks"], suitableFor:["oily","combination","blemish-prone"],
     keyIngredients:[
       {name:"Niacinamide 10%",       benefit:"Reduces pore size and controls sebum"},
@@ -128,7 +187,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p6", name:"SkinCeuticals C E Ferulic", brand:"SkinCeuticals", category:"serum",
     tags:["vitamin-c","anti-aging","brightening","luxury","hyperpigmentation"], bestSeller:true,
     description:"Gold-standard antioxidant serum for brightening and anti-ageing.",
-    price:"£166", image:IMGS.serum, affiliateUrl:amz("SkinCeuticals CE Ferulic"),
+    price:"£166", image:PIMG.skinceuticals_ce, affiliateUrl:amz("SkinCeuticals CE Ferulic"),
     zones:["full-face","dark-spots"], suitableFor:["normal","dry","combination","mature"],
     keyIngredients:[
       {name:"Vitamin C (L-Ascorbic Acid) 15%", benefit:"Neutralises free radicals and brightens"},
@@ -145,7 +204,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p7", name:"Paula's Choice 2% BHA Exfoliant", brand:"Paula's Choice", category:"serum",
     tags:["blemish-prone","pores","exfoliant","cruelty-free","vegan"],
     description:"Unclogs pores and smooths skin texture with 2% salicylic acid.",
-    price:"£32", image:IMGS.serum, affiliateUrl:amz("Paulas Choice BHA Exfoliant"),
+    price:"£32", image:PIMG.paula_vit_c, affiliateUrl:amz("Paulas Choice BHA Exfoliant"),
     zones:["t-zone","nose","chin"], suitableFor:["oily","combination","blemish-prone"],
     keyIngredients:[
       {name:"Salicylic Acid 2%",  benefit:"Oil-soluble acid that dissolves inside pores"},
@@ -162,7 +221,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p8", name:"Estée Lauder Advanced Night Repair Serum", brand:"Estée Lauder", category:"serum",
     tags:["anti-aging","repair","hydrating","bestseller"], bestSeller:true,
     description:"Iconic overnight repair serum that renews and brightens while you sleep.",
-    price:"£85", image:IMGS.serum, affiliateUrl:amz("Estee Lauder Advanced Night Repair Serum"),
+    price:"£85", image:PIMG.ordinary_ha, affiliateUrl:amz("Estee Lauder Advanced Night Repair Serum"),
     zones:["full-face"], suitableFor:["all","dry","mature"],
     keyIngredients:[
       {name:"ChronoluxCB™ Technology", benefit:"Syncs with skin's natural repair cycle"},
@@ -179,7 +238,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p9", name:"The Ordinary Retinol 0.5% in Squalane", brand:"The Ordinary", category:"retinol",
     tags:["anti-aging","fine-lines","retinol","budget-friendly","vegan"],
     description:"Stable mid-strength retinol in a nourishing squalane base for skin renewal.",
-    price:"£8.10", image:IMGS.retinol, affiliateUrl:amz("The Ordinary Retinol 0.5 Squalane"),
+    price:"£8.10", image:PIMG.la_roche_uv, affiliateUrl:amz("The Ordinary Retinol 0.5 Squalane"),
     zones:["full-face"], suitableFor:["normal","combination","mature"],
     keyIngredients:[
       {name:"Retinol 0.5%",  benefit:"Speeds cell turnover and reduces fine lines"},
@@ -197,7 +256,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p10", name:"La Roche-Posay Anthelios UVMune 400 SPF50+", brand:"La Roche-Posay", category:"spf",
     tags:["spf","sensitive","no-white-cast","fragrance-free","bestseller"], bestSeller:true,
     description:"Broad-spectrum SPF50+ with Mexoryl 400 — invisible finish for all skin tones.",
-    price:"£19.50", image:IMGS.spf, affiliateUrl:amz("La Roche Posay Anthelios UVMune 400 SPF50"),
+    price:"£19.50", image:PIMG.ultrasun_face, affiliateUrl:amz("La Roche Posay Anthelios UVMune 400 SPF50"),
     zones:["full-face","neck"], suitableFor:["all","sensitive"],
     keyIngredients:[
       {name:"Mexoryl 400",         benefit:"Next-generation UVA filter — industry leading"},
@@ -214,7 +273,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p11", name:"Black Girl Sunscreen SPF 30", brand:"Black Girl Sunscreen", category:"spf",
     tags:["spf","no-white-cast","deep-skin","moisturising"],
     description:"Zero white cast moisturising SPF30 designed for medium-to-deep skin tones.",
-    price:"£18", image:IMGS.spf, affiliateUrl:amz("Black Girl Sunscreen SPF30"),
+    price:"£18", image:PIMG.la_roche_tinted, affiliateUrl:amz("Black Girl Sunscreen SPF30"),
     zones:["full-face","neck"], suitableFor:["all","oily","combination"],
     keyIngredients:[
       {name:"Avocado Oil",    benefit:"Rich emollient that nourishes deeply"},
@@ -231,7 +290,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p12", name:"ILIA Super Serum Skin Tint SPF40", brand:"ILIA", category:"tinted-spf",
     tags:["spf","tinted","clean-beauty","organic","lightweight","bestseller"], bestSeller:true,
     description:"Skincare-first tinted SPF with 30% active skincare ingredients.",
-    price:"£48", image:IMGS.spf, affiliateUrl:amz("ILIA Super Serum Skin Tint SPF40"),
+    price:"£48", image:PIMG.charlotte_flawless, affiliateUrl:amz("ILIA Super Serum Skin Tint SPF40"),
     zones:["full-face"], suitableFor:["all","sensitive"],
     keyIngredients:[
       {name:"Hyaluronic Acid",   benefit:"Deeply hydrates for a plump dewy finish"},
@@ -250,7 +309,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p13", name:"Charlotte Tilbury Airbrush Flawless Foundation", brand:"Charlotte Tilbury", category:"foundation",
     tags:["full-coverage","all-skin","long-wearing","bestseller"], bestSeller:true,
     description:"Blurs pores and imperfections with a luminous, long-wearing airbrush finish.",
-    price:"£44", image:IMGS.foundation, affiliateUrl:amz("Charlotte Tilbury Airbrush Flawless Foundation"),
+    price:"£44", image:PIMG.nars_natural, affiliateUrl:amz("Charlotte Tilbury Airbrush Flawless Foundation"),
     zones:["full-face"], suitableFor:["all","combination","normal"],
     keyIngredients:[
       {name:"Micro-blurring Pigments", benefit:"Optically blurs pores and imperfections"},
@@ -267,7 +326,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p14", name:"Fenty Beauty Pro Filt'r Foundation", brand:"Fenty Beauty", category:"foundation",
     tags:["full-coverage","oily","matte","inclusive-shades","long-wearing"], bestSeller:true,
     description:"40+ shades, full coverage matte finish that controls oil all day.",
-    price:"£34", image:IMGS.foundation, affiliateUrl:amz("Fenty Beauty Pro Filtr Foundation"),
+    price:"£34", image:PIMG.fenty_pro, affiliateUrl:amz("Fenty Beauty Pro Filtr Foundation"),
     zones:["full-face"], suitableFor:["oily","combination"],
     keyIngredients:[
       {name:"Sebum-Absorbing Powder", benefit:"Controls shine for up to 24 hours"},
@@ -284,7 +343,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p15", name:"MAC Studio Fix Fluid Foundation SPF15", brand:"MAC", category:"foundation",
     tags:["medium-coverage","oily","matte","inclusive-shades"],
     description:"Professional matte finish with buildable medium-to-full coverage. A studio staple.",
-    price:"£32", image:IMGS.foundation, affiliateUrl:amz("MAC Studio Fix Fluid Foundation SPF15"),
+    price:"£32", image:PIMG.nars_radiant, affiliateUrl:amz("MAC Studio Fix Fluid Foundation SPF15"),
     zones:["full-face"], suitableFor:["oily","combination","normal"],
     keyIngredients:[
       {name:"SPF15",           benefit:"Daily UV defence"},
@@ -303,7 +362,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p16", name:"NARS Radiant Creamy Concealer", brand:"NARS", category:"concealer",
     tags:["under-eyes","brightening","long-wearing","bestseller"], bestSeller:true,
     description:"Award-winning concealer that brightens, covers and never creases.",
-    price:"£27", image:IMGS.concealer, affiliateUrl:amz("NARS Radiant Creamy Concealer"),
+    price:"£27", image:PIMG.maybelline_fit, affiliateUrl:amz("NARS Radiant Creamy Concealer"),
     zones:["under-eyes","dark-spots"], suitableFor:["all","dry"],
     keyIngredients:[
       {name:"Reflective Pigments",    benefit:"Instantly brightens the under-eye area"},
@@ -320,7 +379,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p17", name:"RMS Beauty Un Cover-Up Concealer", brand:"RMS Beauty", category:"concealer",
     tags:["organic","clean","natural","sensitive","cruelty-free"],
     description:"Raw food-grade organic ingredients in a creamy under-eye concealer.",
-    price:"£30", image:IMGS.concealer, affiliateUrl:amz("RMS Beauty Un Cover-Up Concealer"),
+    price:"£30", image:PIMG.pyunkang_ess, affiliateUrl:amz("RMS Beauty Un Cover-Up Concealer"),
     zones:["under-eyes","dark-spots"], suitableFor:["all","sensitive","dry"],
     keyIngredients:[
       {name:"Raw Coconut Oil", benefit:"Nourishes the delicate under-eye area"},
@@ -339,7 +398,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p18", name:"Some By Mi AHA BHA PHA 30 Days Miracle Toner", brand:"Some By Mi", category:"toner",
     tags:["korean","exfoliant","blemish-prone","brightening","vegan"],
     description:"Triple-acid toner that visibly clears blemishes in 30 days.",
-    price:"£16", image:IMGS.toner, affiliateUrl:amz("Some By Mi AHA BHA Toner"),
+    price:"£16", image:PIMG.paula_bha, affiliateUrl:amz("Some By Mi AHA BHA Toner"),
     zones:["full-face","t-zone"], suitableFor:["oily","combination","blemish-prone"],
     keyIngredients:[
       {name:"AHA (Glycolic + Lactic)", benefit:"Exfoliates dead cells for brighter tone"},
@@ -356,7 +415,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p19", name:"COSRX Snail Mucin 96% Essence", brand:"COSRX", category:"essence",
     tags:["korean","repairing","hydrating","scarring","bestseller"], bestSeller:true,
     description:"96% snail secretion filtrate to repair damaged skin and fade marks.",
-    price:"£22", image:IMGS.toner, affiliateUrl:amz("COSRX Snail Mucin 96 Essence"),
+    price:"£22", image:PIMG.olay_eyes, affiliateUrl:amz("COSRX Snail Mucin 96 Essence"),
     zones:["full-face","dark-spots","scarring"], suitableFor:["all","sensitive","dry"],
     keyIngredients:[
       {name:"Snail Secretion Filtrate 96%", benefit:"Repairs damaged skin and fades marks"},
@@ -375,7 +434,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p20", name:"CeraVe Foaming Facial Cleanser", brand:"CeraVe", category:"cleanser",
     tags:["oily","combination","fragrance-free","gentle","bestseller"], bestSeller:true,
     description:"Foaming gel cleanser that removes excess oil without disrupting the skin barrier.",
-    price:"£12.50", image:IMGS.cleanser, affiliateUrl:amz("CeraVe Foaming Facial Cleanser"),
+    price:"£12.50", image:PIMG.origins_gin, affiliateUrl:amz("CeraVe Foaming Facial Cleanser"),
     zones:["full-face"], suitableFor:["oily","combination","normal"],
     keyIngredients:[
       {name:"Ceramides",       benefit:"Maintain skin barrier while cleansing"},
@@ -392,7 +451,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p21", name:"La Roche-Posay Toleriane Hydrating Cleanser", brand:"La Roche-Posay", category:"cleanser",
     tags:["dry","sensitive","fragrance-free","gentle"],
     description:"Soap-free cream cleanser that hydrates while cleansing sensitive skin.",
-    price:"£14", image:IMGS.cleanser, affiliateUrl:amz("La Roche Posay Toleriane Hydrating Gentle Cleanser"),
+    price:"£14", image:PIMG.caudalie_instant, affiliateUrl:amz("La Roche Posay Toleriane Hydrating Gentle Cleanser"),
     zones:["full-face"], suitableFor:["dry","sensitive","normal"],
     keyIngredients:[
       {name:"Ceramides",        benefit:"Protect and restore the skin barrier"},
@@ -411,7 +470,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p22", name:"Kiehl's Creamy Eye Treatment with Avocado", brand:"Kiehl's", category:"eye-cream",
     tags:["dry","under-eyes","nourishing","anti-aging"],
     description:"Rich avocado-infused eye cream for dry, delicate under-eye skin.",
-    price:"£32", image:IMGS.eyecream, affiliateUrl:amz("Kiehls Creamy Eye Treatment Avocado"),
+    price:"£32", image:PIMG.la_roche_foam, affiliateUrl:amz("Kiehls Creamy Eye Treatment Avocado"),
     zones:["under-eyes"], suitableFor:["dry","normal","mature"],
     keyIngredients:[
       {name:"Avocado Oil",     benefit:"Ultra-rich emollient nourishing fine lines"},
@@ -428,7 +487,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p23", name:"Elemis Pro-Collagen Eye Cream", brand:"Elemis", category:"eye-cream",
     tags:["anti-aging","fine-lines","mature","luxury"],
     description:"Clinically proven to improve the look of fine lines and dark circles in 14 days.",
-    price:"£60", image:IMGS.eyecream, affiliateUrl:amz("Elemis Pro Collagen Eye Cream"),
+    price:"£60", image:PIMG.paula_1pct, affiliateUrl:amz("Elemis Pro Collagen Eye Cream"),
     zones:["under-eyes"], suitableFor:["mature","dry","normal"],
     keyIngredients:[
       {name:"Padina Pavonica",    benefit:"Marine algae that supports collagen structure"},
@@ -447,7 +506,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p24", name:"Glamglow SuperMud Clearing Treatment", brand:"GlamGlow", category:"mask",
     tags:["blemish-prone","pores","oily","clearing"],
     description:"Six-acid clearing mask that visibly draws out blemishes and blackheads overnight.",
-    price:"£45", image:IMGS.mask, affiliateUrl:amz("Glamglow SuperMud Clearing Treatment"),
+    price:"£45", image:PIMG.roc_retinol, affiliateUrl:amz("Glamglow SuperMud Clearing Treatment"),
     zones:["t-zone","nose","chin"], suitableFor:["oily","combination","blemish-prone"],
     keyIngredients:[
       {name:"Activated Charcoal", benefit:"Draws out impurities deep from pores"},
@@ -464,7 +523,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p25", name:"Charlotte Tilbury Goddess Skin Clay Mask", brand:"Charlotte Tilbury", category:"mask",
     tags:["all-skin","brightening","pores","luxury"],
     description:"Kaolin and charcoal mask that buffs away dullness for goddess-like luminosity.",
-    price:"£36", image:IMGS.mask, affiliateUrl:amz("Charlotte Tilbury Goddess Skin Clay Mask"),
+    price:"£36", image:PIMG.glow_recipe, affiliateUrl:amz("Charlotte Tilbury Goddess Skin Clay Mask"),
     zones:["full-face"], suitableFor:["all","combination","normal"],
     keyIngredients:[
       {name:"Kaolin Clay",   benefit:"Gently draws out impurities and excess oil"},
@@ -483,7 +542,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p26", name:"Charlotte Tilbury Pillow Talk Lip Cheat", brand:"Charlotte Tilbury", category:"lip-liner",
     tags:["lip","bestseller","nude","defining"], bestSeller:true,
     description:"The world's most universally flattering lip liner. Makes lips look bigger instantly.",
-    price:"£20", image:IMGS.lip, affiliateUrl:amz("Charlotte Tilbury Pillow Talk Lip Cheat"),
+    price:"£20", image:PIMG.origins_charcoal, affiliateUrl:amz("Charlotte Tilbury Pillow Talk Lip Cheat"),
     zones:["lips"], suitableFor:["all"],
     keyIngredients:[
       {name:"Long-wear Formula",  benefit:"Stays put for hours without smudging"},
@@ -499,7 +558,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p27", name:"Charlotte Tilbury Matte Revolution Lipstick", brand:"Charlotte Tilbury", category:"lipstick",
     tags:["lip","matte","bestseller","long-wearing"], bestSeller:true,
     description:"Lightweight matte with a comfortable long-lasting formula. 50 iconic shades.",
-    price:"£30", image:IMGS.lip, affiliateUrl:amz("Charlotte Tilbury Matte Revolution Lipstick"),
+    price:"£30", image:PIMG.charlotte_liner, affiliateUrl:amz("Charlotte Tilbury Matte Revolution Lipstick"),
     zones:["lips"], suitableFor:["all"],
     keyIngredients:[
       {name:"Hyaluronic Acid",   benefit:"Moisturises lips throughout wear"},
@@ -518,7 +577,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p28", name:"NARS Orgasm Blush", brand:"NARS", category:"blush",
     tags:["blush","bestseller","glow","universal"], bestSeller:true,
     description:"The world's best-selling blush. Peachy-pink with golden shimmer for instant glow.",
-    price:"£29", image:IMGS.blush, affiliateUrl:amz("NARS Orgasm Blush"),
+    price:"£29", image:PIMG.mac_ruby, affiliateUrl:amz("NARS Orgasm Blush"),
     zones:["cheeks"], suitableFor:["all"],
     keyIngredients:[
       {name:"Golden Shimmer Pearls", benefit:"Catch the light for a fresh glow"},
@@ -534,7 +593,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p29", name:"Fenty Beauty Killawatt Freestyle Highlighter", brand:"Fenty Beauty", category:"highlighter",
     tags:["highlighter","glow","bestseller","deep-skin"], bestSeller:true,
     description:"Mega-watt glow for all skin tones — blinding shimmer without glitter.",
-    price:"£30", image:IMGS.blush, affiliateUrl:amz("Fenty Beauty Killawatt Freestyle Highlighter"),
+    price:"£30", image:PIMG.nars_orgasm, affiliateUrl:amz("Fenty Beauty Killawatt Freestyle Highlighter"),
     zones:["cheeks","forehead"], suitableFor:["all"],
     keyIngredients:[
       {name:"Diamond Powder",       benefit:"Creates an ultra-reflective blinding glow"},
@@ -552,7 +611,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p30", name:"The Ordinary Hyaluronic Acid 2% + B5", brand:"The Ordinary", category:"serum",
     tags:["hydrating","all-skin","budget-friendly","vegan","dry"],
     description:"Multi-weight hyaluronic acid draws moisture at multiple skin layers.",
-    price:"£9.90", image:IMGS.serum, affiliateUrl:amz("The Ordinary Hyaluronic Acid 2 B5"),
+    price:"£9.90", image:PIMG.rare_blush, affiliateUrl:amz("The Ordinary Hyaluronic Acid 2 B5"),
     zones:["full-face"], suitableFor:["all","dry","sensitive"],
     keyIngredients:[
       {name:"Hyaluronic Acid (3 weights)", benefit:"Hydrates at the surface, mid and deep layers"},
@@ -568,7 +627,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p31", name:"Medik8 Crystal Retinal 6", brand:"Medik8", category:"retinol",
     tags:["anti-aging","fine-lines","retinol","brightening","luxury"], newIn:true,
     description:"Retinaldehyde — 11x more potent than retinol — for faster visible anti-ageing.",
-    price:"£49", image:IMGS.retinol, affiliateUrl:amz("Medik8 Crystal Retinal 6"),
+    price:"£49", image:PIMG.benefit_porefessional, affiliateUrl:amz("Medik8 Crystal Retinal 6"),
     zones:["full-face"], suitableFor:["normal","combination","mature"],
     keyIngredients:[
       {name:"Retinaldehyde 0.06%", benefit:"Converts to retinoic acid in 1 step vs retinol's 2"},
@@ -586,7 +645,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p32", name:"Sunday Riley C.E.O. Vitamin C Serum", brand:"Sunday Riley", category:"serum",
     tags:["vitamin-c","brightening","anti-aging","hyperpigmentation","luxury"], newIn:true,
     description:"15% THD Ascorbate — the most stable form of vitamin C for maximum brightening.",
-    price:"£85", image:IMGS.serum, affiliateUrl:amz("Sunday Riley CEO Vitamin C Serum"),
+    price:"£85", image:PIMG.charlotte_beam, affiliateUrl:amz("Sunday Riley CEO Vitamin C Serum"),
     zones:["full-face","dark-spots"], suitableFor:["all","normal","mature"],
     keyIngredients:[
       {name:"THD Ascorbate 15%", benefit:"Stable Vitamin C that penetrates 8x deeper"},
@@ -605,7 +664,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p33", name:"Charlotte Tilbury Airbrush Flawless Finish Setting Powder", brand:"Charlotte Tilbury", category:"powder",
     tags:["powder","setting","oily","bestseller","matte"], bestSeller:true,
     description:"Micro-fine setting powder that blurs pores and sets makeup for 12 hours.",
-    price:"£38", image:IMGS.blush, affiliateUrl:amz("Charlotte Tilbury Airbrush Flawless Finish Setting Powder"),
+    price:"£38", image:PIMG.ordinary_azelaic, affiliateUrl:amz("Charlotte Tilbury Airbrush Flawless Finish Setting Powder"),
     zones:["full-face","t-zone"], suitableFor:["all","oily"],
     keyIngredients:[
       {name:"Micro-fine Silica",   benefit:"Blurs pores and fine lines instantly"},

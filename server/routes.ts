@@ -453,6 +453,23 @@ Ingredients: ${ingredientsText || "Not available — score based on product name
       res.status(500).json({ error: "Scoring failed", detail: err.message });
     }
   });
+
+  // ── Email signup ──────────────────────────────────────────────────────────
+  app.post("/api/subscribe", async (req, res) => {
+    try {
+      const { email, name, skinConcerns } = req.body as { email: string; name?: string; skinConcerns?: string };
+      if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        return res.status(400).json({ error: "Please enter a valid email address." });
+      }
+      const result = await storage.subscribeEmail(email, name, skinConcerns);
+      if (result.alreadySubscribed) {
+        return res.json({ ok: true, message: "You're already on the list — we'll keep you posted." });
+      }
+      return res.json({ ok: true, message: "You're on the list! Expect curated offers and recommendations in your inbox." });
+    } catch (err: any) {
+      res.status(500).json({ error: "Signup failed", detail: err.message });
+    }
+  });
 }
 
 // ─────────────────────────────────────────────
