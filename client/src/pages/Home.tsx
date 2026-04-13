@@ -5,29 +5,53 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
-// ── BlushMap constellation/compass logo ──────────────────────────────────────
+// ── BlushMap Gemini constellation logo ───────────────────────────────────────
+// Gemini star map: Castor (left twin) + Pollux (right twin) with connecting lines
+// Stars: Castor=top-left head, Pollux=top-right head, then shoulders, waists, feet crossing
 function BlushMapLogo({ size = 36 }: { size?: number }) {
+  const r = "var(--color-rose)";
+  const g = "var(--color-gold)";
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-label="BlushMap">
-      {/* Outer compass ring */}
-      <circle cx="20" cy="20" r="18.5" stroke="var(--color-rose)" strokeWidth="1" opacity="0.35" />
-      {/* Cardinal tick marks */}
-      <line x1="20" y1="2" x2="20" y2="6"   stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="20" y1="34" x2="20" y2="38" stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="2" y1="20" x2="6" y2="20"   stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
-      <line x1="34" y1="20" x2="38" y2="20" stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
-      {/* Constellation triangle */}
-      <polygon points="20,8 28,26 12,26" fill="none" stroke="var(--color-rose)" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
-      {/* Star nodes */}
-      <circle cx="20" cy="8"  r="2"   fill="var(--color-rose)" />
-      <circle cx="28" cy="26" r="1.5" fill="var(--color-rose)" opacity="0.7" />
-      <circle cx="12" cy="26" r="1.5" fill="var(--color-rose)" opacity="0.7" />
-      {/* Centre crosshair / mapping pin */}
-      <circle cx="20" cy="20" r="2.8" fill="var(--color-rose)" />
-      <circle cx="20" cy="20" r="1.2" fill="white" />
-      {/* Diagonal constellation lines */}
-      <line x1="20" y1="8"  x2="28" y2="26" stroke="var(--color-rose)" strokeWidth="0.7" opacity="0.4"/>
-      <line x1="20" y1="8"  x2="12" y2="26" stroke="var(--color-rose)" strokeWidth="0.7" opacity="0.4"/>
+    <svg width={size} height={size} viewBox="0 0 44 44" fill="none" aria-label="BlushMap — Gemini">
+      {/* ── Subtle outer circle ── */}
+      <circle cx="22" cy="22" r="20" stroke="var(--color-rose)" strokeWidth="0.6" opacity="0.2" />
+
+      {/* ── Gemini constellation lines ── */}
+      {/* Left twin (Castor side): head → shoulder → waist → foot */}
+      <line x1="10" y1="5"  x2="10" y2="13" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="10" y1="13" x2="8"  y2="21" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="8"  y1="21" x2="10" y2="30" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="10" y1="30" x2="12" y2="38" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+
+      {/* Right twin (Pollux side): head → shoulder → waist → foot */}
+      <line x1="34" y1="5"  x2="34" y2="13" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="34" y1="13" x2="36" y2="21" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="36" y1="21" x2="34" y2="30" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+      <line x1="34" y1="30" x2="32" y2="38" stroke={r} strokeWidth="1" opacity="0.55" strokeLinecap="round"/>
+
+      {/* Connecting bridge lines (twins joined at shoulder + waist) */}
+      <line x1="10" y1="13" x2="34" y2="13" stroke={r} strokeWidth="0.9" opacity="0.45" strokeLinecap="round"/>
+      <line x1="8"  y1="21" x2="36" y2="21" stroke={r} strokeWidth="0.9" opacity="0.45" strokeLinecap="round"/>
+
+      {/* ── Star nodes ── */}
+      {/* Castor — bright, gold (α Gem) */}
+      <circle cx="10" cy="5"  r="2.2" fill={g} />
+      <circle cx="10" cy="5"  r="3.5" fill={g} opacity="0.15" />
+      {/* Pollux — bright, rose (β Gem, slightly brighter in reality) */}
+      <circle cx="34" cy="5"  r="2.4" fill={r} />
+      <circle cx="34" cy="5"  r="3.8" fill={r} opacity="0.15" />
+      {/* Shoulders */}
+      <circle cx="10" cy="13" r="1.5" fill={r} opacity="0.8" />
+      <circle cx="34" cy="13" r="1.5" fill={r} opacity="0.8" />
+      {/* Waists */}
+      <circle cx="8"  cy="21" r="1.2" fill={r} opacity="0.65" />
+      <circle cx="36" cy="21" r="1.2" fill={r} opacity="0.65" />
+      {/* Knees / lower */}
+      <circle cx="10" cy="30" r="1.2" fill={r} opacity="0.55" />
+      <circle cx="34" cy="30" r="1.2" fill={r} opacity="0.55" />
+      {/* Feet */}
+      <circle cx="12" cy="38" r="1"   fill={r} opacity="0.45" />
+      <circle cx="32" cy="38" r="1"   fill={r} opacity="0.45" />
     </svg>
   );
 }
