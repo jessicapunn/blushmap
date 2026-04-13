@@ -660,7 +660,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p34", name:"Smashbox Photo Finish Primer", brand:"Smashbox", category:"primer",
     tags:["primer","pores","all-skin","long-wearing"],
     description:"Silicone-based primer that minimises pores and extends foundation wear.",
-    price:"£33", image:IMGS.blush, affiliateUrl:amz("Smashbox Photo Finish Foundation Primer"),
+    price:"£33", image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80", affiliateUrl:amz("Smashbox Photo Finish Foundation Primer"),
     zones:["full-face"], suitableFor:["all","oily","combination"],
     keyIngredients:[
       {name:"Cyclopentasiloxane", benefit:"Fills in pores and fine lines"},
@@ -678,7 +678,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p35", name:"Mario Badescu Drying Lotion", brand:"Mario Badescu", category:"spot-treatment",
     tags:["blemish-prone","spot-treatment","overnight","bestseller"], bestSeller:true,
     description:"Cult overnight spot treatment that shrinks blemishes while you sleep.",
-    price:"£20", image:IMGS.serum, affiliateUrl:amz("Mario Badescu Drying Lotion"),
+    price:"£20", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80", affiliateUrl:amz("Mario Badescu Drying Lotion"),
     zones:["chin","nose","cheeks"], suitableFor:["oily","combination","blemish-prone"],
     keyIngredients:[
       {name:"Salicylic Acid",    benefit:"Penetrates pores to break down blemishes"},
@@ -695,7 +695,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p36", name:"The Ordinary Azelaic Acid Suspension 10%", brand:"The Ordinary", category:"serum",
     tags:["hyperpigmentation","redness","rosacea","budget-friendly","brightening"],
     description:"Multi-function azelaic acid for even tone, redness reduction and blemish control.",
-    price:"£7.90", image:IMGS.serum, affiliateUrl:amz("The Ordinary Azelaic Acid Suspension 10"),
+    price:"£7.90", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80", affiliateUrl:amz("The Ordinary Azelaic Acid Suspension 10"),
     zones:["full-face","dark-spots","cheeks"], suitableFor:["sensitive","rosacea","oily"],
     keyIngredients:[
       {name:"Azelaic Acid 10%", benefit:"Fades hyperpigmentation and reduces redness"},
@@ -711,7 +711,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p37", name:"Glow Recipe Watermelon Glow Niacinamide Dew Drops", brand:"Glow Recipe", category:"serum",
     tags:["brightening","pores","oily","korean-inspired","glow","newIn"], newIn:true,
     description:"Watermelon-infused serum for dewy, glass-skin radiance with niacinamide.",
-    price:"£38", image:IMGS.serum, affiliateUrl:amz("Glow Recipe Watermelon Glow Niacinamide Dew Drops"),
+    price:"£38", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80", affiliateUrl:amz("Glow Recipe Watermelon Glow Niacinamide Dew Drops"),
     zones:["full-face","t-zone"], suitableFor:["oily","combination","normal"],
     keyIngredients:[
       {name:"Niacinamide 3%",        benefit:"Tightens pores and controls oil"},
@@ -728,7 +728,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p38", name:"Drunk Elephant Protini Polypeptide Cream", brand:"Drunk Elephant", category:"moisturiser",
     tags:["anti-aging","dry","peptides","luxury","firming"], newIn:true,
     description:"Signal peptide moisturiser that visibly improves skin texture and firmness.",
-    price:"£60", image:IMGS.moisturiser, affiliateUrl:amz("Drunk Elephant Protini Polypeptide Cream"),
+    price:"£60", image:"https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400&q=80", affiliateUrl:amz("Drunk Elephant Protini Polypeptide Cream"),
     zones:["full-face"], suitableFor:["all","dry","mature"],
     keyIngredients:[
       {name:"Signal Peptides",    benefit:"Stimulate collagen and firmness"},
@@ -745,7 +745,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p39", name:"REN Clean Skincare AHA Smart Renewal Body Serum", brand:"REN", category:"body",
     tags:["body","brightening","dry-skin","exfoliant","clean-beauty"],
     description:"AHA body serum that resurfaces and evens skin tone from neck to toe.",
-    price:"£39", image:IMGS.serum, affiliateUrl:amz("REN Clean Skincare AHA Smart Renewal Body Serum"),
+    price:"£39", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80", affiliateUrl:amz("REN Clean Skincare AHA Smart Renewal Body Serum"),
     zones:["neck","full-face"], suitableFor:["all","dry"],
     keyIngredients:[
       {name:"Lactic Acid",       benefit:"Gently resurfaces and evens body skin tone"},
@@ -762,7 +762,7 @@ export const PRODUCT_CATALOG: Product[] = [
     id:"p40", name:"Caudalie Vinoperfect Radiance Serum", brand:"Caudalie", category:"serum",
     tags:["hyperpigmentation","brightening","dark-spots","vegan","bestseller"], bestSeller:true,
     description:"10x more effective than Vitamin C on dark spots — the #1 serum in France.",
-    price:"£49", image:IMGS.serum, affiliateUrl:amz("Caudalie Vinoperfect Radiance Serum"),
+    price:"£49", image:"https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&q=80", affiliateUrl:amz("Caudalie Vinoperfect Radiance Serum"),
     zones:["full-face","dark-spots"], suitableFor:["all","sensitive","mature"],
     keyIngredients:[
       {name:"Viniferine",        benefit:"10x more effective than Vitamin C on spots"},

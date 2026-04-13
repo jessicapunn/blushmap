@@ -203,7 +203,7 @@ export default function TryOn() {
       category: product.category,
       shade: activeShade.name,
     });
-    setAdded(prev => new Set([...prev, product.id]));
+    setAdded(prev => new Set([...Array.from(prev), product.id]));
     setTimeout(() => setAdded(prev => { const n = new Set(prev); n.delete(product.id); return n; }), 2000);
   }
 

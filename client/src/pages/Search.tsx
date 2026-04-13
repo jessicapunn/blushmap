@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { NavBar } from "@/components/NavBar";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";

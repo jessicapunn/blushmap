@@ -399,6 +399,44 @@ export default function Results() {
   }
 
   const { skinAnalysis, recommendations, imageData } = data;
+  const { user } = useAuth();
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
+  // Auto-save face scan to profile after analysis loads
+  useEffect(() => {
+    if (!user || !skinAnalysis || !id) return;
+    fetch("/api/profile/face-scan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        analysisId: id,
+        skinScore: skinAnalysis.overallScore || null,
+        skinTone: skinAnalysis.skinTone,
+        skinType: skinAnalysis.skinType,
+        concerns: Array.isArray(skinAnalysis.skinConcerns) ? skinAnalysis.skinConcerns.join(", ") : skinAnalysis.skinConcerns,
+      }),
+    }).catch(() => {});
+  }, [user, skinAnalysis?.skinType, id]);
+
+  async function saveProduct(p: any) {
+    if (!user) return;
+    try {
+      await fetch("/api/profile/save-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: p.id || p.name,
+          productName: p.name,
+          productBrand: p.brand,
+          productImage: p.image,
+          affiliateUrl: p.affiliateUrl,
+          category: p.category,
+        }),
+      });
+      setSavedIds(prev => new Set([...Array.from(prev), p.id || p.name]));
+    } catch {}
+  }
+
   const concerns: string[] = skinAnalysis.concerns || [];
   const products = recommendations?.recommendedProducts || [];
 
