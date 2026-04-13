@@ -12,8 +12,18 @@ declare module "http" {
   interface IncomingMessage { rawBody: unknown; }
 }
 
-app.use(express.json({ verify: (req, _res, buf) => { (req as any).rawBody = buf; } }));
-app.use(express.urlencoded({ extended: false }));
+// Only parse JSON/urlencoded bodies for non-multipart requests
+// Multipart (file uploads) must be handled exclusively by multer — pre-parsing the stream breaks it
+app.use((req, res, next) => {
+  const ct = req.headers["content-type"] || "";
+  if (ct.startsWith("multipart/")) return next(); // skip — let multer handle it
+  express.json({ limit: "10mb", verify: (req, _res, buf) => { (req as any).rawBody = buf; } })(req, res, next);
+});
+app.use((req, res, next) => {
+  const ct = req.headers["content-type"] || "";
+  if (ct.startsWith("multipart/")) return next(); // skip
+  express.urlencoded({ extended: false, limit: "10mb" })(req, res, next);
+});
 
 // Redirect blushmap.co.uk → www.blushmap.com (301 permanent)
 app.use((req, res, next) => {
