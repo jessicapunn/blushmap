@@ -5,7 +5,14 @@ import multer from "multer";
 import { Jimp } from "jimp";
 import PRODUCT_CATALOG from "./catalog";
 
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize:  20 * 1024 * 1024,  // 20 MB for file uploads
+    fieldSize: 25 * 1024 * 1024,  // 25 MB for base64 imageData text fields
+    fields: 20,
+  },
+});
 
 // Initialise Anthropic client lazily so token errors surface at request time, not boot time
 function getAnthropicClient() {
@@ -363,6 +370,13 @@ export async function registerRoutes(httpServer: any, app: Express) {
   });
 
   // Product search — query, category, concern, bestseller, newIn
+  // ── Single product by ID ──
+  app.get("/api/products/:id", (req, res) => {
+    const product = PRODUCT_CATALOG.find(p => p.id === req.params.id);
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    return res.json(product);
+  });
+
   app.get("/api/search", (req, res) => {
     const q = ((req.query.q as string) || "").toLowerCase().trim();
     const category = (req.query.category as string || "").toLowerCase();

@@ -253,7 +253,7 @@ export default function Analyse() {
               <ArrowLeft size={16} /> Back
             </button>
           </Link>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>Skin Analysis</span>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem" }}>Face Mapping</span>
           {/* Steps */}
           <div className="ml-auto flex items-center gap-2 text-xs text-muted-foreground">
             <span className={step === "capture" ? "text-foreground font-medium" : ""}>1 Capture</span>
@@ -461,7 +461,7 @@ export default function Analyse() {
                 </svg>
               </div>
             </div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", marginBottom: "0.5rem" }}>Analysing your skin</h2>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", marginBottom: "0.5rem" }}>Mapping your face</h2>
             <p className="text-muted-foreground text-sm mb-6">{progressMsg}</p>
             <div className="w-full max-w-xs mx-auto rounded-full overflow-hidden" style={{ height: 6, background: "hsl(var(--muted))" }}>
               <div className="h-full rounded-full gradient-rose transition-all duration-700" style={{ width: `${analysisProgress}%` }} />

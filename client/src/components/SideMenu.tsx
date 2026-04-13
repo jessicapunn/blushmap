@@ -28,7 +28,7 @@ const skinTypes = [
 const navLinks = [
   { icon: Home,       label: "Home",               href: "/" },
   { icon: ScanLine,   label: "Scan a Product",     href: "/scanner",  accent: "#c9506e" },
-  { icon: Sparkles,   label: "Analyse My Skin",    href: "/analyse",  accent: "#c9944a" },
+  { icon: Sparkles,   label: "Face Mapping",    href: "/analyse",  accent: "#c9944a" },
   { icon: Wand2,      label: "Virtual Try-On",     href: "/try-on" },
   { icon: Search,     label: "Shop Products",      href: "/search" },
   { icon: User,       label: "My Profile",         href: "/profile" },

@@ -12,6 +12,7 @@ import ScanResult from "@/pages/ScanResult";
 import Search from "@/pages/Search";
 import Profile from "@/pages/Profile";
 import TryOn from "@/pages/TryOn";
+import ProductDetail from "@/pages/ProductDetail";
 import NotFound from "@/pages/not-found";
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/search" component={Search} />
             <Route path="/profile" component={Profile} />
             <Route path="/try-on" component={TryOn} />
+            <Route path="/product/:id" component={ProductDetail} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

@@ -220,10 +220,15 @@ function ProductCard({ rec, index }: { rec: any; index: number }) {
       data-testid={`product-card-${index}`}
     >
       {/* Category label strip */}
-      <div className="px-5 pt-4 pb-0">
+      <div className="px-5 pt-4 pb-0 flex items-center justify-between">
         <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "hsl(var(--muted-foreground))", letterSpacing: "0.12em" }}>
           {product.category?.replace(/-/g, " ")}
         </span>
+        <Link href={`/product/${product.id}`}>
+          <span className="text-xs font-semibold hover:underline cursor-pointer" style={{ color: "var(--color-rose)" }}>
+            View details →
+          </span>
+        </Link>
       </div>
 
       {/* Main product row */}

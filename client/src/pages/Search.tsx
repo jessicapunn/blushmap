@@ -41,7 +41,8 @@ const CATEGORIES = [
 
 function ProductCard({ product }: { product: any }) {
   return (
-    <div className="rounded-2xl border overflow-hidden card-hover relative" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+    <Link href={`/product/${product.id}`}>
+    <div className="rounded-2xl border overflow-hidden card-hover relative cursor-pointer" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
       {product.bestSeller && (
         <div className="ribbon-bestseller">Best Seller</div>
       )}
@@ -79,6 +80,7 @@ function ProductCard({ product }: { product: any }) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }
 

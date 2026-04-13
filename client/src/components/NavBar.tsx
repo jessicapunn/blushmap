@@ -180,7 +180,7 @@ export function NavBar() {
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-[11px] font-bold cursor-pointer hover:opacity-90 transition-all uppercase"
                 style={{ background: "linear-gradient(135deg, #c9944a, #b07830)", letterSpacing: "0.08em" }}
               >
-                <Sparkles size={12} /> Analyse
+                <Sparkles size={12} /> Face Map
               </span>
             </Link>
             <Link href="/try-on">
