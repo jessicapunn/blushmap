@@ -4,6 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import multer from "multer";
 import { Jimp } from "jimp";
 import PRODUCT_CATALOG from "./catalog";
+import { SKIN_ANALYSIS_PROMPT, buildRecommendationPrompt, INGREDIENT_SCORE_PROMPT } from "./derma-prompts";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -121,79 +122,9 @@ async function preprocessImage(buffer: Buffer, mimetype: string): Promise<{ base
 // ---------- Product catalog ----------
 // Each product now includes: keyIngredients[] and alternatives { budget, luxury, organic }
 // ---------- AI Prompts ----------
-const SKIN_ANALYSIS_PROMPT = `You are an expert cosmetic skin analyst and makeup artist. You will analyse a face image and provide a structured JSON assessment.
+// All prompts imported from ./derma-prompts (clinical-grade dermatology standards)
 
-Analyse the face image and return ONLY valid JSON (no markdown, no code blocks) with exactly this structure:
-
-{
-  "skinTone": "fair|light|medium|tan|deep|rich",
-  "undertone": "cool|warm|neutral|olive",
-  "skinType": "dry|oily|combination|normal|sensitive",
-  "concerns": ["hyperpigmentation", "acne", "redness", "dryness", "oiliness", "scarring", "dark-circles", "fine-lines", "uneven-texture"],
-  "faceShape": "oval|round|square|heart|oblong",
-  "faceZones": {
-    "forehead": "description of visible skin condition in this zone",
-    "tZone": "description of T-zone (forehead + nose) condition",
-    "cheeks": "description of cheek condition",
-    "underEyes": "description of under-eye area",
-    "chin": "description of chin/jaw area",
-    "nose": "description of nose/pore condition",
-    "overall": "overall skin condition summary"
-  },
-  "rgbAnalysis": {
-    "dominantTone": "brief description of the colour balance observed",
-    "warmthLevel": "cool|neutral|warm",
-    "luminosity": "dull|average|radiant"
-  },
-  "confidence": "high|medium|low",
-  "notes": "Any additional observations about the skin that would inform product selection"
-}
-
-Only include concerns that are visibly present. Return ONLY the JSON object.`;
-
-function buildRecommendationPrompt(analysis: any, preferences: string[], focus: string): string {
-  const focusInstruction = focus === "skincare"
-    ? "FOCUS: Recommend SKINCARE products only (cleansers, serums, moisturisers, SPF, treatments). Do NOT recommend makeup products."
-    : focus === "makeup"
-    ? "FOCUS: Recommend MAKEUP products only (foundation, concealer, blush, lip, eye). Do NOT recommend skincare products."
-    : "FOCUS: Recommend a balanced mix — prioritise skincare first (60%), then makeup (40%) to complement their skin profile.";
-
-  return `You are an expert dermatologist-trained beauty consultant and makeup artist. Your recommendations must be deeply personalised — reference specific details from the skin analysis in every reason and tip.
-
-${focusInstruction}
-
-SKIN ANALYSIS:
-${JSON.stringify(analysis, null, 2)}
-
-USER PREFERENCES: ${preferences.length ? preferences.join(", ") : "none specified"}
-
-PRODUCT CATALOG:
-${JSON.stringify(PRODUCT_CATALOG.map(p => ({ id: p.id, name: p.name, brand: p.brand, category: p.category, tags: p.tags, suitableFor: p.suitableFor, description: p.description })), null, 1)}
-
-RULES:
-1. Select 5-7 products strictly matching the FOCUS above.
-2. Every "reason" must mention AT LEAST ONE specific detail from their analysis (e.g. their exact skin type, a named zone, a concern, their undertone, or luminosity level). Never write generic reasons.
-3. "usageTip" must be actionable and tailored (e.g. "Apply to your T-zone and chin only — your cheeks are dry and don't need it").
-4. "routineOrder" must reflect the correct application order for their focus (skincare: cleanse → treat → moisturise → SPF; makeup: primer → base → eyes → lips → blush → setting).
-5. "skinSummary" must read like a personalised consultation note — name their skin type, undertone, top 2 concerns, and the overall condition observed.
-6. "topConcernToAddress" must be the single highest-priority issue for their specific profile.
-
-Return ONLY valid JSON (no markdown, no code blocks):
-{
-  "recommendedProducts": [
-    {
-      "productId": "p1",
-      "priority": 1,
-      "reason": "Specific personalised reason referencing their analysis details",
-      "applicationZone": "which face zone to apply",
-      "usageTip": "Personalised application tip for their exact skin profile"
-    }
-  ],
-  "routineOrder": ["step1", "step2", "step3"],
-  "skinSummary": "Personalised 2-3 sentence consultation note about their skin",
-  "topConcernToAddress": "Single most important concern for this profile"
-}`;
-}
+// buildRecommendationPrompt imported from ./derma-prompts
 
 // ---------- Routes ----------
 export async function registerRoutes(httpServer: any, app: Express) {
@@ -347,7 +278,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         recMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
           max_tokens: 2000,
-          messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences, focus) }],
+          messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences, focus, PRODUCT_CATALOG as any[]) }],
         });
         log("Recommendations response received");
       } catch (recErr: any) {
@@ -581,65 +512,4 @@ Ingredients: ${ingredientsText || "Not available — score based on product name
   });
 }
 
-// ─────────────────────────────────────────────
-// BARCODE SCANNER — ingredient scoring
-// ─────────────────────────────────────────────
-
-const INGREDIENT_SCORE_PROMPT = `You are an expert cosmetic chemist and clean beauty analyst, similar to the Yuka app.
-
-Given the following cosmetic/beauty product information, analyse the ingredients and return ONLY valid JSON with this exact structure:
-
-{
-  "productName": "full product name",
-  "brand": "brand name",
-  "score": 73,
-  "scoreLabel": "Good",
-  "scoreColour": "#4CAF50",
-  "summary": "2-3 sentence plain English overview of this product's ingredient quality",
-  "ingredients": [
-    {
-      "name": "Aqua",
-      "inci": "Water",
-      "role": "Solvent",
-      "rating": "good",
-      "concern": null,
-      "detail": "Universal solvent — safe and essential"
-    },
-    {
-      "name": "Parfum",
-      "inci": "Fragrance",
-      "role": "Fragrance",
-      "rating": "caution",
-      "concern": "Potential allergen",
-      "detail": "Synthetic fragrance blend — can trigger reactions in sensitive skin"
-    }
-  ],
-  "pros": ["Fragrance-free", "Rich in ceramides", "Dermatologist tested"],
-  "cons": ["Contains parabens", "High alcohol content"],
-  "certifications": ["cruelty-free", "vegan"],
-  "bestFor": ["dry skin", "sensitive skin"],
-  "avoid": ["rosacea", "fragrance allergy"],
-  "overallVerdict": "A well-formulated moisturiser with strong barrier-repair ingredients. Suitable for most skin types."
-}
-
-Score guide:
-- 85-100: Excellent (dark green) #2E7D32
-- 70-84: Good (green) #4CAF50  
-- 50-69: Average (amber) #FF9800
-- 25-49: Poor (orange-red) #F44336
-- 0-24: Hazardous (red) #B71C1C
-
-scoreLabel: "Excellent" | "Good" | "Average" | "Poor" | "Hazardous",
-  cleanCertified: true/false — true only if score >= 75 with no red ingredients,
-  redIngredients: ["any harmful/concerning ingredients found"],
-  greenIngredients: ["top 3 hero beneficial ingredients"]
-
-For ingredient rating: "good" | "caution" | "poor"
-
-Score based on:
-- Presence of known irritants/harmful ingredients (parabens, SLS, formaldehyde releasers, certain alcohols)
-- Quality of beneficial actives
-- Fragrance/allergen risk
-- Overall formulation standard
-
-Return ONLY the JSON object, no markdown.`;
+// INGREDIENT_SCORE_PROMPT imported from ./derma-prompts (clinical-grade EU Cosmetics Regulation standard)
