@@ -1,315 +1,466 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { ArrowRight, Camera, Upload, Sparkles, ShieldCheck, Star, ScanLine, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users } from "lucide-react";
+import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
-const STATS = [
-  { value: "15+", label: "Curated products" },
-  { value: "4 picks", label: "Per recommendation" },
-  { value: "6 zones", label: "Analysed per face" },
-  { value: "Free", label: "Always" },
+// ── BlushMap constellation/compass logo ──────────────────────────────────────
+function BlushMapLogo({ size = 36 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-label="BlushMap">
+      {/* Outer compass ring */}
+      <circle cx="20" cy="20" r="18.5" stroke="var(--color-rose)" strokeWidth="1" opacity="0.35" />
+      {/* Cardinal tick marks */}
+      <line x1="20" y1="2" x2="20" y2="6"   stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="20" y1="34" x2="20" y2="38" stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="2" y1="20" x2="6" y2="20"   stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
+      <line x1="34" y1="20" x2="38" y2="20" stroke="var(--color-rose)" strokeWidth="1.5" strokeLinecap="round"/>
+      {/* Constellation triangle */}
+      <polygon points="20,8 28,26 12,26" fill="none" stroke="var(--color-rose)" strokeWidth="1.2" strokeLinejoin="round" opacity="0.6"/>
+      {/* Star nodes */}
+      <circle cx="20" cy="8"  r="2"   fill="var(--color-rose)" />
+      <circle cx="28" cy="26" r="1.5" fill="var(--color-rose)" opacity="0.7" />
+      <circle cx="12" cy="26" r="1.5" fill="var(--color-rose)" opacity="0.7" />
+      {/* Centre crosshair / mapping pin */}
+      <circle cx="20" cy="20" r="2.8" fill="var(--color-rose)" />
+      <circle cx="20" cy="20" r="1.2" fill="white" />
+      {/* Diagonal constellation lines */}
+      <line x1="20" y1="8"  x2="28" y2="26" stroke="var(--color-rose)" strokeWidth="0.7" opacity="0.4"/>
+      <line x1="20" y1="8"  x2="12" y2="26" stroke="var(--color-rose)" strokeWidth="0.7" opacity="0.4"/>
+    </svg>
+  );
+}
+
+// ── Affiliate offers (curated, updated regularly) ────────────────────────────
+const OFFERS = [
+  {
+    id: 1, brand: "LOOKFANTASTIC",
+    title: "Up to 30% off skincare",
+    desc: "Hundreds of premium skincare brands on sale. La Roche-Posay, Elemis, Paula's Choice and more.",
+    badge: "30% OFF", badgeColor: "#c9506e",
+    url: "https://www.lookfantastic.com/sale.list?affil=blushmap",
+    concern: "all skin types",
+  },
+  {
+    id: 2, brand: "CULT BEAUTY",
+    title: "New In: Vitamin C Edits",
+    desc: "The best new vitamin C serums, brightening toners and glow-boosting treatments just dropped.",
+    badge: "NEW IN", badgeColor: "#7c3aed",
+    url: "https://www.cultbeauty.co.uk/vitamin-c.list?affil=blushmap",
+    concern: "hyperpigmentation, dullness",
+  },
+  {
+    id: 3, brand: "BOOTS",
+    title: "3 for 2 on skincare",
+    desc: "Mix and match across hundreds of skincare products. CeraVe, No7, Simple and more included.",
+    badge: "3 FOR 2", badgeColor: "#2563eb",
+    url: "https://www.boots.com/offers/skincare?affil=blushmap",
+    concern: "budget-conscious",
+  },
+  {
+    id: 4, brand: "SPACE NK",
+    title: "Luxury beauty event",
+    desc: "Earn points on every purchase. Charlotte Tilbury, Drunk Elephant, Tatcha — all included.",
+    badge: "POINTS", badgeColor: "#c9944a",
+    url: "https://www.spacenk.com/uk/promotions/gifts-with-purchase.html?affil=blushmap",
+    concern: "luxury skincare",
+  },
+  {
+    id: 5, brand: "SEPHORA UK",
+    title: "Korean beauty favourites",
+    desc: "COSRX, Some By Mi, Glow Recipe and more K-beauty bestsellers with free delivery over £30.",
+    badge: "K-BEAUTY", badgeColor: "#059669",
+    url: "https://www.sephora.co.uk/i/best-sellers-korean-beauty?affil=blushmap",
+    concern: "oily, blemish-prone",
+  },
+  {
+    id: 6, brand: "FEELUNIQUE",
+    title: "SPF essentials edit",
+    desc: "Sun protection for every skin tone. Mineral, tinted and invisible finishes — all SPF50+.",
+    badge: "SPF50+", badgeColor: "#ea580c",
+    url: "https://www.feelunique.com/c/Sun-Protection?affil=blushmap",
+    concern: "daily sun protection",
+  },
 ];
 
+function OfferCard({ offer }: { offer: typeof OFFERS[0] }) {
+  return (
+    <a
+      href={offer.url}
+      target="_blank"
+      rel="noopener noreferrer sponsored"
+      className="group flex flex-col rounded-2xl border overflow-hidden card-hover"
+      style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}
+    >
+      <div className="px-5 pt-5 pb-3 flex-1">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <span className="text-xs font-bold tracking-widest" style={{ color: "var(--color-gold)", letterSpacing: "0.15em" }}>
+            {offer.brand}
+          </span>
+          <span className="text-xs font-bold px-2.5 py-1 rounded-full text-white shrink-0" style={{ background: offer.badgeColor }}>
+            {offer.badge}
+          </span>
+        </div>
+        <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 500, marginBottom: "0.4rem", lineHeight: 1.25 }}>
+          {offer.title}
+        </h3>
+        <p className="text-xs text-muted-foreground leading-relaxed mb-3">{offer.desc}</p>
+        <p className="text-xs" style={{ color: "hsl(var(--muted-foreground))" }}>
+          <span style={{ color: "var(--color-rose)", fontWeight: 600 }}>✦</span> Best for: {offer.concern}
+        </p>
+      </div>
+      <div className="px-5 pb-5">
+        <div className="flex items-center gap-1.5 text-sm font-semibold transition-colors group-hover:opacity-80" style={{ color: "var(--color-rose)" }}>
+          Shop now <ExternalLink size={13} />
+        </div>
+      </div>
+    </a>
+  );
+}
+
+function BestSellerStrip() {
+  const { data } = useQuery({
+    queryKey: ["/api/search", "bestseller-strip"],
+    queryFn: async () => {
+      const res = await apiRequest("GET", "/api/search?bestseller=true");
+      return res.json();
+    },
+  });
+  const products = (data?.results || []).slice(0, 5);
+  if (!products.length) return null;
+
+  return (
+    <div className="overflow-x-auto pb-1 scrollbar-hide -mx-6 px-6">
+      <div className="flex gap-4" style={{ width: "max-content" }}>
+        {products.map((p: any) => (
+          <div key={p.id} className="w-52 rounded-2xl border overflow-hidden card-hover shrink-0" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+            <div className="h-28 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
+              <img src={p.image} alt={p.name} className="w-full h-full object-cover opacity-80" loading="lazy"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+            </div>
+            <div className="p-3">
+              <p className="text-xs font-semibold mb-0.5" style={{ color: "var(--color-gold)" }}>{p.brand}</p>
+              <p className="text-xs font-semibold leading-snug mb-2 line-clamp-2" style={{ fontFamily: "var(--font-display)" }}>{p.name}</p>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-bold" style={{ color: "var(--color-rose)" }}>{p.price}</span>
+                <a href={p.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+                  className="text-xs px-2 py-1 rounded-full text-white" style={{ background: "var(--color-rose)" }}>
+                  <ShoppingBag size={10} className="inline" />
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const TESTIMONIALS = [
-  {
-    name: "Priya M.",
-    skin: "Combination, medium",
-    quote: "The alternatives tab is genius — I chose the organic option and my skin has never been calmer.",
-    rating: 5,
-  },
-  {
-    name: "Sophie K.",
-    skin: "Dry, fair",
-    quote: "I'd wasted hundreds on the wrong products. BlushMap nailed my skin type in 30 seconds.",
-    rating: 5,
-  },
-  {
-    name: "Aisha R.",
-    skin: "Oily, deep",
-    quote: "Finally an app that considers deeper skin tones and actually recommends no-white-cast SPF.",
-    rating: 5,
-  },
+  { name: "Priya M.", skin: "Combination, medium", quote: "The alternatives tab is genius — I chose organic and my skin has never been calmer.", rating: 5 },
+  { name: "Sophie K.", skin: "Dry, fair", quote: "I wasted hundreds on the wrong products. BlushMap nailed my skin type in 30 seconds.", rating: 5 },
+  { name: "Aisha R.", skin: "Oily, deep", quote: "Finally an app that considers deeper skin tones and actually recommends no-white-cast SPF.", rating: 5 },
 ];
 
 export default function Home() {
+  const [heroLoaded, setHeroLoaded] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
+
   return (
-    <div className="min-h-screen" style={{ fontFamily: "var(--font-body)" }}>
-      {/* Nav */}
-      <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 backdrop-blur-md" style={{ background: "hsl(var(--background) / 0.92)" }}>
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-label="BlushMap logo">
-              <circle cx="15" cy="15" r="14" fill="hsl(340 45% 45%)" />
-              <ellipse cx="15" cy="13" rx="5.5" ry="6.5" fill="none" stroke="white" strokeWidth="1.5" />
-              <path d="M9.5 20 Q15 24.5 20.5 20" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-              <circle cx="15" cy="9.5" r="1.8" fill="hsl(30 60% 80%)" />
-              <circle cx="11.5" cy="11.5" r="1" fill="white" opacity="0.6" />
-              <circle cx="18.5" cy="11.5" r="1" fill="white" opacity="0.6" />
-            </svg>
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600 }}>BlushMap</span>
-          </div>
-          <nav className="flex items-center gap-3">
+    <div className="min-h-screen" style={{ fontFamily: "var(--font-body)", background: "hsl(var(--background))" }}>
+
+      {/* ── Nav ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.92)", backdropFilter: "blur(16px)", borderColor: "hsl(var(--border))" }}>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/">
+            <div className="flex items-center gap-2.5 cursor-pointer">
+              <BlushMapLogo size={34} />
+              <span style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--color-black)" }}>
+                BlushMap
+              </span>
+            </div>
+          </Link>
+          {/* Nav links (desktop) */}
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium" style={{ color: "hsl(var(--muted-foreground))" }}>
+            <Link href="/search"><span className="hover:text-foreground transition-colors cursor-pointer">Products</span></Link>
+            <Link href="/scanner"><span className="hover:text-foreground transition-colors cursor-pointer">Scan</span></Link>
+            <Link href="/analyse"><span className="hover:text-foreground transition-colors cursor-pointer">Analyse</span></Link>
+          </nav>
+          {/* CTAs */}
+          <div className="flex items-center gap-2">
+            <Link href="/search">
+              <Button size="sm" variant="ghost" className="gap-1.5 text-sm">
+                <Search size={14} />
+                <span className="hidden sm:inline">Search</span>
+              </Button>
+            </Link>
             <Link href="/scanner">
-              <Button size="sm" variant="outline" className="gap-1.5">
-                <ScanLine size={15} /> Scan product
+              <Button size="sm" variant="outline" className="gap-1.5 text-sm hidden sm:flex">
+                <ScanLine size={14} /> Scan
               </Button>
             </Link>
             <Link href="/analyse">
-              <Button size="sm" className="gradient-rose text-white border-0 hover:opacity-90 gap-1.5">
-                <Sparkles size={14} /> Analyse skin
+              <Button size="sm" className="gap-1.5 text-sm text-white border-0" style={{ background: "var(--color-rose)" }}>
+                <Sparkles size={13} /> Analyse skin
               </Button>
             </Link>
-          </nav>
+          </div>
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="pt-36 pb-24 px-6 relative overflow-hidden" style={{ background: "linear-gradient(160deg, hsl(30 25% 97%), hsl(340 25% 95%))" }}>
-        {/* Decorative blobs */}
-        <div className="absolute top-20 right-10 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none" style={{ background: "hsl(340 50% 75%)" }} />
-        <div className="absolute bottom-10 left-0 w-96 h-64 rounded-full opacity-15 blur-3xl pointer-events-none" style={{ background: "hsl(30 60% 75%)" }} />
+      {/* ── Hero ── */}
+      <section className="relative overflow-hidden" style={{
+        paddingTop: "9rem", paddingBottom: "7rem",
+        background: "linear-gradient(170deg, #fff8f9 0%, #fde8ed 40%, #f9dde6 100%)",
+      }}>
+        {/* Decorative constellation bg */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.06 }} aria-hidden="true">
+          <circle cx="15%" cy="30%" r="1.5" fill="#c9506e"/>
+          <circle cx="25%" cy="65%" r="1" fill="#c9506e"/>
+          <circle cx="78%" cy="20%" r="2" fill="#c9506e"/>
+          <circle cx="85%" cy="55%" r="1.5" fill="#c9506e"/>
+          <circle cx="60%" cy="75%" r="1" fill="#c9506e"/>
+          <circle cx="45%" cy="15%" r="1.5" fill="#c9506e"/>
+          <line x1="15%" y1="30%" x2="25%" y2="65%" stroke="#c9506e" strokeWidth="0.5"/>
+          <line x1="78%" y1="20%" x2="85%" y2="55%" stroke="#c9506e" strokeWidth="0.5"/>
+          <line x1="60%" y1="75%" x2="85%" y2="55%" stroke="#c9506e" strokeWidth="0.5"/>
+          <line x1="45%" y1="15%" x2="78%" y2="20%" stroke="#c9506e" strokeWidth="0.5"/>
+        </svg>
 
-        <div className="max-w-4xl mx-auto text-center relative">
-          {/* Editorial eyebrow */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm mb-8 border" style={{ background: "hsl(340 30% 94%)", borderColor: "hsl(340 30% 82%)", color: "hsl(340 50% 40%)" }}>
-            <Sparkles size={13} />
-            AI-powered · personalised · free
+        {/* Large blush blobs */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(232,160,176,0.4) 0%, transparent 70%)" }} />
+        <div className="absolute -bottom-12 -left-12 w-72 h-72 rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(201,80,110,0.12) 0%, transparent 70%)" }} />
+
+        <div className={`max-w-5xl mx-auto px-6 text-center relative transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
+          {/* Eyebrow */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-8 border" style={{ background: "rgba(255,255,255,0.7)", borderColor: "hsl(345 40% 82%)", color: "var(--color-rose)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+            <BlushMapLogo size={14} /> AI skin analysis · free forever
           </div>
 
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.6rem, 7vw, 5rem)", lineHeight: 1.07, fontWeight: 600, marginBottom: "1.5rem" }}>
-            Your skin,<br /><em style={{ color: "var(--color-rose)" }}>finally understood</em>
+          <h1 className="display-hero mb-6" style={{ color: "var(--color-black)" }}>
+            Your skin,<br />
+            <em style={{ color: "var(--color-rose)", fontStyle: "italic" }}>finally mapped.</em>
           </h1>
 
-          <p className="text-muted-foreground mx-auto mb-3" style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)", maxWidth: "52ch", lineHeight: 1.7 }}>
-            Upload a selfie or use your camera. Our AI analyses your skin tone, type, and every face zone — then recommends the exact products, with budget, luxury, and organic alternatives.
+          <p style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)", color: "hsl(0 0% 40%)", maxWidth: "50ch", margin: "0 auto 2rem", lineHeight: 1.75 }}>
+            Upload a selfie and our AI reads your skin tone, type, and every face zone — then builds your personal beauty routine with budget, luxury and organic options.
           </p>
 
-          {/* Trust line */}
-          <p className="text-xs text-muted-foreground mb-10">
-            No sign-up · no subscription · results in under 30 seconds
+          <p className="text-xs mb-10" style={{ color: "hsl(0 0% 58%)", letterSpacing: "0.05em" }}>
+            No sign-up · No subscription · Results in under 30 seconds
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-16">
+          {/* CTA row */}
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
             <Link href="/analyse">
-              <Button size="lg" className="gradient-rose text-white border-0 hover:opacity-90 gap-2 px-8" data-testid="cta-start">
+              <Button size="lg" className="gap-2 px-10 text-white border-0 shadow-lg font-semibold" style={{ background: "var(--color-rose)", boxShadow: "var(--shadow-pink)", fontSize: "1rem" }}>
                 Analyse my skin <ArrowRight size={18} />
               </Button>
             </Link>
-            <Link href="/scanner">
-              <Button size="lg" variant="outline" className="gap-2 px-8">
-                <ScanLine size={16} /> Scan a product
+            <Link href="/search">
+              <Button size="lg" variant="outline" className="gap-2 px-8 font-semibold" style={{ fontSize: "1rem" }}>
+                <Search size={16} /> Browse products
               </Button>
             </Link>
           </div>
 
-          {/* Stats row */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            {STATS.map(stat => (
-              <div key={stat.label} className="rounded-2xl border p-4" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
-                <p className="font-semibold mb-0.5" style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", color: "var(--color-rose)" }}>{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
+          {/* Trust stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+            {[
+              { value: "40+", label: "Curated products" },
+              { value: "4 picks", label: "Per recommendation" },
+              { value: "6 zones", label: "Face analysis" },
+              { value: "Free", label: "Always" },
+            ].map(stat => (
+              <div key={stat.label} className="rounded-2xl border px-4 py-3 text-center" style={{ background: "rgba(255,255,255,0.75)", borderColor: "hsl(345 35% 86%)" }}>
+                <p style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", color: "var(--color-rose)", fontWeight: 600 }}>{stat.value}</p>
+                <p className="text-xs" style={{ color: "hsl(0 0% 52%)" }}>{stat.label}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Alternatives showcase */}
+      {/* ── Best Sellers Strip ── */}
+      <section className="py-14 px-6 border-b" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-6">
+            <div>
+              <p className="label-eyebrow mb-1">Most loved</p>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.8rem" }}>Best Sellers</h2>
+            </div>
+            <Link href="/search?bestseller=true">
+              <Button variant="ghost" size="sm" className="gap-1.5 text-sm" style={{ color: "var(--color-rose)" }}>
+                View all <ArrowRight size={14} />
+              </Button>
+            </Link>
+          </div>
+          <BestSellerStrip />
+        </div>
+      </section>
+
+      {/* ── How it works ── */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14">
+            <p className="label-eyebrow mb-3">Simple by design</p>
+            <h2 className="display-section">How BlushMap works</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { num: "01", title: "Capture your face", desc: "Upload a photo, take a selfie, or use our RGB face scan. No account needed, no data stored." },
+              { num: "02", title: "AI maps your skin", desc: "Claude Vision AI analyses your tone, undertone, type, pores, and 6 face zones in seconds." },
+              { num: "03", title: "Get your edit", desc: "Receive ranked product picks — each with budget, luxury, and organic alternatives tailored to you." },
+            ].map((s, i) => (
+              <div key={i} className="relative rounded-2xl border p-8" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+                <span className="absolute top-6 right-7 select-none" style={{ fontFamily: "var(--font-display)", fontSize: "3.5rem", color: "hsl(var(--border))", lineHeight: 1 }}>{s.num}</span>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: "hsl(345 40% 93%)" }}>
+                  <BlushMapLogo size={24} />
+                </div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 600, marginBottom: "0.5rem" }}>{s.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Three price points ── */}
       <section className="py-20 px-6" style={{ background: "hsl(var(--card))" }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-semibold uppercase tracking-widest mb-3 block" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>
-              What makes BlushMap different
-            </span>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.8rem)", lineHeight: 1.15, marginBottom: "1rem" }}>
-              Every recommendation.<br />Three price points.
-            </h2>
-            <p className="text-muted-foreground mx-auto" style={{ maxWidth: "48ch", lineHeight: 1.7 }}>
-              For every product we recommend, you get our top pick plus budget, luxury, and organic alternatives — all matched to your skin profile.
-            </p>
+            <p className="label-eyebrow mb-3">Every recommendation</p>
+            <h2 className="display-section">Three price points.<br />One skin profile.</h2>
           </div>
-
           <div className="grid sm:grid-cols-3 gap-5">
             {[
-              {
-                icon: Banknote,
-                label: "Budget",
-                color: "#4a9b6a",
-                bg: "hsl(130 25% 95%)",
-                desc: "High-quality picks under £15 that punch well above their price point.",
-                example: "The Ordinary Niacinamide · £5.90",
-              },
-              {
-                icon: Sparkles,
-                label: "Our Pick",
-                color: "#b5476a",
-                bg: "hsl(340 25% 95%)",
-                desc: "The best overall choice for your specific skin type and concerns.",
-                example: "La Roche-Posay Anthelios · £19.50",
-                featured: true,
-              },
-              {
-                icon: Crown,
-                label: "Luxury",
-                color: "#c9944a",
-                bg: "hsl(30 35% 95%)",
-                desc: "Premium formulations worth the investment for visible results.",
-                example: "SkinCeuticals C E Ferulic · £166",
-              },
+              { icon: Banknote, label: "Budget",   color: "#4a9b6a", bg: "hsl(130 25% 96%)", desc: "The best under-£15 products that genuinely work — chosen by ingredient quality, not marketing spend.", example: "The Ordinary Niacinamide · £5.90" },
+              { icon: Sparkles, label: "Our Pick",  color: "#c9506e", bg: "hsl(345 30% 97%)", desc: "The single best product for your exact skin profile, chosen from 40+ curated options.", example: "La Roche-Posay Anthelios · £19.50", featured: true },
+              { icon: Crown,    label: "Luxury",   color: "#c9944a", bg: "hsl(36 40% 96%)",  desc: "Premium formulations worth the investment — dermatologist-favourite and clinically proven.", example: "SkinCeuticals C E Ferulic · £166" },
             ].map(item => {
               const Icon = item.icon;
               return (
-                <div key={item.label} className={`rounded-2xl border p-6 relative ${item.featured ? "ring-2" : ""}`} style={{ background: item.bg, borderColor: item.featured ? item.color : "hsl(var(--border))", ringColor: item.color }}>
-                  {item.featured && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-semibold text-white" style={{ background: item.color }}>
-                      Always included
-                    </div>
-                  )}
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: `${item.color}20` }}>
+                <div key={item.label} className={`rounded-2xl border p-6 relative ${item.featured ? "ring-2" : ""}`} style={{ background: item.bg, borderColor: (item as any).featured ? item.color : "hsl(var(--border))", ["--tw-ring-color" as any]: item.color }}>
+                  {(item as any).featured && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold text-white" style={{ background: item.color }}>Always included</div>}
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={{ background: `${item.color}18` }}>
                     <Icon size={18} style={{ color: item.color }} />
                   </div>
-                  <h3 className="font-semibold mb-2" style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: item.color }}>{item.label}</h3>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: item.color, marginBottom: "0.5rem" }}>{item.label}</h3>
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.desc}</p>
-                  <p className="text-xs font-medium px-3 py-2 rounded-lg" style={{ background: `${item.color}10`, color: item.color }}>
-                    e.g. {item.example}
-                  </p>
+                  <p className="text-xs font-medium px-3 py-2 rounded-lg" style={{ background: `${item.color}12`, color: item.color }}>e.g. {item.example}</p>
                 </div>
               );
             })}
           </div>
-
-          {/* Organic mention */}
-          <div className="mt-5 rounded-2xl border p-5 flex items-center gap-4" style={{ background: "hsl(130 20% 96%)", borderColor: "hsl(130 25% 85%)" }}>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ background: "#5a8a5a20" }}>
-              <Leaf size={18} style={{ color: "#5a8a5a" }} />
-            </div>
+          <div className="mt-5 rounded-2xl border p-5 flex gap-4 items-center" style={{ background: "hsl(130 20% 97%)", borderColor: "hsl(130 25% 85%)" }}>
+            <Leaf size={20} style={{ color: "#5a8a5a", flexShrink: 0 }} />
             <div>
-              <p className="font-semibold text-sm" style={{ color: "#3a6a3a" }}>Organic alternatives</p>
-              <p className="text-xs text-muted-foreground leading-relaxed">Every recommendation also comes with a certified organic or natural option for clean beauty enthusiasts.</p>
+              <p className="text-sm font-semibold" style={{ color: "#3a6a3a" }}>Organic alternatives — always included</p>
+              <p className="text-xs text-muted-foreground mt-0.5">Every recommendation comes with a certified organic or clean beauty option.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ── Live Offers & Deals ── */}
       <section className="py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-xs font-semibold uppercase tracking-widest mb-3 block" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Simple by design</span>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.6rem)", textAlign: "center" }}>
-              How it works
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                num: "01",
-                icon: <Camera size={26} />,
-                title: "Capture your face",
-                desc: "Take a selfie, use our live RGB face scan, or upload an existing photo. No account needed.",
-              },
-              {
-                num: "02",
-                icon: <Sparkles size={26} />,
-                title: "AI analyses your skin",
-                desc: "Our AI examines tone, undertone, type, pores, pigmentation, and more — across every face zone.",
-              },
-              {
-                num: "03",
-                icon: <ShieldCheck size={26} />,
-                title: "Get your picks",
-                desc: "Receive ranked product recommendations with budget, luxury, and organic alternatives for each one.",
-              },
-            ].map((step, i) => (
-              <div key={i} className="relative flex flex-col gap-4 p-8 rounded-2xl border" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
-                <span className="text-4xl font-light absolute top-5 right-6 select-none" style={{ fontFamily: "var(--font-display)", color: "hsl(var(--border))" }}>{step.num}</span>
-                <div style={{ color: "var(--color-rose)", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center", background: "hsl(340 30% 93%)", borderRadius: "12px" }}>
-                  {step.icon}
-                </div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600 }}>{step.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-20 px-6" style={{ background: "hsl(var(--muted) / 0.5)" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between mb-10">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest mb-4 block" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Advanced technology</span>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.4rem)", marginBottom: "1.5rem", lineHeight: 1.15 }}>
-                Hyper-advanced face scanning
-              </h2>
-              <ul className="space-y-4 text-muted-foreground">
-                {[
-                  "RGB light analysis — your screen flashes colours to reveal subtle pigmentation changes invisible to normal photography",
-                  "Zone-by-zone skin condition mapping across forehead, T-zone, cheeks, under-eyes, chin and nose",
-                  "Detects oiliness, dryness, hyperpigmentation, scarring, pores, fine lines, and redness",
-                  "Skin tone and undertone identification for perfectly matched foundation shades",
-                ].map((f, i) => (
-                  <li key={i} className="flex gap-3 text-sm leading-relaxed">
-                    <span style={{ color: "var(--color-rose)", flexShrink: 0, marginTop: 2 }}>✦</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-8">
-                <Link href="/analyse">
-                  <Button className="gradient-rose text-white border-0 hover:opacity-90 gap-2">
-                    Try it now <ArrowRight size={16} />
-                  </Button>
-                </Link>
-              </div>
+              <p className="label-eyebrow mb-2">Partner offers</p>
+              <h2 className="display-section">Current deals & offers</h2>
+              <p className="text-sm text-muted-foreground mt-2" style={{ maxWidth: "42ch" }}>
+                Hand-picked offers from trusted retailers — matched to common skin concerns.
+              </p>
             </div>
-            <div className="rounded-3xl overflow-hidden aspect-square" style={{ background: "linear-gradient(135deg, hsl(340 30% 88%), hsl(30 40% 88%))", position: "relative" }}>
-              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16 }}>
-                <svg width="90" height="90" viewBox="0 0 80 80" fill="none">
-                  <circle cx="40" cy="40" r="39" stroke="hsl(340 45% 45%)" strokeWidth="1.5" strokeDasharray="4 4" />
-                  <ellipse cx="40" cy="35" rx="14" ry="16" fill="none" stroke="hsl(340 45% 45%)" strokeWidth="1.5" />
-                  <path d="M26 55 Q40 65 54 55" stroke="hsl(340 45% 45%)" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                  <circle cx="34" cy="30" r="2" fill="hsl(340 45% 45%)" />
-                  <circle cx="46" cy="30" r="2" fill="hsl(340 45% 45%)" />
-                  <path d="M10 40 H18 M62 40 H70" stroke="hsl(30 60% 55%)" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M20 15 L25 22 M60 15 L55 22" stroke="hsl(200 60% 55%)" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M20 65 L25 58 M60 65 L55 58" stroke="hsl(120 45% 45%)" strokeWidth="1.5" strokeLinecap="round" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs border" style={{ background: "hsl(345 30% 96%)", borderColor: "hsl(345 35% 85%)", color: "var(--color-rose)" }}>
+              <Tag size={11} /> Affiliate links
+            </div>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {OFFERS.map(offer => <OfferCard key={offer.id} offer={offer} />)}
+          </div>
+          <p className="text-xs text-muted-foreground mt-5 text-center">
+            These are affiliate links — we may earn a small commission if you purchase, at no extra cost to you.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Scan feature ── */}
+      <section className="py-20 px-6" style={{ background: "hsl(var(--card))" }}>
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+          <div>
+            <p className="label-eyebrow mb-4">Know what's in it</p>
+            <h2 className="display-section mb-5">Ingredient scanner</h2>
+            <p className="text-muted-foreground mb-6 leading-relaxed" style={{ fontSize: "1.05rem" }}>
+              Scan any beauty barcode. Our AI rates every ingredient, flags harmful chemicals, and gives your product a score from 0 to 100. Like Yuka — but built for beauty.
+            </p>
+            <ul className="space-y-3 mb-8">
+              {[
+                { icon: <CheckCircle size={15} style={{ color: "#4CAF50" }} />, text: "Full ingredient breakdown with safety ratings" },
+                { icon: <CheckCircle size={15} style={{ color: "#4CAF50" }} />, text: "Score 0–100 based on formulation quality" },
+                { icon: <AlertTriangle size={15} style={{ color: "#FF9800" }} />, text: "Flags parabens, SLS, allergens & irritants" },
+                { icon: <CheckCircle size={15} style={{ color: "#4CAF50" }} />, text: "Works on makeup, skincare, haircare & more" },
+              ].map((item, i) => <li key={i} className="flex items-center gap-3 text-sm">{item.icon}{item.text}</li>)}
+            </ul>
+            <Link href="/scanner">
+              <Button size="lg" className="gap-2 text-white border-0" style={{ background: "var(--color-rose)" }}>
+                <ScanLine size={18} /> Scan a product
+              </Button>
+            </Link>
+          </div>
+          {/* Score demo */}
+          <div className="flex justify-center">
+            <div className="w-68 rounded-2xl border shadow-lg p-6 text-center" style={{ background: "white", borderColor: "hsl(var(--border))", maxWidth: 280 }}>
+              <p className="text-xs text-muted-foreground mb-0.5">CeraVe</p>
+              <p className="font-semibold mb-4" style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem" }}>Moisturising Cream</p>
+              <div className="relative w-28 h-28 mx-auto mb-3">
+                <svg width="112" height="112" className="-rotate-90">
+                  <circle cx="56" cy="56" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
+                  <circle cx="56" cy="56" r="44" fill="none" stroke="#4CAF50" strokeWidth="8"
+                    strokeDasharray={`${2 * Math.PI * 44}`} strokeDashoffset={`${2 * Math.PI * 44 * 0.18}`} strokeLinecap="round" />
                 </svg>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "hsl(340 40% 40%)", textAlign: "center", maxWidth: "18ch" }}>RGB scan in action</p>
-                {/* Zone indicators */}
-                <div className="flex gap-2 flex-wrap justify-center px-4">
-                  {["Forehead", "T-Zone", "Cheeks", "Under-eyes", "Chin"].map(z => (
-                    <span key={z} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(181,71,106,0.12)", color: "hsl(340 50% 40%)" }}>{z}</span>
-                  ))}
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-3xl font-bold" style={{ color: "#4CAF50" }}>82</span>
+                  <span className="text-xs text-muted-foreground">/100</span>
                 </div>
+              </div>
+              <span className="text-sm font-bold" style={{ color: "#4CAF50" }}>Good</span>
+              <div className="flex justify-center gap-2 mt-3">
+                <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(120 30% 93%)", color: "#2E7D32" }}>12 good</span>
+                <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(38 50% 93%)", color: "#E65100" }}>2 caution</span>
+              </div>
+              <div className="mt-3 text-left space-y-1.5">
+                {[{n:"Ceramides",r:"good"},{n:"Hyaluronic Acid",r:"good"},{n:"Parfum",r:"caution"}].map((ing,i)=>(
+                  <div key={i} className="flex items-center gap-2 text-xs">
+                    {ing.r==="good"?<CheckCircle size={12} style={{color:"#4CAF50"}}/>:<AlertTriangle size={12} style={{color:"#FF9800"}}/>}
+                    <span className="text-muted-foreground">{ing.n}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* ── Testimonials ── */}
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-xs font-semibold uppercase tracking-widest mb-3 block" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Real results</span>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.6rem)" }}>
-              What our users say
-            </h2>
+            <p className="label-eyebrow mb-3">Real results</p>
+            <h2 className="display-section">What our users say</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {TESTIMONIALS.map((t, i) => (
               <div key={i} className="rounded-2xl border p-6" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
                 <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={14} fill="var(--color-gold)" style={{ color: "var(--color-gold)" }} />
-                  ))}
+                  {Array.from({ length: t.rating }).map((_, j) => <Star key={j} size={13} fill="var(--color-gold)" style={{ color: "var(--color-gold)" }} />)}
                 </div>
                 <p className="text-sm leading-relaxed mb-5 text-muted-foreground">"{t.quote}"</p>
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold text-white" style={{ background: "var(--color-rose)" }}>
-                    {t.name[0]}
-                  </div>
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "var(--color-rose)" }}>{t.name[0]}</div>
                   <div>
                     <p className="text-sm font-semibold">{t.name}</p>
                     <p className="text-xs text-muted-foreground">{t.skin}</p>
@@ -321,145 +472,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Preference filters showcase */}
-      <section className="py-20 px-6" style={{ background: "hsl(var(--muted) / 0.4)" }}>
-        <div className="max-w-3xl mx-auto text-center">
-          <span className="text-xs font-semibold uppercase tracking-widest mb-3 block" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Your preferences, your rules</span>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.4rem)", marginBottom: "1rem" }}>
-            You decide what matters
-          </h2>
-          <p className="text-muted-foreground mb-10 mx-auto" style={{ maxWidth: "44ch" }}>Filter recommendations by what's important to you.</p>
-          <div className="flex flex-wrap justify-center gap-2.5">
-            {["Organic", "Cruelty-free", "Vegan", "Korean beauty", "SPF included", "Fragrance-free", "Budget-friendly", "Luxury", "No white cast", "Anti-aging", "Sensitive skin", "Clean beauty"].map(tag => (
-              <span key={tag} className="px-4 py-2 rounded-full text-sm border transition-colors cursor-default" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))", color: "hsl(var(--foreground))" }}>{tag}</span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Ingredient Scanner section */}
-      <section className="py-20 px-6" style={{ background: "linear-gradient(160deg, hsl(340 25% 96%), hsl(30 25% 97%))" }}>
-        <div className="max-w-5xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs mb-5 border" style={{ background: "hsl(340 30% 94%)", borderColor: "hsl(340 30% 82%)", color: "hsl(340 50% 40%)" }}>
-                <ScanLine size={12} /> Ingredient scanner
-              </div>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.6rem)", lineHeight: 1.15, marginBottom: "1rem" }}>
-                Know exactly what's in your products
-              </h2>
-              <p className="text-muted-foreground mb-6" style={{ fontSize: "1.05rem", lineHeight: 1.7 }}>
-                Scan any beauty or skincare barcode. Our AI analyses every ingredient, flags harmful chemicals, and scores your product out of 100.
-              </p>
-              <ul className="space-y-3 mb-8">
-                {[
-                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Instant ingredient breakdown with safety ratings" },
-                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Score from 0–100 based on ingredient quality" },
-                  { icon: <AlertTriangle size={16} style={{ color: "#FF9800" }} />, text: "Flags parabens, SLS, allergens & irritants" },
-                  { icon: <CheckCircle size={16} style={{ color: "#4CAF50" }} />, text: "Works on makeup, skincare, haircare & more" },
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-sm">
-                    {item.icon} <span>{item.text}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link href="/scanner">
-                <Button size="lg" className="gradient-rose text-white border-0 hover:opacity-90 gap-2">
-                  <ScanLine size={18} /> Scan a product
-                </Button>
-              </Link>
-            </div>
-            {/* Score demo card */}
-            <div className="flex justify-center">
-              <div className="w-72 rounded-2xl border shadow-lg p-6 text-center" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
-                <p className="text-xs text-muted-foreground mb-1">CeraVe</p>
-                <p className="font-semibold mb-4" style={{ fontFamily: "var(--font-display)" }}>Moisturising Cream</p>
-                <div className="relative w-28 h-28 mx-auto mb-3">
-                  <svg width="112" height="112" className="-rotate-90">
-                    <circle cx="56" cy="56" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="8" />
-                    <circle cx="56" cy="56" r="44" fill="none" stroke="#4CAF50" strokeWidth="8"
-                      strokeDasharray={`${2 * Math.PI * 44}`}
-                      strokeDashoffset={`${2 * Math.PI * 44 * (1 - 0.82)}`}
-                      strokeLinecap="round" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-3xl font-bold" style={{ color: "#4CAF50" }}>82</span>
-                    <span className="text-xs text-muted-foreground">/100</span>
-                  </div>
-                </div>
-                <span className="text-sm font-semibold" style={{ color: "#4CAF50" }}>Good</span>
-                <div className="flex justify-center gap-2 mt-4">
-                  <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(120 30% 93%)", color: "#2E7D32" }}>12 good</span>
-                  <span className="text-xs px-2 py-1 rounded-full" style={{ background: "hsl(38 50% 93%)", color: "#E65100" }}>2 caution</span>
-                </div>
-                <div className="mt-4 text-left space-y-1.5">
-                  {[{n:"Ceramides",r:"good"},{n:"Hyaluronic Acid",r:"good"},{n:"Parfum",r:"caution"}].map((ing,i)=>(
-                    <div key={i} className="flex items-center gap-2 text-xs">
-                      {ing.r==="good" ? <CheckCircle size={12} style={{color:"#4CAF50"}} /> : <AlertTriangle size={12} style={{color:"#FF9800"}} />}
-                      <span className="text-muted-foreground">{ing.n}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust signals */}
+      {/* ── Trust signals ── */}
       <section className="py-14 px-6 border-t border-b" style={{ borderColor: "hsl(var(--border))" }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            {[
-              { icon: <ShieldCheck size={22} />, label: "Privacy first", desc: "Images never stored beyond your session" },
-              { icon: <Sparkles size={22} />, label: "Claude AI", desc: "Powered by Anthropic's Claude Vision" },
-              { icon: <Leaf size={22} />, label: "Organic options", desc: "Clean beauty alternatives for every pick" },
-              { icon: <Users size={22} />, label: "All skin tones", desc: "Inclusive recommendations for every shade" },
-            ].map((t, i) => (
-              <div key={i} className="flex flex-col items-center gap-2">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(340 25% 94%)", color: "var(--color-rose)" }}>
-                  {t.icon}
-                </div>
-                <p className="text-sm font-semibold">{t.label}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
-              </div>
-            ))}
-          </div>
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { icon: <ShieldCheck size={20}/>, label: "Privacy first",    desc: "Images never stored beyond your session" },
+            { icon: <Sparkles size={20}/>,   label: "Claude AI",         desc: "Powered by Anthropic's Claude Vision" },
+            { icon: <Leaf size={20}/>,       label: "Organic options",   desc: "Clean beauty alternatives for every pick" },
+            { icon: <Users size={20}/>,      label: "All skin tones",    desc: "Inclusive picks for every shade" },
+          ].map((t, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(345 35% 93%)", color: "var(--color-rose)" }}>{t.icon}</div>
+              <p className="text-sm font-semibold">{t.label}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{t.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* CTA footer */}
-      <section className="py-24 px-6 text-center gradient-rose text-white">
-        <div className="max-w-2xl mx-auto">
-          <span className="text-xs font-semibold uppercase tracking-widest mb-4 block opacity-80" style={{ letterSpacing: "0.12em" }}>
-            Start now
-          </span>
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3.2rem)", marginBottom: "1rem", lineHeight: 1.1 }}>
-            Meet your perfect routine
+      {/* ── Final CTA ── */}
+      <section className="py-28 px-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #c9506e 0%, #e8a0b0 100%)" }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.08 }}>
+          <svg width="100%" height="100%">
+            <circle cx="20%" cy="30%" r="2" fill="white"/>
+            <circle cx="80%" cy="25%" r="1.5" fill="white"/>
+            <circle cx="65%" cy="70%" r="2" fill="white"/>
+            <line x1="20%" y1="30%" x2="80%" y2="25%" stroke="white" strokeWidth="0.5"/>
+            <line x1="80%" y1="25%" x2="65%" y2="70%" stroke="white" strokeWidth="0.5"/>
+          </svg>
+        </div>
+        <div className="max-w-2xl mx-auto relative">
+          <BlushMapLogo size={48} />
+          <div className="mx-auto w-12 mb-6" />
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.2rem, 5vw, 3.8rem)", color: "white", lineHeight: 1.08, marginBottom: "1.2rem" }}>
+            Meet your perfect routine.
           </h2>
-          <p style={{ opacity: 0.85, marginBottom: "2.5rem", fontSize: "1.05rem", lineHeight: 1.7, maxWidth: "42ch", margin: "0 auto 2.5rem" }}>
-            Free. No sign-up required. Results in under 30 seconds — with budget, luxury, and organic alternatives for every skin type.
+          <p style={{ color: "rgba(255,255,255,0.85)", marginBottom: "2.5rem", fontSize: "1.1rem", lineHeight: 1.75, maxWidth: "40ch", margin: "0 auto 2.5rem" }}>
+            Free. No sign-up. Results in under 30 seconds — with budget, luxury and organic alternatives for every skin type.
           </p>
           <Link href="/analyse">
-            <Button size="lg" variant="outline" className="bg-white/10 border-white/40 text-white hover:bg-white/20 gap-2 px-10">
-              Start your skin analysis <ArrowRight size={18} />
+            <Button size="lg" variant="outline" className="font-semibold px-10 gap-2" style={{ background: "rgba(255,255,255,0.12)", borderColor: "rgba(255,255,255,0.4)", color: "white", fontSize: "1rem" }}>
+              Start your analysis <ArrowRight size={18} />
             </Button>
           </Link>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t" style={{ borderColor: "hsl(var(--border))" }}>
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <svg width="20" height="20" viewBox="0 0 28 28" fill="none">
-              <circle cx="14" cy="14" r="13" fill="hsl(340 45% 45%)" />
-              <ellipse cx="14" cy="12" rx="5" ry="6" fill="none" stroke="white" strokeWidth="1.5" />
-              <path d="M9 18 Q14 22 19 18" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-            </svg>
-            <span>© 2026 BlushMap</span>
+      {/* ── Footer ── */}
+      <footer className="py-10 px-6 border-t" style={{ borderColor: "hsl(var(--border))" }}>
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2.5">
+            <BlushMapLogo size={22} />
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--color-black)" }}>BlushMap</span>
           </div>
-          <p className="text-xs text-center">Some product links are affiliate links — we may earn a commission at no extra cost to you.</p>
+          <div className="flex items-center gap-6 text-xs">
+            <Link href="/search"><span className="hover:text-foreground cursor-pointer transition-colors">Products</span></Link>
+            <Link href="/scanner"><span className="hover:text-foreground cursor-pointer transition-colors">Scanner</span></Link>
+            <Link href="/analyse"><span className="hover:text-foreground cursor-pointer transition-colors">Analyse</span></Link>
+          </div>
+          <p className="text-xs text-center sm:text-right" style={{ maxWidth: "32ch" }}>
+            Some links are affiliate links — we may earn a small commission at no extra cost to you. © 2026 BlushMap
+          </p>
         </div>
       </footer>
     </div>
