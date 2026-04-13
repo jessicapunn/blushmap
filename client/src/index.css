@@ -1,9 +1,7 @@
+/* Fonts are loaded via <link> in index.html for optimal performance */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* ── Google Fonts: Playfair Display (Kylie-style serif) + DM Sans body ── */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 @layer base {
   :root {

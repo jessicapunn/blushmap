@@ -92,6 +92,26 @@ export default function Analyse() {
     }
   }, [toast]);
 
+  // captureFrame must be declared BEFORE runRGBSequence which depends on it
+  const captureFrame = useCallback((): string | null => {
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas) return null;
+
+    const w = video.videoWidth;
+    const h = video.videoHeight;
+    if (!w || !h) return null;
+
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d")!;
+    ctx.translate(w, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    return canvas.toDataURL("image/jpeg", 0.92);
+  }, []);
+
   const startRGBScan = useCallback(async () => {
     setRgbPhase("idle");
     setRgbFrames([]);
@@ -115,26 +135,6 @@ export default function Analyse() {
     stopCamera();
     setTimeout(() => setStep("preferences"), 800);
   }, [captureFrame, stopCamera]);
-
-  const captureFrame = useCallback((): string | null => {
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas) return null;
-
-    const w = video.videoWidth;
-    const h = video.videoHeight;
-    if (!w || !h) return null; // refuse to capture a blank frame
-
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext("2d")!;
-    // Mirror to match the mirrored selfie preview
-    ctx.translate(w, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0);
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    return canvas.toDataURL("image/jpeg", 0.92);
-  }, []);
 
   const handleCameraCapture = useCallback(() => {
     const frame = captureFrame();

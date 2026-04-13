@@ -74,7 +74,7 @@ const ALT_CONFIG = [
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const { addItem } = useBasket();
+  const { add } = useBasket();
   const { user } = useAuth();
   const [saved, setSaved] = useState(false);
   const [added, setAdded] = useState(false);
@@ -88,7 +88,7 @@ export default function ProductDetail() {
 
   function handleAddToBasket() {
     if (!product) return;
-    addItem({ id: product.id, name: product.name, brand: product.brand, price: product.price, image: product.image, affiliateUrl: product.affiliateUrl });
+    add({ id: product.id, name: product.name, brand: product.brand, price: product.price, image: product.image, affiliateUrl: product.affiliateUrl, category: product.category || "skincare" });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }

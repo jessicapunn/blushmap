@@ -8,6 +8,9 @@ import { createServer } from "http";
 const app = express();
 const httpServer = createServer(app);
 
+// Trust Railway/Fastly reverse proxy — required for secure cookies + correct IP
+app.set("trust proxy", 1);
+
 declare module "http" {
   interface IncomingMessage { rawBody: unknown; }
 }

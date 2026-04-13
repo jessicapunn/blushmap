@@ -37,7 +37,7 @@ const MAKEUP: TryProduct[] = [
       {name:"Superstar",hex:"#9b3030"},{name:"Very Victoria",hex:"#b88070"},{name:"Pinkgasm",hex:"#e0a090"},
     ]},
   { id:"nars-lip-1", name:"Satin Lipstick", brand:"NARS", price:"£27", category:"lipstick",
-    image:"https://images.unsplash.com/photo-1631730358585-38a4935cbec4?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1631214499182-e37c7dc30a3a?w=400&q=80",
     affiliateUrl: amz("NARS satin lipstick"),
     shades:[
       {name:"Dolce Vita",hex:"#c07068"},{name:"Heat Wave",hex:"#c84040"},{name:"Cruella",hex:"#8b1a1a"},
@@ -51,7 +51,7 @@ const MAKEUP: TryProduct[] = [
       {name:"Chili",hex:"#a03030"},{name:"Candy Yum-Yum",hex:"#f060a0"},{name:"Mocha",hex:"#906050"},
     ]},
   { id:"fenty-lip-1", name:"Stunna Lip Paint", brand:"Fenty Beauty", price:"£22", category:"lipstick",
-    image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1631730358585-38a4935cbec4?w=400&q=80",
     newIn: true,
     affiliateUrl: amz("Fenty Stunna Lip Paint"),
     shades:[
@@ -60,7 +60,7 @@ const MAKEUP: TryProduct[] = [
     ]},
   // ── Blush ──
   { id:"nars-blush-1", name:"Orgasm Blush", brand:"NARS", price:"£31", category:"blush",
-    image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80",
     bestseller: true,
     affiliateUrl: amz("NARS Orgasm blush"),
     shades:[
@@ -76,7 +76,7 @@ const MAKEUP: TryProduct[] = [
       {name:"Love",hex:"#c85060"},{name:"Grateful",hex:"#c07060"},{name:"Bliss",hex:"#e09080"},
     ]},
   { id:"ct-blush-1", name:"Cheek to Chic Blush", brand:"Charlotte Tilbury", price:"£33", category:"blush",
-    image:"https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
     affiliateUrl: amz("Charlotte Tilbury Cheek to Chic"),
     shades:[
       {name:"Love is the Drug",hex:"#d0806a"},{name:"Pillow Talk",hex:"#d0907e"},{name:"Super Nudes",hex:"#c8a090"},
@@ -92,7 +92,7 @@ const MAKEUP: TryProduct[] = [
       {name:"Nude",hex:"#c8a480"},{name:"Smoky",hex:"#504050"},{name:"Gold",hex:"#c9944a"},
     ]},
   { id:"ct-eye-1", name:"Luxury Palette", brand:"Charlotte Tilbury", price:"£65", category:"eyeshadow",
-    image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=80",
     newIn: true,
     affiliateUrl: amz("Charlotte Tilbury eyeshadow palette"),
     shades:[
@@ -108,7 +108,7 @@ const MAKEUP: TryProduct[] = [
     ]},
   // ── Highlighter ──
   { id:"ct-high-1", name:"Beam Highlighter", brand:"Charlotte Tilbury", price:"£38", category:"highlighter",
-    image:"https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=400&q=80",
     bestseller: true,
     affiliateUrl: amz("Charlotte Tilbury Beam Highlighter"),
     shades:[
@@ -116,7 +116,7 @@ const MAKEUP: TryProduct[] = [
       {name:"Bronze Venus",hex:"#c8a870"},
     ]},
   { id:"fenty-high-1", name:"Killawatt Highlighter", brand:"Fenty Beauty", price:"£28", category:"highlighter",
-    image:"https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=400&q=80",
+    image:"https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80",
     affiliateUrl: amz("Fenty Killawatt highlighter"),
     shades:[
       {name:"Trophy Wife",hex:"#c8a830"},{name:"Moscow Mule",hex:"#c8b898"},{name:"Lightning Dust",hex:"#e0d0b0"},
@@ -127,7 +127,7 @@ const MAKEUP: TryProduct[] = [
     image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
     affiliateUrl: amz("Charlotte Tilbury Film Star Bronze Glow"),
     shades:[
-      {name:"Light/Medium",hex:"#c8906858"},{name:"Medium/Dark",hex:"#a87048"},{name:"Fair",hex:"#d8a880"},
+      {name:"Light/Medium",hex:"#c8a870"},{name:"Medium/Dark",hex:"#a87048"},{name:"Fair",hex:"#d8a880"},
     ]},
 ];
 

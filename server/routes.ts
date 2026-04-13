@@ -236,7 +236,8 @@ export async function registerRoutes(httpServer: any, app: Express) {
         log(`File upload received: ${rawBuffer.length} bytes, type=${originalMimetype}`);
       } else if (req.body.imageData) {
         const dataUrl: string = req.body.imageData;
-        const match = dataUrl.match(/^data:(image\/[\w+]+);base64,(.+)$/s);
+        // Note: using [^]* instead of .* with s flag for ES2017 compatibility
+        const match = dataUrl.match(/^data:(image\/[\w+]+);base64,([^]+)$/);
         if (!match) {
           const err = classifyError(new Error("no image"));
           return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });

@@ -34,8 +34,8 @@ const READERS = [
   "ean_8_reader",      // EAN-8  — small products (nail polish, lip balm)
   "upc_reader",        // UPC-A  — US products
   "upc_e_reader",      // UPC-E  — small US products
-  "code_128_reader",   // Code-128 — some professional/pharmacy lines
-];
+  "code_128_reader",   // Code-128 — professional/pharmacy
+] as any;  // cast needed: Quagga types accept strings but the TS types are overly strict
 
 export default function Scanner() {
   const [mode, setMode] = useState<Mode>("choose");
@@ -90,7 +90,6 @@ export default function Scanner() {
         Quagga.init(
           {
             inputStream: {
-              name: "Live",
               type: "LiveStream",
               // Point at the container div — Quagga creates its own <video> inside
               target: mountedRef.current!,

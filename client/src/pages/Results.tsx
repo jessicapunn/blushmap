@@ -206,7 +206,7 @@ function AlternativeCard({ alt, type }: { alt: any; type: "budget" | "luxury" | 
   );
 }
 
-function ProductCard({ rec, index }: { rec: any; index: number }) {
+function ProductCard({ rec, index, user, savedIds, saveProduct }: { rec: any; index: number; user: any; savedIds: Set<string>; saveProduct: (p: any) => void }) {
   const { product, reason, usageTip } = rec;
   const [activeTab, setActiveTab] = useState<AlternativeTab>("our-pick");
   if (!product) return null;
@@ -363,6 +363,10 @@ export default function Results() {
   const params = useParams<{ id: string }>();
   const id = parseInt(params.id || "0");
 
+  // ALL hooks must be declared before any conditional return
+  const { user } = useAuth();
+  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["/api/analysis", id],
     queryFn: async () => {
@@ -378,34 +382,9 @@ export default function Results() {
     enabled: !!id && id > 0,
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--background))" }}>
-        <div className="text-center">
-          <div className="w-16 h-16 rounded-full mx-auto mb-6 skeleton" />
-          <div className="skeleton h-5 w-48 mx-auto mb-3" />
-          <div className="skeleton h-4 w-36 mx-auto" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !data?.skinAnalysis) {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6" style={{ background: "hsl(var(--background))" }}>
-        <div className="text-center max-w-sm">
-          <AlertCircle size={48} className="mx-auto mb-4 text-muted-foreground" />
-          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", marginBottom: "0.5rem" }}>Results not found</h2>
-          <p className="text-muted-foreground text-sm mb-6">We couldn't load your analysis. Please try again.</p>
-          <Link href="/analyse"><Button className="gradient-rose text-white border-0">Try again</Button></Link>
-        </div>
-      </div>
-    );
-  }
-
-  const { skinAnalysis, recommendations, imageData } = data;
-  const { user } = useAuth();
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
+  const skinAnalysis = data?.skinAnalysis;
+  const recommendations = data?.recommendations;
+  const imageData = data?.imageData;
 
   // Auto-save face scan to profile after analysis loads
   useEffect(() => {
@@ -440,6 +419,31 @@ export default function Results() {
       });
       setSavedIds(prev => new Set([...Array.from(prev), p.id || p.name]));
     } catch {}
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(var(--background))" }}>
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-full mx-auto mb-6 skeleton" />
+          <div className="skeleton h-5 w-48 mx-auto mb-3" />
+          <div className="skeleton h-4 w-36 mx-auto" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !skinAnalysis) {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6" style={{ background: "hsl(var(--background))" }}>
+        <div className="text-center max-w-sm">
+          <AlertCircle size={48} className="mx-auto mb-4 text-muted-foreground" />
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", marginBottom: "0.5rem" }}>Results not found</h2>
+          <p className="text-muted-foreground text-sm mb-6">We couldn't load your analysis. Please try again.</p>
+          <Link href="/analyse"><Button className="gradient-rose text-white border-0">Try again</Button></Link>
+        </div>
+      </div>
+    );
   }
 
   const concerns: string[] = skinAnalysis.concerns || [];
@@ -599,7 +603,7 @@ export default function Results() {
 
           <div className="space-y-5">
             {products.map((rec: any, i: number) => (
-              <ProductCard key={rec.productId || i} rec={rec} index={i} />
+              <ProductCard key={rec.productId || i} rec={rec} index={i} user={user} savedIds={savedIds} saveProduct={saveProduct} />
             ))}
           </div>
         </div>
