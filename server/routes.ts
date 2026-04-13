@@ -239,14 +239,14 @@ export async function registerRoutes(httpServer: any, app: Express) {
         const match = dataUrl.match(/^data:(image\/[\w+]+);base64,(.+)$/s);
         if (!match) {
           const err = classifyError(new Error("no image"));
-          return res.status(err.httpStatus).json({ ...err, debugLog });
+          return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
         }
         originalMimetype = match[1];
         rawBuffer = Buffer.from(match[2], "base64");
         log(`Base64 image received: ${rawBuffer.length} bytes, type=${originalMimetype}`);
       } else {
         const err = classifyError(new Error("no image"));
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 2: Preprocess (resize + auto-orient) ──
@@ -261,7 +261,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       } catch (preprocessErr: any) {
         log(`Preprocessing failed: ${preprocessErr.message}`);
         const err = classifyError(new Error("image could not process"));
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 3: Save initial record ──
@@ -296,7 +296,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       } catch (aiErr: any) {
         log(`Claude Vision call failed: ${aiErr.message}`);
         const err = classifyError(aiErr);
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 5: Parse skin analysis ──
@@ -321,7 +321,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       } catch (parseErr: any) {
         log(`Skin analysis parse failed: ${parseErr.message}`);
         const err = classifyError(new Error("parse failed"));
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 6: Product recommendations ──
@@ -337,7 +337,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       } catch (recErr: any) {
         log(`Recommendations call failed: ${recErr.message}`);
         const err = classifyError(recErr);
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 7: Parse recommendations ──
@@ -359,7 +359,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       } catch (parseErr: any) {
         log(`Recommendations parse failed: ${parseErr.message}`);
         const err = classifyError(new Error("parse failed"));
-        return res.status(err.httpStatus).json({ ...err, debugLog });
+        return res.status(err.httpStatus).json({ ...err, ...(process.env.NODE_ENV !== "production" && { debugLog }) });
       }
 
       // ── Step 8: Enrich + save ──
@@ -385,14 +385,17 @@ export async function registerRoutes(httpServer: any, app: Express) {
         skinAnalysis,
         recommendations: { ...recommendations, recommendedProducts: enrichedProducts },
         affiliateDisclosure: "Some links on this page are affiliate links. We may earn a small commission at no extra cost to you.",
-        debugLog,
+        ...(process.env.NODE_ENV !== "production" && { debugLog }),
       });
 
     } catch (err: any) {
       console.error("[BlushMap] Unhandled error:", err);
       debugLog.push(`Unhandled: ${err?.message}`);
       const classified = classifyError(err);
-      res.status(classified.httpStatus).json({ ...classified, debugLog });
+      res.status(classified.httpStatus).json({
+        ...classified,
+        ...(process.env.NODE_ENV !== "production" && { debugLog }),
+      });
     }
   });
 
@@ -457,19 +460,25 @@ export async function registerRoutes(httpServer: any, app: Express) {
   app.get("/api/barcode/:code", async (req, res) => {
     const { code } = req.params;
     try {
-      // Try beauty first, then food
-      let productData: any = null;
+      // Race all three databases in parallel — take the first hit
       const sources = [
         `https://world.openbeautyfacts.org/api/v2/product/${code}.json`,
         `https://world.openfoodfacts.org/api/v2/product/${code}.json`,
         `https://world.openproductsfacts.org/api/v2/product/${code}.json`,
       ];
-      for (const url of sources) {
-        try {
-          const r = await fetch(url, { signal: AbortSignal.timeout(4000) });
-          const d = await r.json() as any;
-          if (d && d.status === 1 && d.product) { productData = d.product; break; }
-        } catch { /* try next */ }
+
+      const tryFetch = async (url: string) => {
+        const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
+        const d = await r.json() as any;
+        if (d?.status === 1 && d.product) return d.product;
+        return null;
+      };
+
+      // Run all in parallel, resolve with first non-null result
+      let productData: any = null;
+      const results = await Promise.allSettled(sources.map(tryFetch));
+      for (const r of results) {
+        if (r.status === "fulfilled" && r.value) { productData = r.value; break; }
       }
 
       if (!productData) {
