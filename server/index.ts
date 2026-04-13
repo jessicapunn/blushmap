@@ -24,6 +24,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// Force no-cache on index.html for ALL paths (prevents CDN/browser caching stale bundles)
+app.use((req, res, next) => {
+  const accept = req.headers["accept"] || "";
+  // Only apply to HTML requests (page loads), not API or asset requests
+  if (!req.path.startsWith("/api") && !req.path.startsWith("/assets") && accept.includes("text/html")) {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.setHeader("Pragma", "no-cache");
+    res.setHeader("Expires", "0");
+    res.setHeader("Surrogate-Control", "no-store"); // Fastly/Varnish
+  }
+  next();
+});
+
 export function log(message: string, source = "express") {
   const t = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit", hour12: true });
   console.log(`${t} [${source}] ${message}`);
