@@ -194,7 +194,17 @@ export async function registerRoutes(httpServer: any, app: Express) {
   });
 
   // Analyse skin from image
-  app.post("/api/analyse", upload.single("image"), async (req, res) => {
+  // Handle both JSON (base64 imageData) and multipart (file upload)
+  const analyseMiddleware = (req: any, res: any, next: any) => {
+    const ct = req.headers["content-type"] || "";
+    if (ct.startsWith("multipart/")) {
+      return upload.single("image")(req, res, next);
+    }
+    // JSON body — already parsed by express.json
+    next();
+  };
+
+  app.post("/api/analyse", analyseMiddleware, async (req, res) => {
     const debugLog: string[] = [];
     const log = (msg: string) => { console.log(`[BlushMap] ${msg}`); debugLog.push(msg); };
 

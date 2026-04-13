@@ -161,18 +161,31 @@ export default function Analyse() {
     }, 1400);
 
     try {
-      const formData = new FormData();
-      formData.append("preferences", JSON.stringify(selectedPrefs));
-      formData.append("captureMethod", captureMode === "live-rgb" ? "live-rgb" : captureMode === "camera" ? "camera" : "upload");
-      formData.append("sessionId", `session_${Date.now()}`);
+      let res: Response;
+      const sessionId = `session_${Date.now()}`;
+      const captureMethodStr = captureMode === "live-rgb" ? "live-rgb" : captureMode === "camera" ? "camera" : "upload";
 
       if (imageFile && captureMode === "upload") {
+        // Real file upload — use multipart so multer can read the file buffer
+        const formData = new FormData();
+        formData.append("preferences", JSON.stringify(selectedPrefs));
+        formData.append("captureMethod", captureMethodStr);
+        formData.append("sessionId", sessionId);
         formData.append("image", imageFile);
+        res = await fetch("/api/analyse", { method: "POST", body: formData });
       } else {
-        formData.append("imageData", imageData);
+        // Base64 data URL — send as JSON to avoid multipart semicolon parsing bug
+        res = await fetch("/api/analyse", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            imageData,
+            preferences: selectedPrefs,
+            captureMethod: captureMethodStr,
+            sessionId,
+          }),
+        });
       }
-
-      const res = await fetch("/api/analyse", { method: "POST", body: formData });
       const data = await res.json();
 
       clearInterval(interval);
