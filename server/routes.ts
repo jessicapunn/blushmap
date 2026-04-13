@@ -159,8 +159,8 @@ ${JSON.stringify(analysis, null, 2)}
 
 USER PREFERENCES: ${preferences.join(", ")}
 
-PRODUCT CATALOG:
-${JSON.stringify(PRODUCT_CATALOG, null, 2)}
+PRODUCT CATALOG (id, name, brand, category, tags, suitableFor, description):
+${JSON.stringify(PRODUCT_CATALOG.map(p => ({ id: p.id, name: p.name, brand: p.brand, category: p.category, tags: p.tags, suitableFor: p.suitableFor, description: p.description })), null, 1)}
 
 Return ONLY valid JSON (no markdown) with this structure:
 {
@@ -275,7 +275,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       try {
         analysisMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
-          max_tokens: 1500,
+          max_tokens: 2500,
           messages: [{
             role: "user",
             content: [
@@ -298,8 +298,20 @@ export async function registerRoutes(httpServer: any, app: Express) {
       let skinAnalysis: any;
       try {
         const rawText = (analysisMsg.content[0] as any).text.trim();
-        const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "");
-        skinAnalysis = JSON.parse(cleaned);
+        const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "").trim();
+        // Try direct parse first
+        try {
+          skinAnalysis = JSON.parse(cleaned);
+        } catch {
+          // Attempt to recover truncated JSON by extracting up to last valid }
+          const lastBrace = cleaned.lastIndexOf("}");
+          if (lastBrace > 0) {
+            const recovered = cleaned.substring(0, lastBrace + 1);
+            skinAnalysis = JSON.parse(recovered);
+          } else {
+            throw new Error("No closing brace found");
+          }
+        }
         log(`Skin analysis parsed OK: tone=${skinAnalysis.skinTone}, type=${skinAnalysis.skinType}`);
       } catch (parseErr: any) {
         log(`Skin analysis parse failed: ${parseErr.message}`);
@@ -327,8 +339,17 @@ export async function registerRoutes(httpServer: any, app: Express) {
       let recommendations: any;
       try {
         const rawText = (recMsg.content[0] as any).text.trim();
-        const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "");
-        recommendations = JSON.parse(cleaned);
+        const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "").trim();
+        try {
+          recommendations = JSON.parse(cleaned);
+        } catch {
+          const lastBrace = cleaned.lastIndexOf("}");
+          if (lastBrace > 0) {
+            recommendations = JSON.parse(cleaned.substring(0, lastBrace + 1));
+          } else {
+            throw new Error("No closing brace found");
+          }
+        }
         log(`Recommendations parsed OK: ${recommendations.recommendedProducts?.length} products`);
       } catch (parseErr: any) {
         log(`Recommendations parse failed: ${parseErr.message}`);
