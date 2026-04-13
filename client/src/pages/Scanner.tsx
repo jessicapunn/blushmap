@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, Camera, Keyboard, Search, Loader2, AlertCircle, ScanLine, Flashlight, ZoomIn } from "lucide-react";
+import { ArrowLeft, Camera, Keyboard, Search, Loader2, AlertCircle, ScanLine, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -8,7 +8,6 @@ type Mode = "choose" | "camera" | "manual";
 
 // ── Quagga2 scan config ──────────────────────────────────────────────────────
 // We try multiple configs in order from most aggressive to most conservative.
-// This handles everything from tiny EAN-8s on lip balm to large UPC-A boxes.
 const SCAN_CONFIGS = [
   // Pass 1 — high frequency, centre crop (most barcodes)
   {
@@ -47,11 +46,10 @@ export default function Scanner() {
   const [configIdx, setConfigIdx] = useState(0);
   const [, setLocation] = useLocation();
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const quaggaRef = useRef<any>(null);
+  // Quagga2 renders into this div — it creates its own <video> inside
   const mountedRef = useRef<HTMLDivElement>(null);
-  const detectedCodesRef = useRef<Record<string, number>>({});  // barcode → hit count
+  const quaggaRef = useRef<any>(null);
+  const detectedCodesRef = useRef<Record<string, number>>({});
   const scanningActiveRef = useRef(false);
   const configTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -67,64 +65,26 @@ export default function Scanner() {
       try { quaggaRef.current.stop(); } catch {}
       quaggaRef.current = null;
     }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(t => t.stop());
-      streamRef.current = null;
-    }
   }, []);
 
-  // ── Start camera stream first, then Quagga ────────────────────────────────
-  const startCamera = async () => {
-    setMode("camera");
-    setError(null);
-    detectedCodesRef.current = {};
-    setConfigIdx(0);
-    setScanStatus("Starting camera…");
-
-    try {
-      // Request rear camera with torchMode constraint if available
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: { ideal: "environment" },
-          width: { ideal: 1920, min: 640 },
-          height: { ideal: 1080, min: 480 },
-          // Focus mode — helps with small barcodes
-          ...(("focusMode" in MediaTrackConstraints.prototype) ? { focusMode: "continuous" } : {}),
-        },
-      });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-      setScanStatus("Point at a barcode");
-      beginQuaggaScan(0);
-    } catch (err: any) {
-      const msg = err?.name === "NotAllowedError"
-        ? "Camera access denied. Please allow camera access and try again, or use manual entry."
-        : "Could not start camera. Try manual entry instead.";
-      setError(msg);
-      setMode("choose");
-    }
-  };
-
-  // ── Init Quagga2 with a given config index ────────────────────────────────
+  // ── Init Quagga2 — it opens the camera itself ─────────────────────────────
   const beginQuaggaScan = useCallback(async (cfgIdx: number) => {
-    if (!scanningActiveRef.current && cfgIdx === 0) scanningActiveRef.current = true;
+    if (cfgIdx === 0) scanningActiveRef.current = true;
     if (!scanningActiveRef.current) return;
+    if (!mountedRef.current) return;
 
-    // Stop any previous Quagga instance before starting a new one
+    // Stop any previous Quagga instance
     if (quaggaRef.current) {
       try { quaggaRef.current.stop(); } catch {}
       quaggaRef.current = null;
     }
 
+    const cfg = SCAN_CONFIGS[cfgIdx] || SCAN_CONFIGS[0];
+    setScanStatus(`Scanning (${cfg.label})…`);
+
     try {
       const Quagga = (await import("@ericblade/quagga2")).default;
       quaggaRef.current = Quagga;
-
-      const cfg = SCAN_CONFIGS[cfgIdx] || SCAN_CONFIGS[0];
-      setScanStatus(`Scanning (${cfg.label})…`);
 
       await new Promise<void>((resolve, reject) => {
         Quagga.init(
@@ -132,11 +92,13 @@ export default function Scanner() {
             inputStream: {
               name: "Live",
               type: "LiveStream",
-              target: videoRef.current ?? undefined,
+              // Point at the container div — Quagga creates its own <video> inside
+              target: mountedRef.current!,
               constraints: {
+                // iOS Safari requires exact "environment" (not {ideal})
                 facingMode: "environment",
-                width: { ideal: 1920 },
-                height: { ideal: 1080 },
+                width: { min: 640, ideal: 1280 },
+                height: { min: 480, ideal: 720 },
               },
               area: cfg.area,
               singleChannel: false,
@@ -153,8 +115,8 @@ export default function Scanner() {
             },
             locate: true,
             locator: {
-              patchSize: "medium",   // "x-small"|"small"|"medium"|"large"|"x-large"
-              halfSample: false,      // Full-res decode — better for small barcodes
+              patchSize: "medium",
+              halfSample: false,
             },
             numOfWorkers: 2,
             frequency: cfg.frequency,
@@ -175,7 +137,6 @@ export default function Scanner() {
         const format = result?.codeResult?.format;
         if (!code || code.length < 6) return;
 
-        // ZXing/Quagga sometimes fires false positives — require 2 matching reads
         detectedCodesRef.current[code] = (detectedCodesRef.current[code] || 0) + 1;
 
         if (detectedCodesRef.current[code] >= 2) {
@@ -188,7 +149,7 @@ export default function Scanner() {
         }
       });
 
-      // After 6 s with no result on this config, rotate to next config
+      // After 6s with no result, rotate to next config
       configTimerRef.current = setTimeout(() => {
         if (!scanningActiveRef.current) return;
         const next = (cfgIdx + 1) % SCAN_CONFIGS.length;
@@ -199,11 +160,32 @@ export default function Scanner() {
 
     } catch (err: any) {
       console.error("[Scanner] Quagga init failed:", err);
-      // Quagga failed — fall back to ZXing (legacy path)
-      setError("Camera scanner couldn't start. Please use manual entry.");
+      const msg = err?.name === "NotAllowedError"
+        ? "Camera access denied. Please allow camera access and try again, or use manual entry."
+        : `Could not start camera (${err?.name ?? "unknown error"}). Please use manual entry.`;
+      setError(msg);
       setMode("choose");
     }
   }, [stopCamera]);
+
+  // ── Start scanning ────────────────────────────────────────────────────────
+  const startCamera = () => {
+    setMode("camera");
+    setError(null);
+    detectedCodesRef.current = {};
+    setConfigIdx(0);
+    setScanStatus("Starting camera…");
+    // beginQuaggaScan is called after the camera view mounts (see useEffect below)
+  };
+
+  // Start Quagga once the camera div is mounted in the DOM
+  useEffect(() => {
+    if (mode === "camera") {
+      // Small delay to ensure the div is rendered and attached
+      const t = setTimeout(() => beginQuaggaScan(0), 150);
+      return () => clearTimeout(t);
+    }
+  }, [mode, beginQuaggaScan]);
 
   // ── Handle a confirmed code ───────────────────────────────────────────────
   const handleCode = async (code: string) => {
@@ -375,13 +357,11 @@ export default function Scanner() {
               {/* Config progress indicators */}
               <ConfigPills />
 
-              {/* Video element — Quagga attaches to this */}
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                muted
-                playsInline
-                autoPlay
+              {/* Quagga2 renders its own <video> into this div */}
+              <div
+                ref={mountedRef}
+                className="w-full h-full"
+                style={{ position: "relative" }}
               />
 
               {/* Scan window overlay */}
@@ -390,8 +370,6 @@ export default function Scanner() {
                 <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.35)" }} />
                 {/* Clear window */}
                 <div className="relative z-10" style={{ width: "78%", height: "38%" }}>
-                  {/* Cutout */}
-                  <div className="absolute inset-0 rounded-lg" style={{ background: "transparent", boxShadow: "0 0 0 9999px rgba(0,0,0,0.35)" }} />
                   {/* Animated scan line */}
                   <div
                     className="absolute left-2 right-2 h-0.5 rounded-full"
@@ -501,6 +479,15 @@ export default function Scanner() {
           0%   { transform: translateY(-12px); opacity: 0.5; }
           50%  { transform: translateY(12px);  opacity: 1; }
           100% { transform: translateY(-12px); opacity: 0.5; }
+        }
+        /* Quagga renders a canvas overlay — make sure it fills the container */
+        #interactive.viewport canvas,
+        #interactive.viewport video {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: cover;
+          position: absolute;
+          top: 0; left: 0;
         }
       `}</style>
     </div>
