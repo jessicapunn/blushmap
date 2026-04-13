@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { NavBar } from "@/components/NavBar";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, ShoppingCart, Star, Sparkles, TrendingUp, Zap, X } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, ShoppingCart, Star, Sparkles, TrendingUp, Zap, X, CheckCircle, Banknote, Crown, Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -39,19 +39,123 @@ const CATEGORIES = [
   { label: "Blush",         value: "blush" },
 ];
 
-function ProductCard({ product }: { product: any }) {
+// ── Product Quick-View Modal ───────────────────────────────────────────────────
+function ProductQuickView({ product, onClose }: { product: any; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  if (!product) return null;
+  const alts = product.alternatives || {};
+
   return (
-    <Link href={`/product/${product.id}`}>
-    <div className="rounded-2xl border overflow-hidden card-hover relative cursor-pointer" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
+    <div
+      className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: "rgba(0,0,0,0.52)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="relative w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl"
+        style={{ background: "#fff8f9", maxHeight: "90vh", overflowY: "auto" }}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center hover:bg-pink-50 transition-colors" style={{ border: "1.5px solid #f0ccd6", color: "#9b6674" }}>
+          <X size={15} />
+        </button>
+        <div className="w-full h-52 sm:h-64 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+        <div className="p-6">
+          <p className="text-xs font-bold tracking-widest mb-1" style={{ color: "#c9944a", letterSpacing: "0.14em" }}>{product.brand}</p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", lineHeight: 1.2, color: "#1a0a0e", marginBottom: "0.5rem" }}>{product.name}</h2>
+          <p className="text-2xl font-bold mb-3" style={{ color: "#c9506e", fontFamily: "var(--font-display)" }}>{product.price}</p>
+          <p className="text-sm leading-relaxed mb-5" style={{ color: "#5a3a42" }}>{product.description}</p>
+
+          {product.keyIngredients?.length > 0 && (
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#c9506e", letterSpacing: "0.12em" }}>Key Ingredients</p>
+              <div className="space-y-2">
+                {product.keyIngredients.map((ing: any, i: number) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <CheckCircle size={13} style={{ color: "#4a9b6a", flexShrink: 0, marginTop: 2 }} />
+                    <div>
+                      <span className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{ing.name}</span>
+                      {ing.benefit && <span className="text-xs text-muted-foreground ml-1.5">— {ing.benefit}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {(alts.budget || alts.luxury || alts.organic) && (
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#c9506e", letterSpacing: "0.12em" }}>Alternatives</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {alts.budget && (
+                  <a href={alts.budget.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(130 25% 97%)", borderColor: "hsl(var(--border))" }}>
+                    <div className="flex items-center gap-1 mb-1"><Banknote size={11} style={{ color: "#4a9b6a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#4a9b6a" }}>Budget</span></div>
+                    <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.budget.name}</p>
+                    <p className="text-xs text-muted-foreground">{alts.budget.brand} · {alts.budget.price}</p>
+                  </a>
+                )}
+                {alts.luxury && (
+                  <a href={alts.luxury.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(36 40% 97%)", borderColor: "hsl(var(--border))" }}>
+                    <div className="flex items-center gap-1 mb-1"><Crown size={11} style={{ color: "#c9944a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#c9944a" }}>Luxury</span></div>
+                    <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.luxury.name}</p>
+                    <p className="text-xs text-muted-foreground">{alts.luxury.brand} · {alts.luxury.price}</p>
+                  </a>
+                )}
+                {alts.organic && (
+                  <a href={alts.organic.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(145 25% 97%)", borderColor: "hsl(var(--border))" }}>
+                    <div className="flex items-center gap-1 mb-1"><Leaf size={11} style={{ color: "#5a8a5a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#5a8a5a" }}>Organic</span></div>
+                    <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.organic.name}</p>
+                    <p className="text-xs text-muted-foreground">{alts.organic.brand} · {alts.organic.price}</p>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a href={product.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+              style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+              <ShoppingBag size={15} /> Buy now <ExternalLink size={12} />
+            </a>
+            <Link href={`/product/${product.id}`}>
+              <button onClick={onClose} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all hover:bg-pink-50"
+                style={{ border: "1.5px solid #f0ccd6", color: "#c9506e", background: "white" }}>
+                Full details
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductCard({ product, onQuickView }: { product: any; onQuickView: (p: any) => void }) {
+  return (
+    <div
+      className="rounded-2xl border overflow-hidden card-hover relative cursor-pointer"
+      style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}
+      onClick={() => onQuickView(product)}
+    >
       {product.bestSeller && (
         <div className="ribbon-bestseller">Best Seller</div>
       )}
       {product.newIn && !product.bestSeller && (
         <div className="ribbon-bestseller" style={{ background: "#7c3aed" }}>New In</div>
       )}
-      <div className="h-36 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 92%))" }}>
+      <div className="h-36 overflow-hidden relative" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 92%))" }}>
         <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80" loading="lazy"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style={{ background: "rgba(201,80,110,0.12)" }}>
+          <span className="text-xs font-semibold bg-white/90 px-2.5 py-1 rounded-full" style={{ color: "#c9506e" }}>Quick view</span>
+        </div>
       </div>
       <div className="p-4">
         <p className="text-xs mb-0.5" style={{ color: "var(--color-gold)", fontWeight: 600 }}>{product.brand}</p>
@@ -74,13 +178,13 @@ function ProductCard({ product }: { product: any }) {
             rel="noopener noreferrer sponsored"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "var(--color-rose)" }}
+            onClick={e => e.stopPropagation()}
           >
             <ShoppingBag size={11} /> Buy <ExternalLink size={9} />
           </a>
         </div>
       </div>
     </div>
-    </Link>
   );
 }
 
@@ -91,6 +195,7 @@ export default function SearchPage() {
   const [bestseller, setBestseller] = useState(false);
   const [newIn, setNewIn] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
 
   // Build API params
   const params = new URLSearchParams();
@@ -241,7 +346,7 @@ export default function SearchPage() {
         ) : results.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {results.map((p: any) => (
-              <ProductCard key={p.id} product={p} />
+              <ProductCard key={p.id} product={p} onQuickView={setQuickViewProduct} />
             ))}
           </div>
         ) : hasFilters ? (
@@ -290,16 +395,17 @@ export default function SearchPage() {
                   View all <ExternalLink size={12} />
                 </button>
               </div>
-              <BestSellerPreview />
+              <BestSellerPreview onQuickView={setQuickViewProduct} />
             </div>
           </div>
         )}
       </main>
+      {quickViewProduct && <ProductQuickView product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />}
     </div>
   );
 }
 
-function BestSellerPreview() {
+function BestSellerPreview({ onQuickView }: { onQuickView: (p: any) => void }) {
   const { data, isLoading } = useQuery({
     queryKey: ["/api/search", "bestseller"],
     queryFn: async () => {
@@ -322,7 +428,7 @@ function BestSellerPreview() {
   const products = (data?.results || []).slice(0, 4);
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {products.map((p: any) => <ProductCard key={p.id} product={p} />)}
+      {products.map((p: any) => <ProductCard key={p.id} product={p} onQuickView={onQuickView} />)}
     </div>
   );
 }

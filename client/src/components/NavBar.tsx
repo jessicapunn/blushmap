@@ -54,21 +54,17 @@ const BANNERS = [
 
 function AnnouncementBanner({ onOpenAuth }: { onOpenAuth: () => void }) {
   const [idx, setIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
+  const [animating, setAnimating] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  function startInterval() {
+  useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setVisible(false);
+      setAnimating(true);
       setTimeout(() => {
         setIdx(i => (i + 1) % BANNERS.length);
-        setVisible(true);
-      }, 300);
-    }, 4000);
-  }
-
-  useEffect(() => {
-    startInterval();
+        setAnimating(false);
+      }, 350);
+    }, 4200);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, []);
 
@@ -83,24 +79,25 @@ function AnnouncementBanner({ onOpenAuth }: { onOpenAuth: () => void }) {
 
   return (
     <div
-      className="w-full flex items-center justify-center gap-2 px-4 py-1.5 text-white relative overflow-hidden"
-      style={{ background: banner.bg, minHeight: "32px", transition: "background 0.4s ease" }}
+      className="w-full flex items-center justify-center gap-2 px-4 text-white relative overflow-hidden"
+      style={{ background: banner.bg, minHeight: "30px", transition: "background 0.5s ease" }}
     >
       <a
         href={banner.isSignup ? "#" : banner.href}
         target={banner.isSignup ? undefined : "_blank"}
         rel="noopener noreferrer"
         onClick={handleClick}
-        className="flex items-center gap-2 no-underline"
+        className="flex items-center gap-2 no-underline py-1.5"
         style={{
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(-4px)",
-          transition: "opacity 0.28s ease, transform 0.28s ease",
+          opacity: animating ? 0 : 1,
+          transform: animating ? "translateX(40px)" : "translateX(0)",
+          transition: "opacity 0.32s ease, transform 0.32s ease",
+          whiteSpace: "nowrap",
         }}
       >
         <span className="text-[11px] font-medium tracking-wide">{banner.text}</span>
         <span
-          className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+          className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0"
           style={{ background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.3)" }}
         >
           {banner.cta}

@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "@/lib/auth";
 import { Link } from "wouter";
 import {
   ScanLine, Sparkles, Star, CheckCircle, AlertTriangle, Leaf,
   Crown, Banknote, ExternalLink, ShoppingBag, Tag, Mail, X, Loader2,
+  ChevronLeft, ChevronRight, Heart, ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -122,6 +123,273 @@ function EmailSignupModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ── Beauty Carousel ──────────────────────────────────────────────────────────
+const CAROUSEL_SLIDES = [
+  {
+    id: 1,
+    image: "https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=1200&q=85&fit=crop",
+    label: "Radiant skin, every shade",
+    sub: "Deep skin tones",
+  },
+  {
+    id: 2,
+    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1200&q=85&fit=crop",
+    label: "Your natural glow",
+    sub: "Skincare routines",
+  },
+  {
+    id: 3,
+    image: "https://images.unsplash.com/photo-1619451334792-150fd785ee74?w=1200&q=85&fit=crop",
+    label: "Bold. Beautiful. You.",
+    sub: "Makeup artistry",
+  },
+  {
+    id: 4,
+    image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=1200&q=85&fit=crop",
+    label: "Clean beauty essentials",
+    sub: "Light skin tones",
+  },
+  {
+    id: 5,
+    image: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1200&q=85&fit=crop",
+    label: "Glow from within",
+    sub: "Diverse beauty",
+  },
+  {
+    id: 6,
+    image: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=85&fit=crop",
+    label: "Effortless elegance",
+    sub: "Editorial looks",
+  },
+];
+
+function BeautyCarousel() {
+  const [current, setCurrent] = useState(0);
+  const [transitioning, setTransitioning] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const total = CAROUSEL_SLIDES.length;
+
+  const goTo = useCallback((next: number) => {
+    if (transitioning) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setCurrent(next);
+      setTransitioning(false);
+    }, 320);
+  }, [transitioning]);
+
+  const prev = () => goTo((current - 1 + total) % total);
+  const next = useCallback(() => goTo((current + 1) % total), [current, goTo, total]);
+
+  useEffect(() => {
+    timerRef.current = setInterval(next, 5000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [next]);
+
+  const slide = CAROUSEL_SLIDES[current];
+
+  return (
+    <section className="relative overflow-hidden" style={{ height: "clamp(280px, 40vw, 520px)" }}>
+      {/* Image */}
+      <img
+        src={slide.image}
+        alt={slide.label}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          opacity: transitioning ? 0 : 1,
+          transform: transitioning ? "scale(1.03)" : "scale(1)",
+          transition: "opacity 0.4s ease, transform 0.4s ease",
+        }}
+        loading="eager"
+      />
+      {/* Overlay */}
+      <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,10,14,0.68) 0%, rgba(26,10,14,0.1) 55%, transparent 100%)" }} />
+
+      {/* Text */}
+      <div
+        className="absolute bottom-0 left-0 right-0 px-6 pb-8 md:px-12"
+        style={{
+          opacity: transitioning ? 0 : 1,
+          transform: transitioning ? "translateY(8px)" : "translateY(0)",
+          transition: "opacity 0.35s ease 0.1s, transform 0.35s ease 0.1s",
+        }}
+      >
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#e8a0b0", letterSpacing: "0.16em" }}>{slide.sub}</p>
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 3.5vw, 2.8rem)", color: "white", lineHeight: 1.1 }}>{slide.label}</h2>
+      </div>
+
+      {/* Prev / Next */}
+      <button
+        onClick={prev}
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+        style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)", color: "white" }}
+        aria-label="Previous"
+      >
+        <ChevronLeft size={17} />
+      </button>
+      <button
+        onClick={next}
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+        style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.3)", color: "white" }}
+        aria-label="Next"
+      >
+        <ChevronRight size={17} />
+      </button>
+
+      {/* Dots */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+        {CAROUSEL_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className="rounded-full transition-all"
+            style={{
+              width: i === current ? 20 : 6,
+              height: 6,
+              background: i === current ? "white" : "rgba(255,255,255,0.45)",
+            }}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ── Product Quick-View Modal ───────────────────────────────────────────────────
+function ProductQuickView({ product, onClose }: { product: any; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [onClose]);
+
+  if (!product) return null;
+  const alts = product.alternatives || {};
+
+  return (
+    <div
+      className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4"
+      style={{ background: "rgba(0,0,0,0.52)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="relative w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl"
+        style={{ background: "#fff8f9", maxHeight: "90vh", overflowY: "auto" }}
+      >
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-pink-50"
+          style={{ border: "1.5px solid #f0ccd6", color: "#9b6674" }}
+        >
+          <X size={15} />
+        </button>
+
+        {/* Image */}
+        <div className="w-full h-52 sm:h-64 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
+          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+        </div>
+
+        <div className="p-6">
+          {/* Brand / name */}
+          <p className="text-xs font-bold tracking-widest mb-1" style={{ color: "var(--color-gold)", letterSpacing: "0.14em" }}>{product.brand}</p>
+          <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", lineHeight: 1.2, color: "#1a0a0e", marginBottom: "0.5rem" }}>{product.name}</h2>
+          <p className="text-2xl font-bold mb-3" style={{ color: "var(--color-rose)", fontFamily: "var(--font-display)" }}>{product.price}</p>
+
+          {/* Description */}
+          <p className="text-sm leading-relaxed mb-5" style={{ color: "#5a3a42" }}>{product.description}</p>
+
+          {/* Key ingredients */}
+          {product.keyIngredients?.length > 0 && (
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Key Ingredients</p>
+              <div className="space-y-2">
+                {product.keyIngredients.map((ing: any, i: number) => (
+                  <div key={i} className="flex gap-3 items-start">
+                    <CheckCircle size={13} style={{ color: "#4a9b6a", flexShrink: 0, marginTop: 2 }} />
+                    <div>
+                      <span className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{ing.name}</span>
+                      {ing.benefit && <span className="text-xs text-muted-foreground ml-1.5">— {ing.benefit}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Alternatives */}
+          {(alts.budget || alts.luxury || alts.organic) && (
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>Alternatives</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {alts.budget && (
+                  <a href={alts.budget.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+                    className="rounded-xl border p-3 block hover:border-green-300 transition-colors"
+                    style={{ borderColor: "hsl(var(--border))", background: "hsl(130 25% 97%)" }}>
+                    <div className="flex items-center gap-1 mb-1">
+                      <Banknote size={11} style={{ color: "#4a9b6a" }} />
+                      <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "#4a9b6a" }}>Budget</span>
+                    </div>
+                    <p className="text-xs font-semibold leading-snug" style={{ color: "#1a0a0e" }}>{alts.budget.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{alts.budget.brand} · {alts.budget.price}</p>
+                  </a>
+                )}
+                {alts.luxury && (
+                  <a href={alts.luxury.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+                    className="rounded-xl border p-3 block hover:border-amber-300 transition-colors"
+                    style={{ borderColor: "hsl(var(--border))", background: "hsl(36 40% 97%)" }}>
+                    <div className="flex items-center gap-1 mb-1">
+                      <Crown size={11} style={{ color: "#c9944a" }} />
+                      <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "#c9944a" }}>Luxury</span>
+                    </div>
+                    <p className="text-xs font-semibold leading-snug" style={{ color: "#1a0a0e" }}>{alts.luxury.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{alts.luxury.brand} · {alts.luxury.price}</p>
+                  </a>
+                )}
+                {alts.organic && (
+                  <a href={alts.organic.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+                    className="rounded-xl border p-3 block hover:border-emerald-300 transition-colors"
+                    style={{ borderColor: "hsl(var(--border))", background: "hsl(145 25% 97%)" }}>
+                    <div className="flex items-center gap-1 mb-1">
+                      <Leaf size={11} style={{ color: "#5a8a5a" }} />
+                      <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "#5a8a5a" }}>Organic</span>
+                    </div>
+                    <p className="text-xs font-semibold leading-snug" style={{ color: "#1a0a0e" }}>{alts.organic.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{alts.organic.brand} · {alts.organic.price}</p>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Buy CTA */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href={product.affiliateUrl}
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-semibold text-sm transition-opacity hover:opacity-90"
+              style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
+            >
+              <ShoppingBag size={15} /> Buy now <ExternalLink size={12} />
+            </a>
+            <Link href={`/product/${product.id}`}>
+              <button
+                onClick={onClose}
+                className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all hover:bg-pink-50"
+                style={{ border: "1.5px solid #f0ccd6", color: "var(--color-rose)", background: "white" }}
+              >
+                Full details
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Offers ────────────────────────────────────────────────────────────────────
 const OFFERS = [
   { id: 1, brand: "LOOKFANTASTIC", title: "Up to 30% off skincare", badge: "30% OFF", badgeColor: "#c9506e", url: "https://www.lookfantastic.com/sale.list?affil=blushmap", concern: "all skin types" },
@@ -132,7 +400,7 @@ const OFFERS = [
   { id: 6, brand: "FEELUNIQUE",    title: "SPF essentials edit",      badge: "SPF50+",  badgeColor: "#ea580c", url: "https://www.feelunique.com/c/Sun-Protection?affil=blushmap", concern: "daily sun protection" },
 ];
 
-function BestSellerStrip() {
+function BestSellerStrip({ onQuickView }: { onQuickView: (p: any) => void }) {
   const { data } = useQuery({
     queryKey: ["/api/search", "bestseller-strip"],
     queryFn: async () => {
@@ -140,25 +408,39 @@ function BestSellerStrip() {
       return res.json();
     },
   });
-  const products = (data?.results || []).slice(0, 5);
+  const products = (data?.results || []).slice(0, 6);
   if (!products.length) return null;
 
   return (
     <div className="overflow-x-auto pb-1 scrollbar-hide -mx-6 px-6">
       <div className="flex gap-4" style={{ width: "max-content" }}>
         {products.map((p: any) => (
-          <div key={p.id} className="w-48 rounded-2xl border overflow-hidden card-hover shrink-0" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
-            <div className="h-28 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
+          <div
+            key={p.id}
+            className="w-48 rounded-2xl border overflow-hidden card-hover shrink-0 cursor-pointer"
+            style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}
+            onClick={() => onQuickView(p)}
+          >
+            <div className="h-28 overflow-hidden relative" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
               <img src={p.image} alt={p.name} className="w-full h-full object-cover opacity-80" loading="lazy"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style={{ background: "rgba(201,80,110,0.15)" }}>
+                <span className="text-xs font-semibold bg-white/90 px-2.5 py-1 rounded-full" style={{ color: "var(--color-rose)" }}>Quick view</span>
+              </div>
             </div>
             <div className="p-3">
               <p className="text-xs font-semibold mb-0.5" style={{ color: "var(--color-gold)" }}>{p.brand}</p>
               <p className="text-xs font-semibold leading-snug mb-2 line-clamp-2" style={{ fontFamily: "var(--font-display)" }}>{p.name}</p>
               <div className="flex items-center justify-between">
                 <span className="text-sm font-bold" style={{ color: "var(--color-rose)" }}>{p.price}</span>
-                <a href={p.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
-                  className="text-xs px-2 py-1 rounded-full text-white" style={{ background: "var(--color-rose)" }}>
+                <a
+                  href={p.affiliateUrl}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  className="text-xs px-2 py-1 rounded-full text-white"
+                  style={{ background: "var(--color-rose)" }}
+                  onClick={e => e.stopPropagation()}
+                >
                   <ShoppingBag size={10} className="inline" />
                 </a>
               </div>
@@ -179,6 +461,7 @@ const TESTIMONIALS = [
 export default function Home() {
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [quickViewProduct, setQuickViewProduct] = useState<any>(null);
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   return (
@@ -248,6 +531,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Beauty Carousel ── */}
+      <BeautyCarousel />
+
       {/* ── Best Sellers ── */}
       <section className="py-14 px-6 border-b" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
         <div className="max-w-7xl mx-auto">
@@ -260,7 +546,7 @@ export default function Home() {
               <span className="text-sm font-semibold" style={{ color: "var(--color-rose)" }}>View all →</span>
             </Link>
           </div>
-          <BestSellerStrip />
+          <BestSellerStrip onQuickView={setQuickViewProduct} />
         </div>
       </section>
 
@@ -491,6 +777,7 @@ export default function Home() {
       </footer>
 
       {showSignup && <EmailSignupModal onClose={() => setShowSignup(false)} />}
+      {quickViewProduct && <ProductQuickView product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />}
     </div>
   );
 }
