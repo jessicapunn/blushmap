@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { NavBar } from "@/components/NavBar";
+import { BlushMapLogoInline } from "@/components/BlushMapLogo";
 
 
 // ── Email signup modal ────────────────────────────────────────────────────────
