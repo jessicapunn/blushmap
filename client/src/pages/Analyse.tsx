@@ -31,6 +31,7 @@ export default function Analyse() {
   const [imageData, setImageData] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [selectedPrefs, setSelectedPrefs] = useState<string[]>([]);
+  const [focus, setFocus] = useState<"skincare" | "makeup" | "both">("skincare");
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [progressMsg, setProgressMsg] = useState("Initialising...");
   const [videoReady, setVideoReady] = useState(false);
@@ -191,6 +192,7 @@ export default function Analyse() {
       if (imageFile && captureMode === "upload") {
         const formData = new FormData();
         formData.append("preferences", JSON.stringify(selectedPrefs));
+        formData.append("focus", focus);
         formData.append("captureMethod", "upload");
         formData.append("sessionId", sessionId);
         formData.append("image", imageFile);
@@ -202,6 +204,7 @@ export default function Analyse() {
           body: JSON.stringify({
             imageData,
             preferences: selectedPrefs,
+            focus,
             captureMethod: captureMode === "live-rgb" ? "live-rgb" : "camera",
             sessionId,
           }),
@@ -441,9 +444,37 @@ export default function Analyse() {
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.4rem, 3vw, 1.8rem)", marginBottom: "0.4rem" }}>
               What matters to you?
             </h2>
-            <p className="text-muted-foreground text-sm mb-6">
-              Select any preferences to filter your recommendations. Skip to get general picks.
+            <p className="text-muted-foreground text-sm mb-7">
+              Tell us what you'd like recommendations for, then refine with any preferences below.
             </p>
+
+            {/* Focus selector */}
+            <div className="mb-7">
+              <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: "#9b6674", letterSpacing: "0.1em" }}>I want recommendations for</p>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { key: "skincare", label: "Skincare", emoji: "✨", desc: "Serums, SPF, moisturisers" },
+                  { key: "makeup",   label: "Makeup",   emoji: "💄", desc: "Foundation, blush, lips" },
+                  { key: "both",     label: "Both",     emoji: "🌟", desc: "Full routine" },
+                ] as const).map(opt => (
+                  <button
+                    key={opt.key}
+                    onClick={() => setFocus(opt.key)}
+                    className="flex flex-col items-center gap-1.5 px-3 py-4 rounded-2xl border text-center transition-all"
+                    style={{
+                      background: focus === opt.key ? "var(--color-rose)" : "hsl(var(--card))",
+                      borderColor: focus === opt.key ? "var(--color-rose)" : "hsl(var(--border))",
+                      color: focus === opt.key ? "white" : "hsl(var(--foreground))",
+                      boxShadow: focus === opt.key ? "0 4px 18px rgba(201,80,110,0.22)" : "none",
+                    }}
+                  >
+                    <span style={{ fontSize: "1.4rem" }}>{opt.emoji}</span>
+                    <span className="text-sm font-semibold">{opt.label}</span>
+                    <span className="text-xs opacity-70 leading-tight">{opt.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="flex flex-wrap gap-2.5 mb-8">
               {PREFERENCES.map(pref => {

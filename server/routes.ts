@@ -151,34 +151,48 @@ Analyse the face image and return ONLY valid JSON (no markdown, no code blocks) 
 
 Only include concerns that are visibly present. Return ONLY the JSON object.`;
 
-function buildRecommendationPrompt(analysis: any, preferences: string[]): string {
-  return `You are a professional makeup artist and skincare consultant. Based on this skin analysis and user preferences, select the most appropriate products from the provided catalog.
+function buildRecommendationPrompt(analysis: any, preferences: string[], focus: string): string {
+  const focusInstruction = focus === "skincare"
+    ? "FOCUS: Recommend SKINCARE products only (cleansers, serums, moisturisers, SPF, treatments). Do NOT recommend makeup products."
+    : focus === "makeup"
+    ? "FOCUS: Recommend MAKEUP products only (foundation, concealer, blush, lip, eye). Do NOT recommend skincare products."
+    : "FOCUS: Recommend a balanced mix — prioritise skincare first (60%), then makeup (40%) to complement their skin profile.";
+
+  return `You are an expert dermatologist-trained beauty consultant and makeup artist. Your recommendations must be deeply personalised — reference specific details from the skin analysis in every reason and tip.
+
+${focusInstruction}
 
 SKIN ANALYSIS:
 ${JSON.stringify(analysis, null, 2)}
 
-USER PREFERENCES: ${preferences.join(", ")}
+USER PREFERENCES: ${preferences.length ? preferences.join(", ") : "none specified"}
 
-PRODUCT CATALOG (id, name, brand, category, tags, suitableFor, description):
+PRODUCT CATALOG:
 ${JSON.stringify(PRODUCT_CATALOG.map(p => ({ id: p.id, name: p.name, brand: p.brand, category: p.category, tags: p.tags, suitableFor: p.suitableFor, description: p.description })), null, 1)}
 
-Return ONLY valid JSON (no markdown) with this structure:
+RULES:
+1. Select 5-7 products strictly matching the FOCUS above.
+2. Every "reason" must mention AT LEAST ONE specific detail from their analysis (e.g. their exact skin type, a named zone, a concern, their undertone, or luminosity level). Never write generic reasons.
+3. "usageTip" must be actionable and tailored (e.g. "Apply to your T-zone and chin only — your cheeks are dry and don't need it").
+4. "routineOrder" must reflect the correct application order for their focus (skincare: cleanse → treat → moisturise → SPF; makeup: primer → base → eyes → lips → blush → setting).
+5. "skinSummary" must read like a personalised consultation note — name their skin type, undertone, top 2 concerns, and the overall condition observed.
+6. "topConcernToAddress" must be the single highest-priority issue for their specific profile.
+
+Return ONLY valid JSON (no markdown, no code blocks):
 {
   "recommendedProducts": [
     {
       "productId": "p1",
       "priority": 1,
-      "reason": "Why this product suits their specific skin profile",
+      "reason": "Specific personalised reason referencing their analysis details",
       "applicationZone": "which face zone to apply",
-      "usageTip": "specific application tip for their skin type"
+      "usageTip": "Personalised application tip for their exact skin profile"
     }
   ],
-  "routineOrder": ["step1 product name", "step2", "step3"],
-  "skinSummary": "2-3 sentence plain English summary of their skin profile",
-  "topConcernToAddress": "the single most important skin concern to tackle first"
-}
-
-Select 4-7 products. Prioritise by impact. Match to user preferences when possible. Return ONLY the JSON.`;
+  "routineOrder": ["step1", "step2", "step3"],
+  "skinSummary": "Personalised 2-3 sentence consultation note about their skin",
+  "topConcernToAddress": "Single most important concern for this profile"
+}`;
 }
 
 // ---------- Routes ----------
@@ -222,6 +236,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         if (Array.isArray(p)) return p;
         try { return JSON.parse(p); } catch { return []; }
       })();
+      const focus: string = req.body.focus || "skincare"; // default to skincare-first
       const captureMethod: string = req.body.captureMethod || "upload";
       const sessionId = req.body.sessionId || `session_${Date.now()}`;
       log(`captureMethod=${captureMethod}, preferences=${preferences.join(",")}`);
@@ -332,7 +347,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         recMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
           max_tokens: 2000,
-          messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences) }],
+          messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences, focus) }],
         });
         log("Recommendations response received");
       } catch (recErr: any) {
