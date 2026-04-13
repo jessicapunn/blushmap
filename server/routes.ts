@@ -497,8 +497,9 @@ export async function registerRoutes(httpServer: any, app: Express) {
   app.post("/api/score-ingredients", async (req, res) => {
     const { productName, brand, ingredientsText, barcode } = req.body;
 
-    if (!ingredientsText && !productName) {
-      return res.status(400).json({ error: "ingredientsText or productName required" });
+    // Allow scoring with barcode alone — Claude will do best-effort analysis
+    if (!ingredientsText && !productName && !barcode) {
+      return res.status(400).json({ error: "At least a barcode, product name, or ingredients are required" });
     }
 
     try {

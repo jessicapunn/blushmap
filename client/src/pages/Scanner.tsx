@@ -207,7 +207,10 @@ export default function Scanner() {
         }),
       });
 
-      if (!scoreRes.ok) throw new Error("Scoring failed");
+      if (!scoreRes.ok) {
+        const errBody = await scoreRes.json().catch(() => ({}));
+        throw new Error(errBody?.detail || errBody?.error || "Scoring failed");
+      }
       const scoreData = await scoreRes.json();
 
       const payload = { ...scoreData, barcode: code, productImage: product?.image ?? null };
