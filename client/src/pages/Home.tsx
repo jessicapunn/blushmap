@@ -1,89 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { useAuth } from "@/lib/auth";
+import { AuthModal } from "@/components/AuthModal";
+import { BlushMapLogoInline } from "@/components/BlushMapLogo";
 import { Link } from "wouter";
-import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag, Mail, X, Loader2 } from "lucide-react";
+import { ArrowRight, Search, ScanLine, Sparkles, ShieldCheck, Star, CheckCircle, AlertTriangle, Leaf, Crown, Banknote, Users, ExternalLink, ShoppingBag, Zap, TrendingUp, Tag, Mail, X, Loader2, User as UserIcon, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
-// ── BlushMap constellation face logo ─────────────────────────────────────────
-// Inspired by: line-art face profile overlaid with constellation map + gold star nodes
-// The face outline is a minimal side profile; constellation points map the face zones
-function BlushMapLogo({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 56 72" fill="none" aria-label="BlushMap">
-      {/* ── Face outline (minimal line-art side profile) ── */}
-      <path
-        d="M28 4 C20 4 15 10 14 17 C13 22 14 26 13 30 C12 35 11 39 13 44 C15 50 20 54 26 56 C29 57 31 56 32 54"
-        stroke="#c9944a" strokeWidth="0.9" fill="none" strokeLinecap="round" opacity="0.45"
-      />
-      {/* Eye / brow suggestion */}
-      <path d="M19 24 C21 22 24 22 26 24" stroke="#c9944a" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.5"/>
-      {/* Lip suggestion */}
-      <path d="M21 48 C23 50 26 50 28 48" stroke="#c9944a" strokeWidth="0.8" fill="none" strokeLinecap="round" opacity="0.45"/>
-
-      {/* ── Constellation lines connecting face-mapping points ── */}
-      <line x1="22" y1="10" x2="30" y2="8"  stroke="#c9944a" strokeWidth="0.75" opacity="0.6" strokeLinecap="round"/>
-      <line x1="30" y1="8"  x2="38" y2="14" stroke="#c9944a" strokeWidth="0.75" opacity="0.6" strokeLinecap="round"/>
-      <line x1="38" y1="14" x2="36" y2="22" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
-      <line x1="36" y1="22" x2="28" y2="20" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
-      <line x1="28" y1="20" x2="22" y2="10" stroke="#c9944a" strokeWidth="0.75" opacity="0.5" strokeLinecap="round"/>
-      <line x1="28" y1="20" x2="30" y2="30" stroke="#c9944a" strokeWidth="0.7"  opacity="0.45" strokeLinecap="round"/>
-      <line x1="30" y1="30" x2="36" y2="22" stroke="#c9944a" strokeWidth="0.7"  opacity="0.45" strokeLinecap="round"/>
-      <line x1="30" y1="30" x2="24" y2="36" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
-      <line x1="24" y1="36" x2="18" y2="30" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
-      <line x1="18" y1="30" x2="28" y2="20" stroke="#c9944a" strokeWidth="0.7"  opacity="0.4" strokeLinecap="round"/>
-      <line x1="24" y1="36" x2="26" y2="46" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
-      <line x1="26" y1="46" x2="32" y2="42" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
-      <line x1="32" y1="42" x2="30" y2="30" stroke="#c9944a" strokeWidth="0.65" opacity="0.35" strokeLinecap="round"/>
-
-      {/* ── Star nodes — gold burst rings + solid cores ── */}
-      {/* Crown top — Castor-like bright star */}
-      <circle cx="30" cy="8"  r="4.5" fill="#c9944a" opacity="0.1"/>
-      <circle cx="30" cy="8"  r="2.8" fill="#c9944a" opacity="0.2"/>
-      <circle cx="30" cy="8"  r="1.6" fill="#c9944a"/>
-      {/* Four-point sparkle on crown */}
-      <line x1="30" y1="4.5" x2="30" y2="11.5" stroke="#c9944a" strokeWidth="0.6" opacity="0.5"/>
-      <line x1="26.5" y1="8" x2="33.5" y2="8" stroke="#c9944a" strokeWidth="0.6" opacity="0.5"/>
-
-      {/* Forehead right */}
-      <circle cx="38" cy="14" r="3.5" fill="#c9944a" opacity="0.12"/>
-      <circle cx="38" cy="14" r="1.4" fill="#c9944a"/>
-      <line x1="38" y1="11.2" x2="38" y2="16.8" stroke="#c9944a" strokeWidth="0.5" opacity="0.45"/>
-      <line x1="35.2" y1="14" x2="40.8" y2="14" stroke="#c9944a" strokeWidth="0.5" opacity="0.45"/>
-
-      {/* Temple */}
-      <circle cx="22" cy="10" r="1.2" fill="#c9944a" opacity="0.7"/>
-
-      {/* Eye zone centre */}
-      <circle cx="36" cy="22" r="3.2" fill="#c9944a" opacity="0.12"/>
-      <circle cx="36" cy="22" r="1.3" fill="#c9944a"/>
-
-      {/* Nose bridge */}
-      <circle cx="28" cy="20" r="2.8" fill="#c9944a" opacity="0.12"/>
-      <circle cx="28" cy="20" r="1.2" fill="#c9944a" opacity="0.85"/>
-
-      {/* Cheekbone */}
-      <circle cx="30" cy="30" r="3" fill="#c9944a" opacity="0.1"/>
-      <circle cx="30" cy="30" r="1.3" fill="#c9944a" opacity="0.8"/>
-
-      {/* Chin hollow */}
-      <circle cx="18" cy="30" r="1"   fill="#c9944a" opacity="0.6"/>
-      <circle cx="24" cy="36" r="2.5" fill="#c9944a" opacity="0.1"/>
-      <circle cx="24" cy="36" r="1.1" fill="#c9944a" opacity="0.75"/>
-
-      {/* Jaw */}
-      <circle cx="26" cy="46" r="2"   fill="#c9944a" opacity="0.1"/>
-      <circle cx="26" cy="46" r="1"   fill="#c9944a" opacity="0.6"/>
-      <circle cx="32" cy="42" r="1"   fill="#c9944a" opacity="0.55"/>
-
-      {/* Scatter micro-stars */}
-      <circle cx="42" cy="32" r="0.7" fill="#c9944a" opacity="0.4"/>
-      <circle cx="15" cy="42" r="0.6" fill="#c9944a" opacity="0.3"/>
-      <circle cx="44" cy="20" r="0.5" fill="#c9944a" opacity="0.35"/>
-      <circle cx="12" cy="20" r="0.5" fill="#c9944a" opacity="0.3"/>
-    </svg>
-  );
-}
 
 // ── Email signup modal ────────────────────────────────────────────────────────
 function EmailSignupModal({ onClose }: { onClose: () => void }) {
@@ -143,7 +67,7 @@ function EmailSignupModal({ onClose }: { onClose: () => void }) {
         ) : (
           <>
             <div className="mb-6">
-              <BlushMapLogo size={44} />
+              <BlushMapLogoInline size={44} />
               <h3 className="text-2xl mt-3 mb-1" style={{ fontFamily: "var(--font-display)", color: "#1a0a0e" }}>Stay in the glow</h3>
               <p className="text-sm" style={{ color: "#9b6674" }}>Get personalised product picks, exclusive deals and your scan results delivered straight to your inbox.</p>
             </div>
@@ -333,13 +257,16 @@ const TESTIMONIALS = [
 export default function Home() {
   const [heroLoaded, setHeroLoaded] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const { user } = useAuth();
   useEffect(() => { const t = setTimeout(() => setHeroLoaded(true), 80); return () => clearTimeout(t); }, []);
 
   return (
     <div className="min-h-screen" style={{ fontFamily: "var(--font-body)", background: "hsl(var(--background))" }}>
 
-      {/* ── Email signup modal ── */}
+      {/* ── Modals ── */}
       {showSignup && <EmailSignupModal onClose={() => setShowSignup(false)} />}
+      {showAuth   && <AuthModal onClose={() => setShowAuth(false)} />}
 
       {/* ── Nav ── */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b" style={{ background: "rgba(255,248,250,0.95)", backdropFilter: "blur(20px)", borderColor: "hsl(var(--border))" }}>
@@ -351,8 +278,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/">
-            <div className="flex items-center gap-2.5 cursor-pointer">
-              <BlushMapLogo size={42} />
+            <div className="flex items-center gap-2 cursor-pointer">
+              <BlushMapLogoInline size={34} />
               <span style={{ fontFamily: "var(--font-display)", fontSize: "1.45rem", fontWeight: 500, letterSpacing: "-0.01em", color: "var(--color-black)" }}>
                 BlushMap
               </span>
@@ -378,9 +305,17 @@ export default function Home() {
           </nav>
           {/* CTAs */}
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowSignup(true)} className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))", border: "1.5px solid #f0ccd6" }}>
-              <Mail size={12} /> Join
-            </button>
+            {user ? (
+              <Link href="/profile">
+                <button className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors hover:bg-pink-50" style={{ color: "var(--color-rose)", border: "1.5px solid #f0ccd6" }}>
+                  <UserIcon size={12} /> {user.name?.split(" ")[0] || "Profile"}
+                </button>
+              </Link>
+            ) : (
+              <button onClick={() => setShowAuth(true)} className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-medium transition-colors hover:bg-pink-50" style={{ color: "hsl(var(--muted-foreground))", border: "1.5px solid #f0ccd6" }}>
+                <LogIn size={12} /> Log in
+              </button>
+            )}
             <Link href="/scanner">
               <Button size="sm" className="gap-1.5 text-xs text-white border-0 md:hidden" style={{ background: "var(--color-rose)" }}>
                 <ScanLine size={13} /> Scan
@@ -421,7 +356,7 @@ export default function Home() {
         <div className={`max-w-5xl mx-auto px-6 text-center relative transition-all duration-700 ${heroLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}>
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs mb-8 border" style={{ background: "rgba(255,255,255,0.7)", borderColor: "hsl(345 40% 82%)", color: "var(--color-rose)", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" }}>
-            <BlushMapLogo size={14} /> AI skin analysis · free forever
+            <BlushMapLogoInline size={14} /> AI skin analysis · free forever
           </div>
 
           <h1 className="display-hero mb-6" style={{ color: "var(--color-black)" }}>
@@ -505,7 +440,7 @@ export default function Home() {
               <div key={i} className="relative rounded-2xl border p-8" style={{ background: "hsl(var(--card))", borderColor: "hsl(var(--border))" }}>
                 <span className="absolute top-6 right-7 select-none" style={{ fontFamily: "var(--font-display)", fontSize: "3.5rem", color: "hsl(var(--border))", lineHeight: 1 }}>{s.num}</span>
                 <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style={{ background: "hsl(345 40% 93%)" }}>
-                  <BlushMapLogo size={24} />
+                  <BlushMapLogoInline size={24} />
                 </div>
                 <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", fontWeight: 600, marginBottom: "0.5rem" }}>{s.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
@@ -690,7 +625,7 @@ export default function Home() {
           </svg>
         </div>
         <div className="max-w-2xl mx-auto relative">
-          <BlushMapLogo size={48} />
+          <BlushMapLogoInline size={48} />
           <div className="mx-auto w-12 mb-6" />
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2.2rem, 5vw, 3.8rem)", color: "white", lineHeight: 1.08, marginBottom: "1.2rem" }}>
             Meet your perfect routine.
@@ -715,7 +650,7 @@ export default function Home() {
       <footer className="py-10 px-6 border-t" style={{ borderColor: "hsl(var(--border))" }}>
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 text-sm text-muted-foreground">
           <div className="flex items-center gap-2.5">
-            <BlushMapLogo size={22} />
+            <BlushMapLogoInline size={22} />
             <span style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--color-black)" }}>BlushMap</span>
           </div>
           <div className="flex items-center gap-6 text-xs">

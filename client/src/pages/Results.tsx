@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, ExternalLink, ShoppingBag, AlertCircle, Sparkles, Leaf, Crown, Banknote, ChevronRight } from "lucide-react";
+import { ArrowLeft, ExternalLink, ShoppingBag, AlertCircle, Sparkles, Leaf, Crown, Banknote, ChevronRight, Heart, User as UserIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/lib/auth";
 
 // Zone positions on the face SVG map (relative to 200x260 viewBox)
 const ZONE_POSITIONS: Record<string, { x: number; y: number; label: string }> = {
@@ -271,16 +272,26 @@ function ProductCard({ rec, index }: { rec: any; index: number }) {
                 {z.replace(/-/g, " ")}
               </Badge>
             ))}
-            <a
-              href={product.affiliateUrl}
-              target="_blank"
-              rel="noopener noreferrer sponsored"
-              data-testid={`buy-link-${index}`}
-              className="ml-auto flex items-center gap-1.5 px-4 py-2 rounded-full text-sm text-white font-medium transition-opacity hover:opacity-90"
-              style={{ background: "var(--color-rose)" }}
-            >
-              <ShoppingBag size={13} /> Buy now <ExternalLink size={11} />
-            </a>
+            <div className="ml-auto flex items-center gap-2">
+              {user && (
+                <button onClick={() => saveProduct(product)}
+                  className="w-9 h-9 flex items-center justify-center rounded-full flex-shrink-0 transition-colors"
+                  style={{ background: savedIds.has(product.id || product.name) ? "#fef0f3" : "#f9f5f0", border: "1px solid #f0ccd6" }}
+                  title="Save to profile">
+                  <Heart size={14} style={{ color: savedIds.has(product.id || product.name) ? "#c9506e" : "#c0a0a8", fill: savedIds.has(product.id || product.name) ? "#c9506e" : "none" }} />
+                </button>
+              )}
+              <a
+                href={product.affiliateUrl}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                data-testid={`buy-link-${index}`}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm text-white font-medium transition-opacity hover:opacity-90"
+                style={{ background: "var(--color-rose)" }}
+              >
+                <ShoppingBag size={13} /> Buy now <ExternalLink size={11} />
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -409,6 +420,16 @@ export default function Results() {
       </header>
 
       <main className="max-w-4xl mx-auto px-6 py-8">
+
+        {/* Login nudge if not authenticated */}
+        {!user && (
+          <div className="mb-4 px-4 py-3 rounded-xl flex items-center gap-3" style={{ background: "#fef0f3", border: "1px solid #f0ccd6" }}>
+            <UserIcon size={14} style={{ color: "#c9506e", flexShrink: 0 }} />
+            <p className="text-xs flex-1" style={{ color: "#9b6674" }}>
+              <Link href="/profile"><span className="font-semibold underline cursor-pointer" style={{ color: "#c9506e" }}>Create a free account</span></Link> to save these results, track your skin over time and heart products.
+            </p>
+          </div>
+        )}
 
         {/* Hero profile card */}
         <div className="rounded-3xl overflow-hidden mb-8" style={{ background: "linear-gradient(135deg, hsl(340 30% 94%), hsl(30 35% 93%))" }}>

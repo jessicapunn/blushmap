@@ -398,26 +398,40 @@ export async function registerRoutes(httpServer: any, app: Express) {
     res.json({ results, total: results.length });
   });
 
-  // ── Barcode lookup ──
+  // ── Barcode lookup — tries Open Beauty Facts then Open Food Facts ──
   app.get("/api/barcode/:code", async (req, res) => {
     const { code } = req.params;
     try {
-      // Fetch from Open Beauty Facts
-      const response = await fetch(`https://world.openbeautyfacts.org/api/v2/product/${code}.json`);
-      const data = await response.json() as any;
+      // Try beauty first, then food
+      let productData: any = null;
+      const sources = [
+        `https://world.openbeautyfacts.org/api/v2/product/${code}.json`,
+        `https://world.openfoodfacts.org/api/v2/product/${code}.json`,
+        `https://world.openproductsfacts.org/api/v2/product/${code}.json`,
+      ];
+      for (const url of sources) {
+        try {
+          const r = await fetch(url, { signal: AbortSignal.timeout(4000) });
+          const d = await r.json() as any;
+          if (d && d.status === 1 && d.product) { productData = d.product; break; }
+        } catch { /* try next */ }
+      }
 
-      if (!data || data.status === 0) {
+      if (!productData) {
         return res.status(404).json({ error: "Product not found", code });
       }
 
-      const p = data.product || {};
+      const p = productData;
       res.json({
         barcode: code,
-        productName: p.product_name || p.product_name_en || null,
+        productName: p.product_name || p.product_name_en || p.generic_name || null,
         brand: p.brands || null,
         ingredientsText: p.ingredients_text || p.ingredients_text_en || null,
         image: p.image_front_url || p.image_url || null,
-        categories: p.categories || null,
+        categories: p.categories || p.food_groups || null,
+        nutriScore: p.nutriscore_grade || null,
+        ecoScore: p.ecoscore_grade || null,
+        novaGroup: p.nova_group || null,
       });
     } catch (err: any) {
       res.status(500).json({ error: "Lookup failed", detail: err.message });
@@ -448,6 +462,20 @@ Ingredients: ${ingredientsText || "Not available — score based on product name
       const rawText = (msg.content[0] as any).text.trim();
       const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "");
       const result = JSON.parse(cleaned);
+
+      // Save scan to user history if authenticated
+      const uid = (req.session as any)?.userId;
+      await storage.saveProductScan({
+        userId: uid || undefined,
+        barcode: barcode || "",
+        productName: productName || "",
+        brand: brand || "",
+        score: result.score,
+        scoreLabel: result.scoreLabel,
+        ingredients: ingredientsText?.substring(0, 1000),
+        scanResult: JSON.stringify(result).substring(0, 2000),
+      }).catch(() => {});
+
       res.json(result);
     } catch (err: any) {
       res.status(500).json({ error: "Scoring failed", detail: err.message });
@@ -520,7 +548,10 @@ Score guide:
 - 25-49: Poor (orange-red) #F44336
 - 0-24: Hazardous (red) #B71C1C
 
-scoreLabel: "Excellent" | "Good" | "Average" | "Poor" | "Hazardous"
+scoreLabel: "Excellent" | "Good" | "Average" | "Poor" | "Hazardous",
+  cleanCertified: true/false — true only if score >= 75 with no red ingredients,
+  redIngredients: ["any harmful/concerning ingredients found"],
+  greenIngredients: ["top 3 hero beneficial ingredients"]
 
 For ingredient rating: "good" | "caution" | "poor"
 
