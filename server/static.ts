@@ -3,8 +3,6 @@ import fs from "fs";
 import path from "path";
 
 export function serveStatic(app: Express) {
-  // Resolve relative to project root (process.cwd()), not __dirname
-  // This works both with tsx (server/ dir) and esbuild bundle (dist/ dir)
   const distPath = path.resolve(process.cwd(), "dist", "public");
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -18,14 +16,18 @@ export function serveStatic(app: Express) {
     immutable: true,
   }));
 
-  // All other static files — short cache
-  app.use(express.static(distPath, { maxAge: "1h" }));
+  // Other static files (favicon, etc.) — short cache, but NEVER index.html from here
+  app.use(express.static(distPath, {
+    maxAge: "1h",
+    index: false,   // ← prevent express.static from serving index.html
+  }));
 
-  // index.html — NEVER cache so browsers always get the latest entry point
-  app.use("/{*path}", (_req: Request, res: Response) => {
+  // SPA catch-all — always serve index.html with no-cache headers
+  app.use("*", (_req: Request, res: Response) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
     res.setHeader("Expires", "0");
+    res.setHeader("Surrogate-Control", "no-store"); // Fastly
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
