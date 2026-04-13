@@ -274,4 +274,151 @@
     border-width: 4px 2px 0 0;
     border-color: var(--color-rose-deep) transparent transparent transparent;
   }
+
+  /* ── Editorial divider ── */
+  .editorial-rule {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-rose), var(--color-champagne));
+    margin: 0 auto;
+  }
+
+  /* ── Eyebrow label (editorial uppercase) ── */
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-rose);
+  }
+
+  /* ── Side menu slide animation ── */
+  @keyframes slideInLeft {
+    from { transform: translateX(-100%); opacity: 0; }
+    to   { transform: translateX(0);     opacity: 1; }
+  }
+  .slide-in-left {
+    animation: slideInLeft 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ── Banner fade ── */
+  @keyframes bannerFade {
+    0%   { opacity: 0; transform: translateY(-3px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .banner-fade { animation: bannerFade 280ms ease both; }
+
+  /* ── Editorial product card ── */
+  .product-card {
+    background: #fff9fb;
+    border: 1px solid #f5dce4;
+    border-radius: 16px;
+    overflow: hidden;
+    transition:
+      box-shadow var(--duration-base) var(--ease-out-expo),
+      transform  var(--duration-base) var(--ease-out-expo),
+      border-color var(--duration-fast) ease;
+  }
+  .product-card:hover {
+    box-shadow: 0 8px 32px rgba(180,60,90,0.13);
+    transform: translateY(-3px);
+    border-color: #e8a0b0;
+  }
+
+  /* ── Gold star ── */
+  .star-gold { color: var(--color-gold); }
+
+  /* ── Section divider with text ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #f0ccd6);
+  }
+  .section-divider::after {
+    background: linear-gradient(90deg, #f0ccd6, transparent);
+  }
+
+  /* ── Luxury input ── */
+  .input-luxury {
+    border: 1.5px solid #f0ccd6;
+    border-radius: 12px;
+    background: #fff9fb;
+    padding: 0.65rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: #1a0a0e;
+    transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
+  }
+  .input-luxury:focus {
+    outline: none;
+    border-color: #c9506e;
+    box-shadow: 0 0 0 3px rgba(201, 80, 110, 0.1);
+  }
+  .input-luxury::placeholder { color: #c4a0aa; }
+
+  /* ── Ghost button ── */
+  .btn-ghost-rose {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.25rem;
+    border-radius: 9999px;
+    border: 1.5px solid #f0ccd6;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--color-rose);
+    background: transparent;
+    cursor: pointer;
+    transition: background var(--duration-fast) ease, border-color var(--duration-fast) ease;
+  }
+  .btn-ghost-rose:hover {
+    background: hsl(345 40% 97%);
+    border-color: #e8a0b0;
+  }
+
+  /* ── Filled rose button ── */
+  .btn-rose {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #c9506e, #a3324e);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
+  }
+  .btn-rose:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  /* ── Glass surface ── */
+  .glass-blush {
+    background: rgba(255, 248, 250, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(240, 204, 214, 0.6);
+  }
+
+  /* ── Announcement banner text pulse ── */
+  @keyframes textPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  .text-pulse { animation: textPulse 3s ease-in-out infinite; }
 }
