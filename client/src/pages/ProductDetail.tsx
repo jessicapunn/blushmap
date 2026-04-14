@@ -9,6 +9,7 @@ import {
 import { useState } from "react";
 import { useBasket } from "@/lib/basket";
 import { useAuth } from "@/lib/auth";
+import PriceCompare from "@/components/PriceCompare";
 
 // Primary retailer — single best affiliate link per product
 function getPrimaryRetailer(affiliateUrl: string, productName: string, brand: string) {
@@ -313,49 +314,16 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Right column: also available at */}
+          {/* Right column: price comparison */}
           <div className="space-y-5">
-            <section className="rounded-2xl p-5 sticky top-20" style={{ background: "#fff9fb", border: "1px solid #f0ccd6" }}>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "#1a0a0e", marginBottom: "0.25rem" }}>
-                Also available at
-              </h2>
-              <p className="text-xs mb-4" style={{ color: "#9b6674" }}>Compare prices across top retailers.</p>
-
-              <div className="space-y-2.5">
-                {retailers.map((r, i) => (
-                  <a
-                    key={r.name}
-                    href={r.url}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    className="flex items-center justify-between gap-3 p-3 rounded-xl transition-all hover:shadow-sm group"
-                    style={{ background: r.bg, border: `1px solid ${r.border}`, textDecoration: "none" }}
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-white text-[10px] font-bold" style={{ background: r.color }}>
-                        {r.name[0]}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold truncate" style={{ color: "#1a0a0e" }}>{r.name}</p>
-                        <p className="text-[10px] truncate" style={{ color: "#9b6674" }}>{r.note}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      {r.badge && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: "#4a9b6a" }}>
-                          {r.badge}
-                        </span>
-                      )}
-                      <ExternalLink size={12} style={{ color: "#c9506e" }} className="group-hover:translate-x-0.5 transition-transform" />
-                    </div>
-                  </a>
-                ))}
-              </div>
-
-              <p className="text-[10px] mt-4 text-center" style={{ color: "#c4a0aa" }}>
-                BlushMap earns a small commission at no extra cost to you.
-              </p>
-            </section>
+            <div className="sticky top-20">
+              <PriceCompare
+                productId={product.id}
+                productName={product.name}
+                brand={product.brand}
+                catalogPrice={product.price}
+              />
+            </div>
           </div>
         </div>
       </main>
