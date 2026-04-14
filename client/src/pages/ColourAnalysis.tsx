@@ -3,7 +3,7 @@ import { NavBar } from "@/components/NavBar";
 import { Link } from "wouter";
 import { ArrowLeft, ChevronRight, RefreshCw, Sparkles, Sun, Moon, Leaf, Snowflake, Heart, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RETAILERS } from "@/lib/affiliates";
+import { RETAILERS, lf, ct } from "@/lib/affiliates";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 type Season = "spring" | "summer" | "autumn" | "winter" | null;
@@ -313,8 +313,7 @@ function ResultCard({ season }: { season: Season }) {
   if (!season) return null;
   const data = SEASON_DATA[season];
   const Icon = data.icon;
-  const lf = RETAILERS.find(r => r.id === "lookfantastic")!;
-  const ct = RETAILERS.find(r => r.id === "charlotte-tilbury")!;
+  // lf and ct are imported Awin-tracked link builders
 
   return (
     <div className="space-y-6">
@@ -391,12 +390,12 @@ function ResultCard({ season }: { season: Season }) {
                 <p className="text-sm font-semibold" style={{ color: "#1a0a0e" }}>{rec.name}</p>
               </div>
               <div className="flex gap-2">
-                <a href={lf.buildLink(rec.q)} target="_blank" rel="noopener noreferrer sponsored"
+                <a href={lf(rec.q)} target="_blank" rel="noopener noreferrer sponsored"
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white"
                   style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
                   Shop
                 </a>
-                <a href={ct.buildLink(rec.q)} target="_blank" rel="noopener noreferrer sponsored"
+                <a href={ct(rec.q)} target="_blank" rel="noopener noreferrer sponsored"
                   className="px-3 py-1.5 rounded-lg text-xs font-semibold"
                   style={{ background: "#fef0f3", color: "#c9506e", border: "1px solid #f0ccd6" }}>
                   CT

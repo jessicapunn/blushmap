@@ -18,34 +18,46 @@ function getPrimaryRetailer(affiliateUrl: string, productName: string, brand: st
   return { url, name: "Shop Now" };
 }
 
-// Secondary retailers for the "Also available at" section
+// Secondary retailers — all with Awin publisher 2854395 tracked links
+const AWIN_PD = (mid: string, url: string) =>
+  `https://www.awin1.com/cread.php?awinmid=${mid}&awinaffid=2854395&ued=${encodeURIComponent(url)}`;
+
 function buildRetailerLinks(productName: string, brand: string) {
-  const q = encodeURIComponent(`${brand} ${productName}`);
+  const raw = `${brand} ${productName}`;
+  const q = encodeURIComponent(raw);
   return [
     {
       name: "LOOKFANTASTIC",
-      url: `https://www.lookfantastic.com/search?q=${q}`,
+      url: AWIN_PD("2082", `https://www.lookfantastic.com/search?q=${q}`),
       color: "#1a1a2e",
       bg: "#f0f0f8",
       border: "#c8c8e8",
-      note: "Often lowest price",
-      badge: "Best price",
+      note: "Up to 10% commission",
+      badge: "Best commission",
     },
     {
       name: "Cult Beauty",
-      url: `https://www.cultbeauty.co.uk/search?q=${q}`,
+      url: AWIN_PD("29063", `https://www.cultbeauty.co.uk/search?query=${q}`),
       color: "#2d2d2d",
       bg: "#fafafa",
       border: "#e0e0e0",
-      note: "Earn points & gifts",
+      note: "Up to 15% commission",
     },
     {
       name: "Boots",
-      url: `https://www.boots.com/search?text=${q}`,
+      url: AWIN_PD("2041", `https://www.boots.com/search?q=${q}`),
       color: "#004B87",
       bg: "#eef4ff",
       border: "#b8d0ee",
       note: "Advantage card points",
+    },
+    {
+      name: "Space NK",
+      url: AWIN_PD("59805", `https://www.spacenk.com/uk/search#q=${q}`),
+      color: "#1a1a2e",
+      bg: "#f5f5f8",
+      border: "#d0d0e0",
+      note: "Luxury positioning",
     },
     {
       name: "Amazon UK",

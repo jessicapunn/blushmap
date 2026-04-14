@@ -16,10 +16,13 @@ interface TryProduct {
   bestseller?: boolean; newIn?: boolean;
 }
 
-// ── Affiliate helpers ─────────────────────────────────────────────────────────
+// ── Affiliate helpers (Awin publisher 2854395) ───────────────────────────────
+const AWIN = (mid: string, url: string) =>
+  `https://www.awin1.com/cread.php?awinmid=${mid}&awinaffid=2854395&ued=${encodeURIComponent(url)}`;
 const amz  = (q: string) => `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
-const lf   = (q: string) => `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`;
-const cult = (q: string) => `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`;
+const lf   = (q: string) => AWIN("2082",  `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`);
+const cult = (q: string) => AWIN("29063", `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`);
+const ctLink = (q: string) => AWIN("13611", `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`);
 
 // ── Makeup catalogue ──────────────────────────────────────────────────────────
 const MAKEUP: TryProduct[] = [
@@ -30,7 +33,7 @@ const MAKEUP: TryProduct[] = [
     shades:[{name:"Dolce K",hex:"#c1694f"},{name:"Candy K",hex:"#db7c6e"},{name:"True Brown K",hex:"#8b5e4e"},{name:"22",hex:"#8b2020"},{name:"Posie K",hex:"#d4826e"},{name:"Koko K",hex:"#e8b4a0"}]},
   { id:"ct-lip-1", name:"Pillow Talk Lipstick", brand:"Charlotte Tilbury", price:"£29", category:"lipstick",
     image:"https://images.unsplash.com/photo-1586495777744-4e6232bf2d22?w=400&q=80",
-    affiliateUrl: lf("Charlotte Tilbury Pillow Talk lipstick"), bestseller: true,
+    affiliateUrl: ctLink("Charlotte Tilbury Pillow Talk lipstick"), bestseller: true,
     shades:[{name:"Pillow Talk",hex:"#d4927e"},{name:"Walk of No Shame",hex:"#b5463a"},{name:"Love Liberty",hex:"#c96878"},{name:"Superstar",hex:"#9b3030"},{name:"Very Victoria",hex:"#b88070"},{name:"Pinkgasm",hex:"#e0a090"}]},
   { id:"nars-lip-1", name:"Satin Lipstick", brand:"NARS", price:"£27", category:"lipstick",
     image:"https://images.unsplash.com/photo-1631214499182-e37c7dc30a3a?w=400&q=80",
@@ -55,7 +58,7 @@ const MAKEUP: TryProduct[] = [
     shades:[{name:"Happy",hex:"#e07870"},{name:"Joy",hex:"#d06870"},{name:"Lucky",hex:"#d09070"},{name:"Love",hex:"#c85060"},{name:"Grateful",hex:"#c07060"},{name:"Bliss",hex:"#e09080"}]},
   { id:"ct-blush-1", name:"Cheek to Chic Blush", brand:"Charlotte Tilbury", price:"£33", category:"blush",
     image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
-    affiliateUrl: lf("Charlotte Tilbury Cheek to Chic"),
+    affiliateUrl: ctLink("Charlotte Tilbury Cheek to Chic"),
     shades:[{name:"Love is the Drug",hex:"#d0806a"},{name:"Pillow Talk",hex:"#d0907e"},{name:"Super Nudes",hex:"#c8a090"},{name:"First Love",hex:"#d07070"}]},
   // Eyeshadow
   { id:"kl-eye-1", name:"Kyshadow Palette", brand:"Kylie Cosmetics", price:"£40", category:"eyeshadow",
@@ -64,12 +67,12 @@ const MAKEUP: TryProduct[] = [
     shades:[{name:"Bronze",hex:"#8b5e3c"},{name:"Rose Gold",hex:"#c9835c"},{name:"Burgundy",hex:"#6b2030"},{name:"Nude",hex:"#c8a480"},{name:"Smoky",hex:"#504050"},{name:"Gold",hex:"#c9944a"}]},
   { id:"ct-eye-1", name:"Luxury Palette", brand:"Charlotte Tilbury", price:"£65", category:"eyeshadow",
     image:"https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=400&q=80",
-    affiliateUrl: lf("Charlotte Tilbury eyeshadow palette"), newIn: true,
+    affiliateUrl: ctLink("Charlotte Tilbury eyeshadow palette"), newIn: true,
     shades:[{name:"The Bella Sofia",hex:"#a06858"},{name:"Pillow Talk",hex:"#d0907e"},{name:"Walk of No Shame",hex:"#c84838"},{name:"Golden Goddess",hex:"#c8904a"},{name:"Vintage Vamp",hex:"#7b3040"}]},
   // Highlighter
   { id:"ct-high-1", name:"Beam Highlighter", brand:"Charlotte Tilbury", price:"£38", category:"highlighter",
     image:"https://images.unsplash.com/photo-1596704017254-9b121068fb31?w=400&q=80", bestseller: true,
-    affiliateUrl: lf("Charlotte Tilbury Beam Highlighter"),
+    affiliateUrl: ctLink("Charlotte Tilbury Beam Highlighter"),
     shades:[{name:"Moonbeam",hex:"#e8d8b8"},{name:"Pink Venus",hex:"#e8b8b8"},{name:"Ice Goddess",hex:"#dce8e8"},{name:"Bronze Venus",hex:"#c8a870"}]},
   { id:"fenty-high-1", name:"Killawatt Highlighter", brand:"Fenty Beauty", price:"£28", category:"highlighter",
     image:"https://images.unsplash.com/photo-1512495039889-52a3b799c9bc?w=400&q=80",
@@ -78,7 +81,7 @@ const MAKEUP: TryProduct[] = [
   // Bronzer
   { id:"ct-bron-1", name:"Film Star Bronze & Glow", brand:"Charlotte Tilbury", price:"£55", category:"bronzer",
     image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
-    affiliateUrl: lf("Charlotte Tilbury Film Star Bronze Glow"),
+    affiliateUrl: ctLink("Charlotte Tilbury Film Star Bronze Glow"),
     shades:[{name:"Light/Medium",hex:"#c8a870"},{name:"Medium/Dark",hex:"#a87048"},{name:"Fair",hex:"#d8a880"}]},
 ];
 

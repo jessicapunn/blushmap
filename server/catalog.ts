@@ -14,20 +14,30 @@ export interface Product {
 
 interface AltProduct { name: string; brand: string; price: string; affiliateUrl: string; }
 
-const amz  = (q: string) => `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
-const lf   = (q: string) => `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`;
-const cult = (q: string) => `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`;
-const boots = (q: string) => `https://www.boots.com/search?q=${encodeURIComponent(q)}`;
-const spaceNK = (q: string) => `https://www.spacenk.com/uk/search#q=${encodeURIComponent(q)}`;
+// ── Awin Publisher ID: 2854395 ────────────────────────────────────────────────
+const AWIN_PID = "2854395";
+function awin(mid: string, url: string) {
+  return `https://www.awin1.com/cread.php?awinmid=${mid}&awinaffid=${AWIN_PID}&ued=${encodeURIComponent(url)}`;
+}
 
-// primary() — selects best affiliate per brand:
-// Charlotte Tilbury → CT direct, NARS/MAC/Estee Lauder/SkinCeuticals → LOOKFANTASTIC, 
-// The Ordinary/Paula's Choice/CeraVe/Neutrogena → Boots/Cult, La Roche-Posay/Ultrasun → LOOKFANTASTIC
+const amz    = (q: string) => `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
+const lf     = (q: string) => awin("2082",  `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`);
+const cult   = (q: string) => awin("29063", `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`);
+const boots  = (q: string) => awin("2041",  `https://www.boots.com/search?q=${encodeURIComponent(q)}`);
+const ctLink = (q: string) => awin("13611", `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`);
+const sep    = (q: string) => awin("15718", `https://www.sephora.co.uk/search?q=${encodeURIComponent(q)}`);
+
+// primary() — routes to highest-commission retailer per brand
 function primary(brand: string, q: string): string {
-  if (brand.toLowerCase().includes("charlotte tilbury")) return `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`;
-  if (["nars","mac","estée lauder","estee lauder","clinique","la prairie","augustinus bader","sisley","tatcha","fresh","murad","kiehl"].some(b => brand.toLowerCase().includes(b))) return lf(q);
-  if (["the ordinary","paula's choice","cerave","neutrogena","garnier","simple","la roche-posay","ultrasun","drunk elephant"].some(b => brand.toLowerCase().includes(b))) return boots(q);
-  return lf(q);
+  const b = brand.toLowerCase();
+  if (b.includes("charlotte tilbury")) return ctLink(q);
+  if (["nars","mac","estée lauder","estee lauder","clinique","la prairie",
+       "augustinus bader","sisley","tatcha","fresh","murad","kiehl","skinceuticals",
+       "paula's choice"].some(x => b.includes(x))) return lf(q);
+  if (["the ordinary","cerave","neutrogena","garnier","simple",
+       "la roche-posay","ultrasun","drunk elephant"].some(x => b.includes(x))) return boots(q);
+  if (["rare beauty","fenty","kylie","too faced","urban decay"].some(x => b.includes(x))) return sep(q);
+  return lf(q); // default: LOOKFANTASTIC
 }
 
 // Unsplash images that visually match the product TYPE (reliable, no hotlink block)

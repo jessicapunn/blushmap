@@ -1,12 +1,62 @@
-// ── BlushMap Affiliate Network Helper ────────────────────────────────────────
-// Top 10 UK beauty & skincare affiliate retailers
-// Sign up at awin.com (publisher ID needed for full tracked deep links)
-// Until Awin publisher ID confirmed, links use search-page pattern (still trackable)
+// ── BlushMap Affiliate Network ────────────────────────────────────────────────
+// Awin Publisher ID: 2854395
+// Deep link format: https://www.awin1.com/cread.php?awinmid=ADVERTISER_ID&awinaffid=2854395&ued=DESTINATION_URL
+// Amazon Associates tag: blushmap-21
 
+const AWIN_PID = "2854395";
+
+// ── Awin deep link builder ────────────────────────────────────────────────────
+function awin(advertiserId: string, destinationUrl: string): string {
+  return `https://www.awin1.com/cread.php?awinmid=${advertiserId}&awinaffid=${AWIN_PID}&ued=${encodeURIComponent(destinationUrl)}`;
+}
+
+// ── Per-retailer search link builders ────────────────────────────────────────
+
+// LOOKFANTASTIC — Awin #2082 — up to 10% commission (content creators), 30-day cookie
+export const lf = (q: string) =>
+  awin("2082", `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`);
+
+// Cult Beauty — Awin #29063 — up to 15% commission, 30-day cookie
+export const cult = (q: string) =>
+  awin("29063", `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`);
+
+// Space NK — Awin #59805 — 7% new / 2% existing, 30-day cookie
+export const spaceNK = (q: string) =>
+  awin("59805", `https://www.spacenk.com/uk/search#q=${encodeURIComponent(q)}`);
+
+// Boots — Awin #2041 — up to 10% skincare / 8% beauty, 30-day cookie
+export const boots = (q: string) =>
+  awin("2041", `https://www.boots.com/search?q=${encodeURIComponent(q)}`);
+
+// Charlotte Tilbury — Awin #13611 — ~8-10% commission, 30-day cookie
+export const ct = (q: string) =>
+  awin("13611", `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`);
+
+// Sephora UK — Awin #15718 — ~5-8% commission, 30-day cookie
+export const sephora = (q: string) =>
+  awin("15718", `https://www.sephora.co.uk/search?q=${encodeURIComponent(q)}`);
+
+// John Lewis — Awin #2995 — 2-5% commission, 30-day cookie
+export const jl = (q: string) =>
+  awin("2995", `https://www.johnlewis.com/search?search-term=${encodeURIComponent(q)}`);
+
+// Notino — Awin #20754 — 5-10% commission, 30-day cookie
+export const notino = (q: string) =>
+  awin("20754", `https://www.notino.co.uk/search/?phrase=${encodeURIComponent(q)}`);
+
+// Debenhams Beauty — Awin #6659 — ~5% commission
+export const debenhams = (q: string) =>
+  awin("6659", `https://www.debenhams.com/beauty?q=${encodeURIComponent(q)}`);
+
+// Amazon UK — Amazon Associates tag (separate programme)
+export const amz = (q: string) =>
+  `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
+
+// ── Retailer directory ────────────────────────────────────────────────────────
 export interface AffiliateRetailer {
   id: string;
   name: string;
-  logo: string;          // emoji fallback
+  logo: string;
   commission: string;
   network: string;
   cookieDays: number;
@@ -14,46 +64,6 @@ export interface AffiliateRetailer {
   url: string;
   buildLink: (query: string) => string;
 }
-
-// Amazon Associates — already live with tag=blushmap-21
-const amz = (q: string) =>
-  `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
-
-// LOOKFANTASTIC — Awin #2082 — 10% commission (content creators), 30-day cookie
-const lf = (q: string) =>
-  `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`;
-
-// Cult Beauty — Awin #29063 — up to 15% commission, 30-day cookie
-const cult = (q: string) =>
-  `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`;
-
-// Space NK — Awin #59805 — 7% new customers, 30-day cookie
-const spaceNK = (q: string) =>
-  `https://www.spacenk.com/uk/search#q=${encodeURIComponent(q)}`;
-
-// Boots — Awin #2041 — up to 10% skincare, 8% beauty, 30-day cookie
-const boots = (q: string) =>
-  `https://www.boots.com/search?q=${encodeURIComponent(q)}`;
-
-// Charlotte Tilbury — Awin — ~8-10% commission, 30-day cookie
-const ct = (q: string) =>
-  `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`;
-
-// Sephora UK — ~5-8% commission, 30-day cookie
-const sephora = (q: string) =>
-  `https://www.sephora.co.uk/search?q=${encodeURIComponent(q)}`;
-
-// John Lewis — Awin — 2-5% commission, 30-day cookie
-const jl = (q: string) =>
-  `https://www.johnlewis.com/search?search-term=${encodeURIComponent(q)}`;
-
-// LOOKFANTASTIC / NOTINO — 5-10% commission, 30-day cookie
-const notino = (q: string) =>
-  `https://www.notino.co.uk/search?phrase=${encodeURIComponent(q)}`;
-
-// Debenhams Beauty — ~5% commission
-const deb = (q: string) =>
-  `https://www.debenhams.com/beauty?q=${encodeURIComponent(q)}`;
 
 export const RETAILERS: AffiliateRetailer[] = [
   {
@@ -64,7 +74,7 @@ export const RETAILERS: AffiliateRetailer[] = [
     network: "Awin #2082",
     cookieDays: 30,
     color: "#000000",
-    url: "https://www.lookfantastic.com",
+    url: awin("2082", "https://www.lookfantastic.com"),
     buildLink: lf,
   },
   {
@@ -75,7 +85,7 @@ export const RETAILERS: AffiliateRetailer[] = [
     network: "Awin #29063",
     cookieDays: 30,
     color: "#c85a8a",
-    url: "https://www.cultbeauty.co.uk",
+    url: awin("29063", "https://www.cultbeauty.co.uk"),
     buildLink: cult,
   },
   {
@@ -86,7 +96,7 @@ export const RETAILERS: AffiliateRetailer[] = [
     network: "Awin #59805",
     cookieDays: 30,
     color: "#1a1a2e",
-    url: "https://www.spacenk.com",
+    url: awin("59805", "https://www.spacenk.com/uk"),
     buildLink: spaceNK,
   },
   {
@@ -97,8 +107,63 @@ export const RETAILERS: AffiliateRetailer[] = [
     network: "Awin #2041",
     cookieDays: 30,
     color: "#005eb8",
-    url: "https://www.boots.com",
+    url: awin("2041", "https://www.boots.com/beauty"),
     buildLink: boots,
+  },
+  {
+    id: "charlotte-tilbury",
+    name: "Charlotte Tilbury",
+    logo: "🌹",
+    commission: "8-10%",
+    network: "Awin #13611",
+    cookieDays: 30,
+    color: "#b5644e",
+    url: awin("13611", "https://www.charlottetilbury.com/uk"),
+    buildLink: ct,
+  },
+  {
+    id: "sephora",
+    name: "Sephora",
+    logo: "🖤",
+    commission: "5-8%",
+    network: "Awin #15718",
+    cookieDays: 30,
+    color: "#000000",
+    url: awin("15718", "https://www.sephora.co.uk"),
+    buildLink: sephora,
+  },
+  {
+    id: "john-lewis",
+    name: "John Lewis",
+    logo: "🛍️",
+    commission: "2-5%",
+    network: "Awin #2995",
+    cookieDays: 30,
+    color: "#1a5276",
+    url: awin("2995", "https://www.johnlewis.com/beauty"),
+    buildLink: jl,
+  },
+  {
+    id: "notino",
+    name: "Notino",
+    logo: "🌸",
+    commission: "5-10%",
+    network: "Awin #20754",
+    cookieDays: 30,
+    color: "#e75480",
+    url: awin("20754", "https://www.notino.co.uk"),
+    buildLink: notino,
+  },
+  {
+    id: "debenhams",
+    name: "Debenhams Beauty",
+    logo: "👜",
+    commission: "5%",
+    network: "Awin #6659",
+    cookieDays: 30,
+    color: "#8b0000",
+    url: awin("6659", "https://www.debenhams.com/beauty"),
+    buildLink: debenhams,
   },
   {
     id: "amazon",
@@ -108,92 +173,37 @@ export const RETAILERS: AffiliateRetailer[] = [
     network: "Amazon Associates",
     cookieDays: 1,
     color: "#ff9900",
-    url: "https://www.amazon.co.uk",
+    url: "https://www.amazon.co.uk/beauty?tag=blushmap-21",
     buildLink: amz,
-  },
-  {
-    id: "charlotte-tilbury",
-    name: "Charlotte Tilbury",
-    logo: "🌹",
-    commission: "8-10%",
-    network: "Awin",
-    cookieDays: 30,
-    color: "#b5644e",
-    url: "https://www.charlottetilbury.com",
-    buildLink: ct,
-  },
-  {
-    id: "sephora",
-    name: "Sephora",
-    logo: "🖤",
-    commission: "5-8%",
-    network: "Awin",
-    cookieDays: 30,
-    color: "#000000",
-    url: "https://www.sephora.co.uk",
-    buildLink: sephora,
-  },
-  {
-    id: "john-lewis",
-    name: "John Lewis",
-    logo: "🛍️",
-    commission: "2-5%",
-    network: "Awin",
-    cookieDays: 30,
-    color: "#1a5276",
-    url: "https://www.johnlewis.com",
-    buildLink: jl,
-  },
-  {
-    id: "notino",
-    name: "Notino",
-    logo: "🌸",
-    commission: "5-10%",
-    network: "Awin",
-    cookieDays: 30,
-    color: "#e75480",
-    url: "https://www.notino.co.uk",
-    buildLink: notino,
-  },
-  {
-    id: "debenhams",
-    name: "Debenhams Beauty",
-    logo: "👜",
-    commission: "5%",
-    network: "Awin",
-    cookieDays: 30,
-    color: "#8b0000",
-    url: "https://www.debenhams.com",
-    buildLink: deb,
   },
 ];
 
-// ── Helper functions ──────────────────────────────────────────────────────────
+// ── Smart primary link ─────────────────────────────────────────────────────────
+// Routes to highest-commission retailer that stocks the brand
+export function primaryLink(brand: string, query: string): string {
+  const b = brand.toLowerCase();
+  if (b.includes("charlotte tilbury"))                                              return ct(query);
+  if (["nars","mac","estée lauder","estee lauder","clinique","la prairie",
+       "augustinus bader","sisley","tatcha","fresh","murad","kiehl"].some(x => b.includes(x))) return lf(query);
+  if (["the ordinary","paula's choice","cerave","neutrogena","garnier",
+       "simple","la roche-posay","ultrasun","drunk elephant"].some(x => b.includes(x)))        return boots(query);
+  if (["rare beauty","fenty","kylie","too faced","urban decay"].some(x => b.includes(x)))      return sephora(query);
+  return lf(query); // default: LOOKFANTASTIC (highest general commission)
+}
 
-/** Build a multi-retailer "buy at" link set for a product name */
+// ── Multi-retailer buy links for a product ────────────────────────────────────
 export function buildBuyLinks(productName: string, brand: string) {
-  const query = `${brand} ${productName}`;
-  return RETAILERS.map((r) => ({
+  const q = `${brand} ${productName}`;
+  return RETAILERS.map(r => ({
     retailer: r.name,
     logo: r.logo,
-    url: r.buildLink(query),
+    url: r.buildLink(q),
     color: r.color,
+    commission: r.commission,
   }));
 }
 
-/** Primary affiliate link — prefer LOOKFANTASTIC (highest commission) */
-export function primaryAffiliateLink(productName: string, brand: string) {
-  return lf(`${brand} ${productName}`);
-}
-
-/** Amazon fallback */
-export function amazonLink(query: string) {
-  return amz(query);
-}
-
-// ── Current Deals / Offers ────────────────────────────────────────────────────
-// Updated periodically — these map to real promotional pages
-
+// ── Live Deals ────────────────────────────────────────────────────────────────
 export interface Deal {
   id: string;
   retailer: string;
@@ -201,7 +211,6 @@ export interface Deal {
   description: string;
   discount: string;
   url: string;
-  expires?: string;
   category?: string;
 }
 
@@ -212,7 +221,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "Up to 30% off Skincare",
     description: "Save on La Roche-Posay, CeraVe, The Ordinary and more",
     discount: "30% OFF",
-    url: "https://www.lookfantastic.com/offers/",
+    url: awin("2082", "https://www.lookfantastic.com/offers/"),
     category: "skincare",
   },
   {
@@ -221,7 +230,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "Free Gift with Charlotte Tilbury",
     description: "Spend £60+ on Charlotte Tilbury and receive a free deluxe gift",
     discount: "FREE GIFT",
-    url: "https://www.cultbeauty.co.uk/charlotte-tilbury.list",
+    url: awin("29063", "https://www.cultbeauty.co.uk/charlotte-tilbury.list"),
     category: "makeup",
   },
   {
@@ -230,7 +239,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "3 for 2 on Selected Skincare",
     description: "Mix and match across premium skincare brands",
     discount: "3 FOR 2",
-    url: "https://www.boots.com/beauty/skincare",
+    url: awin("2041", "https://www.boots.com/beauty/skincare"),
     category: "skincare",
   },
   {
@@ -239,7 +248,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "Luxury Discovery Kits",
     description: "Curated luxury travel kits from top brands at exclusive prices",
     discount: "UP TO 40% OFF",
-    url: "https://www.spacenk.com/uk/offers",
+    url: awin("59805", "https://www.spacenk.com/uk/offers"),
     category: "luxury",
   },
   {
@@ -248,7 +257,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "New In: Rare Beauty",
     description: "Explore the latest Rare Beauty launches, exclusive to Sephora",
     discount: "NEW IN",
-    url: "https://www.sephora.co.uk/brands/rare-beauty",
+    url: awin("15718", "https://www.sephora.co.uk/brands/rare-beauty"),
     category: "makeup",
   },
   {
@@ -257,16 +266,16 @@ export const LIVE_DEALS: Deal[] = [
     title: "Premium Skincare Event",
     description: "Clinique, Estée Lauder & La Prairie — with complimentary samples",
     discount: "FREE SAMPLES",
-    url: "https://www.johnlewis.com/beauty/skincare",
+    url: awin("2995", "https://www.johnlewis.com/beauty/skincare"),
     category: "skincare",
   },
   {
     id: "d7",
     retailer: "Notino",
-    title: "Fragrance & Body Sets",
+    title: "Fragrance & Beauty Sets",
     description: "Luxury gift sets from CHANEL, Dior, YSL at reduced prices",
     discount: "UP TO 25% OFF",
-    url: "https://www.notino.co.uk/offers/",
+    url: awin("20754", "https://www.notino.co.uk/offers/"),
     category: "fragrance",
   },
   {
@@ -275,7 +284,7 @@ export const LIVE_DEALS: Deal[] = [
     title: "Subscribe & Save on Skincare",
     description: "Save an extra 15% when you subscribe to repeat deliveries",
     discount: "15% EXTRA",
-    url: "https://www.amazon.co.uk/s?k=skincare&rh=n%3A66280031&tag=blushmap-21",
+    url: `https://www.amazon.co.uk/s?k=skincare&rh=n%3A66280031&tag=blushmap-21`,
     category: "skincare",
   },
 ];

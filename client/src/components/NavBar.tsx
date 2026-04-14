@@ -16,31 +16,31 @@ const BANNERS = [
   {
     text: "✦ LOOKFANTASTIC — Up to 30% off skincare this week",
     cta: "Shop now",
-    href: "https://www.lookfantastic.com/?tap_a=1&tag=blushmap-21",
+    href: "https://www.awin1.com/cread.php?awinmid=2082&awinaffid=2854395&ued=https%3A%2F%2Fwww.lookfantastic.com%2Foffers%2F",
     bg: "linear-gradient(90deg, #a3324e, #c9506e)",
   },
   {
     text: "✦ Cult Beauty — Vitamin C edit: brighten & protect",
     cta: "Explore",
-    href: "https://www.cultbeauty.co.uk/vitamin-c.list?tag=blushmap-21",
+    href: "https://www.awin1.com/cread.php?awinmid=29063&awinaffid=2854395&ued=https%3A%2F%2Fwww.cultbeauty.co.uk%2Fvitamin-c.list",
     bg: "linear-gradient(90deg, #7a2a42, #a3324e)",
   },
   {
     text: "✦ Boots — 3 for 2 across selected skincare",
     cta: "See deals",
-    href: "https://www.boots.com/offers/3-for-2?tag=blushmap-21",
+    href: "https://www.awin1.com/cread.php?awinmid=2041&awinaffid=2854395&ued=https%3A%2F%2Fwww.boots.com%2Foffers%2F3-for-2",
     bg: "linear-gradient(90deg, #1a0a0e, #3a1520)",
   },
   {
     text: "✦ Space NK — In-store event: meet your skin experts",
     cta: "Book",
-    href: "https://www.spacenk.com/uk/events?tag=blushmap-21",
+    href: "https://www.awin1.com/cread.php?awinmid=59805&awinaffid=2854395&ued=https%3A%2F%2Fwww.spacenk.com%2Fuk%2Fevents",
     bg: "linear-gradient(90deg, #c9944a, #a3744e)",
   },
   {
     text: "✦ Sephora — K-beauty bestsellers now on BlushMap",
     cta: "Discover",
-    href: "https://www.sephora.co.uk/korean-beauty?tag=blushmap-21",
+    href: "https://www.awin1.com/cread.php?awinmid=15718&awinaffid=2854395&ued=https%3A%2F%2Fwww.sephora.co.uk%2Fkorean-beauty",
     bg: "linear-gradient(90deg, #6b3060, #a3324e)",
   },
   {
