@@ -519,7 +519,7 @@ export default function Home() {
             {[
               { v: "40+", l: "curated products" },
               { v: "6", l: "face zones analysed" },
-              { v: "3", l: "price points per rec" },
+              { v: "Budget to Luxury", l: "alternatives per rec" },
               { v: "Free", l: "always" },
             ].map(s => (
               <div key={s.l} className="text-center">

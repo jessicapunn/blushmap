@@ -227,7 +227,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       try {
         analysisMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
-          max_tokens: 2500,
+          max_tokens: 3000,
           messages: [{
             role: "user",
             content: [
@@ -277,7 +277,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       try {
         recMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
-          max_tokens: 2000,
+          max_tokens: 4000,
           messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences, focus, PRODUCT_CATALOG as any[]) }],
         });
         log("Recommendations response received");
@@ -291,17 +291,32 @@ export async function registerRoutes(httpServer: any, app: Express) {
       let recommendations: any;
       try {
         const rawText = (recMsg.content[0] as any).text.trim();
+        // Strip markdown code fences if present
         const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "").trim();
+        // Attempt 1: direct parse
         try {
           recommendations = JSON.parse(cleaned);
         } catch {
-          const lastBrace = cleaned.lastIndexOf("}");
-          if (lastBrace > 0) {
-            recommendations = JSON.parse(cleaned.substring(0, lastBrace + 1));
+          // Attempt 2: extract first {...} block via regex
+          const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            try {
+              recommendations = JSON.parse(jsonMatch[0]);
+            } catch {
+              // Attempt 3: recover truncated JSON by cutting to last closing brace of outer object
+              const lastBrace = jsonMatch[0].lastIndexOf("}");
+              if (lastBrace > 0) {
+                recommendations = JSON.parse(jsonMatch[0].substring(0, lastBrace + 1));
+              } else {
+                throw new Error("No closing brace found");
+              }
+            }
           } else {
-            throw new Error("No closing brace found");
+            throw new Error("No JSON object found in response");
           }
         }
+        // Ensure required field exists
+        if (!recommendations.recommendedProducts) recommendations.recommendedProducts = [];
         log(`Recommendations parsed OK: ${recommendations.recommendedProducts?.length} products`);
       } catch (parseErr: any) {
         log(`Recommendations parse failed: ${parseErr.message}`);
