@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useBasket } from "@/lib/basket";
+import { getProductImage } from "@/lib/productImages";
 import { useAuth } from "@/lib/auth";
 import PriceCompare from "@/components/PriceCompare";
 
@@ -156,7 +157,7 @@ export default function ProductDetail() {
             <div className="sm:w-80 shrink-0 relative" style={{ background: "linear-gradient(135deg, #fff0f5, #fce8ef)", minHeight: 280 }}>
               {!imgError ? (
                 <img
-                  src={product.image}
+                  src={getProductImage(product.id, product.image)}
                   alt={product.name}
                   className="w-full h-full object-contain"
                   style={{ maxHeight: 320 }}

@@ -1,4 +1,5 @@
 import { X, Heart, Trash2, ExternalLink, ShoppingBag, Package } from "lucide-react";
+import { getProductImage } from "@/lib/productImages";
 import { useBasket } from "@/lib/basket";
 import { Button } from "@/components/ui/button";
 
@@ -46,7 +47,7 @@ export function BasketDrawer({ open, onClose }: Props) {
             <div key={item.id} className="flex gap-3 p-3.5 rounded-2xl" style={{ background: "#fff", border: "1px solid #f0ccd6" }}>
               <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-50" style={{ border: "1px solid #f0ccd6" }}>
                 {item.image
-                  ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                  ? <img src={getProductImage(item.id, item.image)} alt={item.name} className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   : <div className="w-full h-full flex items-center justify-center"><Package size={18} style={{ color: "#f0ccd6" }} /></div>
                 }
               </div>

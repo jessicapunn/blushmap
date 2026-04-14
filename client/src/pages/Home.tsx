@@ -11,6 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { NavBar } from "@/components/NavBar";
 import { BlushMapLogoInline } from "@/components/BlushMapLogo";
+import { getProductImage } from "@/lib/productImages";
 
 
 // ── Email signup modal ────────────────────────────────────────────────────────
@@ -288,7 +289,7 @@ function ProductQuickView({ product, onClose }: { product: any; onClose: () => v
 
         {/* Image */}
         <div className="w-full h-52 sm:h-64 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          <img src={getProductImage(product.id, product.image)} alt={product.name} className="w-full h-full object-cover" />
         </div>
 
         <div className="p-6">
@@ -422,7 +423,7 @@ function BestSellerStrip({ onQuickView }: { onQuickView: (p: any) => void }) {
             onClick={() => onQuickView(p)}
           >
             <div className="h-28 overflow-hidden relative" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
-              <img src={p.image} alt={p.name} className="w-full h-full object-cover opacity-80" loading="lazy"
+              <img src={getProductImage(p.id, p.image)} alt={p.name} className="w-full h-full object-cover opacity-80" loading="lazy"
                 onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style={{ background: "rgba(201,80,110,0.15)" }}>
                 <span className="text-xs font-semibold bg-white/90 px-2.5 py-1 rounded-full" style={{ color: "var(--color-rose)" }}>Quick view</span>

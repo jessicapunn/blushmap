@@ -3,6 +3,7 @@ import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { ArrowLeft, ExternalLink, ShoppingBag, AlertCircle, Sparkles, Leaf, Crown, Banknote, ChevronRight, Heart, User as UserIcon, ChevronDown, ChevronUp, Zap, ShieldCheck } from "lucide-react";
+import { getProductImage } from "@/lib/productImages";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
@@ -394,7 +395,7 @@ function ProductCard({ rec, index, user, savedIds, saveProduct }: { rec: any; in
         {/* Product image */}
         <div className="shrink-0 w-full sm:w-28 h-40 sm:h-28 rounded-xl overflow-hidden" style={{ background: "hsl(var(--muted))" }}>
           <img
-            src={product.image}
+            src={getProductImage(product.id, product.image)}
             alt={product.name}
             className="w-full h-full object-cover"
             loading="lazy"

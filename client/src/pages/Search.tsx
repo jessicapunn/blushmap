@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LIVE_DEALS, RETAILERS } from "@/lib/affiliates";
+import { getProductImage } from "@/lib/productImages";
 
 // ── Quick-access filters ──────────────────────────────────────────────────────
 const QUICK_CONCERNS = [
@@ -65,7 +66,7 @@ function ProductQuickView({ product, onClose }: { product: any; onClose: () => v
           <X size={15} />
         </button>
         <div className="w-full h-52 sm:h-64 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 91%))" }}>
-          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+          <img src={getProductImage(product.id, product.image)} alt={product.name} className="w-full h-full object-cover" />
         </div>
         <div className="p-6">
           <p className="text-xs font-bold tracking-widest mb-1" style={{ color: "#c9944a", letterSpacing: "0.14em" }}>{product.brand}</p>
@@ -152,7 +153,7 @@ function ProductCard({ product, onQuickView }: { product: any; onQuickView: (p: 
         <div className="ribbon-bestseller" style={{ background: "#7c3aed" }}>New In</div>
       )}
       <div className="h-36 overflow-hidden relative" style={{ background: "linear-gradient(135deg, hsl(350 30% 94%), hsl(345 25% 92%))" }}>
-        <img src={product.image} alt={product.name} className="w-full h-full object-cover opacity-80" loading="lazy"
+        <img src={getProductImage(product.id, product.image)} alt={product.name} className="w-full h-full object-cover opacity-80" loading="lazy"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity" style={{ background: "rgba(201,80,110,0.12)" }}>
           <span className="text-xs font-semibold bg-white/90 px-2.5 py-1 rounded-full" style={{ color: "#c9506e" }}>Quick view</span>
