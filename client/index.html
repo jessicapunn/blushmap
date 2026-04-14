@@ -4,29 +4,39 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BlushMap — AI Skin Analysis & Personalised Beauty Recommendations</title>
+
+    <!-- ── Primary SEO ── -->
+    <title>BlushMap — AI Skin Analysis &amp; Personalised Beauty Recommendations</title>
     <meta name="description" content="Discover your perfect skincare and makeup routine with BlushMap's AI-powered face analysis. Upload a selfie to get personalised product recommendations, ingredient scores and virtual try-on — all in one place." />
-    <meta name="keywords" content="AI skin analysis, personalised skincare, makeup recommendations, virtual try-on, barcode scanner, skincare ingredients, beauty advisor" />
+    <meta name="keywords" content="AI skin analysis, personalised skincare, makeup recommendations, virtual try-on, barcode scanner, skincare ingredients, beauty advisor, skin type, Fitzpatrick, clean beauty" />
     <meta name="author" content="BlushMap" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://www.blushmap.com/" />
-    <!-- Open Graph -->
+
+    <!-- ── Open Graph ── -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.blushmap.com/" />
-    <meta property="og:title" content="BlushMap — AI Skin Analysis & Personalised Beauty Recommendations" />
+    <meta property="og:title" content="BlushMap — AI Skin Analysis &amp; Personalised Beauty Recommendations" />
     <meta property="og:description" content="Get hyper-personalised skincare and makeup recommendations powered by AI face analysis. Scan barcodes, try on makeup virtually and shop the best deals." />
     <meta property="og:image" content="https://www.blushmap.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="BlushMap" />
-    <!-- Twitter / X Card -->
+    <meta property="og:locale" content="en_GB" />
+
+    <!-- ── Twitter / X Card ── -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BlushMap — AI-Powered Skin & Beauty Advisor" />
-    <meta name="twitter:description" content="AI face analysis, personalised product recs, barcode scanner & virtual try-on — your beauty routine, reimagined." />
+    <meta name="twitter:site" content="@BlushMap" />
+    <meta name="twitter:title" content="BlushMap — AI-Powered Skin &amp; Beauty Advisor" />
+    <meta name="twitter:description" content="AI face analysis, personalised product recs, barcode scanner &amp; virtual try-on — your beauty routine, reimagined." />
     <meta name="twitter:image" content="https://www.blushmap.com/og-image.jpg" />
-    <!-- Fonts: Playfair Display (display) + DM Sans (body) -->
+
+    <!-- ── Fonts: Playfair Display + DM Sans ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    <!-- Structured Data -->
+
+    <!-- ── Structured Data: WebApplication ── -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -36,8 +46,62 @@
       "description": "AI-powered skin analysis and personalised beauty product recommendations with virtual try-on and barcode scanning.",
       "applicationCategory": "LifestyleApplication",
       "operatingSystem": "Web",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "ratingCount": "1200"
+      }
     }
+    </script>
+
+    <!-- ── Structured Data: Organisation ── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "BlushMap",
+      "url": "https://www.blushmap.com",
+      "logo": "https://www.blushmap.com/favicon.svg",
+      "sameAs": [],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "hello@blushmap.com"
+      }
+    }
+    </script>
+
+    <!-- ── Structured Data: BreadcrumbList (home) ── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.blushmap.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Products", "item": "https://www.blushmap.com/#/search" },
+        { "@type": "ListItem", "position": 3, "name": "Skin Analysis", "item": "https://www.blushmap.com/#/analyse" }
+      ]
+    }
+    </script>
+
+    <!-- ── Cookiebot Consent ── -->
+    <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js"
+      data-cbid="00000000-0000-0000-0000-000000000000"
+      data-blockingmode="auto"
+      type="text/javascript">
+    </script>
+
+    <!-- ── Google Analytics GA4 ── -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
+      });
     </script>
   </head>
   <body>

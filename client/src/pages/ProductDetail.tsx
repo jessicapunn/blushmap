@@ -4,24 +4,24 @@ import { apiRequest } from "@/lib/queryClient";
 import { NavBar } from "@/components/NavBar";
 import {
   ArrowLeft, ShoppingBag, ExternalLink, Star, Leaf, Crown, Banknote,
-  Sparkles, Heart, ShoppingCart, CheckCircle, ChevronRight, Package
+  Sparkles, Heart, CheckCircle, ChevronRight, Package, Zap
 } from "lucide-react";
 import { useState } from "react";
 import { useBasket } from "@/lib/basket";
 import { useAuth } from "@/lib/auth";
 
-// Multi-retailer affiliate links for each product
+// Primary retailer — single best affiliate link per product
+function getPrimaryRetailer(affiliateUrl: string, productName: string, brand: string) {
+  const q = encodeURIComponent(`${brand} ${productName}`);
+  // If the product already has an affiliate URL, use it; otherwise default to LOOKFANTASTIC
+  const url = affiliateUrl && affiliateUrl !== "#" ? affiliateUrl : `https://www.lookfantastic.com/search?q=${q}`;
+  return { url, name: "Shop Now" };
+}
+
+// Secondary retailers for the "Also available at" section
 function buildRetailerLinks(productName: string, brand: string) {
   const q = encodeURIComponent(`${brand} ${productName}`);
   return [
-    {
-      name: "Amazon UK",
-      url: `https://www.amazon.co.uk/s?k=${q}&tag=blushmap-21`,
-      color: "#FF9900",
-      bg: "#fff8ee",
-      border: "#ffd280",
-      note: "Free delivery Prime",
-    },
     {
       name: "LOOKFANTASTIC",
       url: `https://www.lookfantastic.com/search?q=${q}`,
@@ -37,7 +37,7 @@ function buildRetailerLinks(productName: string, brand: string) {
       color: "#2d2d2d",
       bg: "#fafafa",
       border: "#e0e0e0",
-      note: "Points & gifts",
+      note: "Earn points & gifts",
     },
     {
       name: "Boots",
@@ -48,12 +48,12 @@ function buildRetailerLinks(productName: string, brand: string) {
       note: "Advantage card points",
     },
     {
-      name: "Space NK",
-      url: `https://www.spacenk.com/uk/search?searchTerm=${q}`,
-      color: "#1a1a1a",
-      bg: "#f8f8f8",
-      border: "#ddd",
-      note: "Luxury beauty specialist",
+      name: "Amazon UK",
+      url: `https://www.amazon.co.uk/s?k=${q}&tag=blushmap-21`,
+      color: "#FF9900",
+      bg: "#fff8ee",
+      border: "#ffd280",
+      note: "Prime delivery",
     },
   ];
 }
@@ -74,10 +74,9 @@ const ALT_CONFIG = [
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
-  const { add } = useBasket();
+  const { save, unsave, isSaved } = useBasket();
   const { user } = useAuth();
-  const [saved, setSaved] = useState(false);
-  const [added, setAdded] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   const { data: product, isLoading } = useQuery({
@@ -86,11 +85,11 @@ export default function ProductDetail() {
     enabled: !!id,
   });
 
-  function handleAddToBasket() {
+  function handleWishlist() {
     if (!product) return;
-    add({ id: product.id, name: product.name, brand: product.brand, price: product.price, image: product.image, affiliateUrl: product.affiliateUrl, category: product.category || "skincare" });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    const item = { id: product.id, name: product.name, brand: product.brand, price: product.price, image: product.image, affiliateUrl: product.affiliateUrl, category: product.category || "skincare" };
+    if (wishlisted) { unsave(product.id); setWishlisted(false); }
+    else { save(item); setWishlisted(true); }
   }
 
   if (isLoading) {
@@ -120,6 +119,7 @@ export default function ProductDetail() {
   }
 
   const retailers = buildRetailerLinks(product.name, product.brand);
+  const primary = getPrimaryRetailer(product.affiliateUrl, product.name, product.brand);
 
   return (
     <div className="min-h-screen" style={{ background: "hsl(var(--background))" }}>
@@ -191,22 +191,26 @@ export default function ProductDetail() {
                 ))}
               </div>
 
-              {/* CTA row */}
-              <div className="flex flex-wrap gap-2">
+              {/* Primary Buy Now CTA */}
+              <a
+                href={primary.url}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white text-sm font-bold transition-all hover:opacity-90 mb-3"
+                style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", boxShadow: "0 4px 16px rgba(201,80,110,0.28)" }}
+              >
+                <Zap size={14} /> Buy Now <ExternalLink size={12} />
+              </a>
+
+              {/* Wishlist + Save row */}
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={handleAddToBasket}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-full text-white text-sm font-bold transition-all hover:opacity-90"
-                  style={{ background: added ? "#4a9b6a" : "linear-gradient(135deg, #c9506e, #a3324e)" }}
+                  onClick={handleWishlist}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all"
+                  style={{ border: "1.5px solid #f0ccd6", color: wishlisted ? "#c9506e" : "#9b6674", background: wishlisted ? "#fff0f4" : "transparent" }}
                 >
-                  {added ? <><CheckCircle size={15} /> Added!</> : <><ShoppingCart size={15} /> Add to Basket</>}
-                </button>
-                <button
-                  onClick={() => setSaved(s => !s)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold transition-all"
-                  style={{ border: "1.5px solid #f0ccd6", color: saved ? "#c9506e" : "#9b6674", background: saved ? "#fff0f4" : "transparent" }}
-                >
-                  <Heart size={14} fill={saved ? "#c9506e" : "none"} />
-                  {saved ? "Saved" : "Save"}
+                  <Heart size={14} fill={wishlisted ? "#c9506e" : "none"} />
+                  {wishlisted ? "Wishlisted" : "Add to Wish List"}
                 </button>
               </div>
             </div>
@@ -297,13 +301,13 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Right column: where to buy */}
+          {/* Right column: also available at */}
           <div className="space-y-5">
             <section className="rounded-2xl p-5 sticky top-20" style={{ background: "#fff9fb", border: "1px solid #f0ccd6" }}>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "#1a0a0e", marginBottom: "0.25rem" }}>
-                Where to Buy
+                Also available at
               </h2>
-              <p className="text-xs mb-4" style={{ color: "#9b6674" }}>Prices may vary — check each site for the best deal.</p>
+              <p className="text-xs mb-4" style={{ color: "#9b6674" }}>Compare prices across top retailers.</p>
 
               <div className="space-y-2.5">
                 {retailers.map((r, i) => (

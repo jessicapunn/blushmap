@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import {
-  ScanLine, Sparkles, Search, ShoppingCart, User as UserIcon,
+  ScanLine, Sparkles, Search, Heart, User as UserIcon,
   LogIn, Wand2, Menu, X, Tag
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
@@ -110,7 +110,8 @@ function AnnouncementBanner({ onOpenAuth }: { onOpenAuth: () => void }) {
 // ── Main NavBar ───────────────────────────────────────────────────────────────
 export function NavBar() {
   const { user } = useAuth();
-  const { count } = useBasket();
+  const { savedItems } = useBasket();
+  const savedCount = savedItems.length;
   const [showAuth,   setShowAuth]   = useState(false);
   const [showBasket, setShowBasket] = useState(false);
   const [showMenu,   setShowMenu]   = useState(false);
@@ -143,18 +144,18 @@ export function NavBar() {
             <Menu size={17} />
           </button>
 
-          {/* Logo */}
+          {/* Logo — brand name always visible */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer shrink-0">
-              <BlushMapLogoInline size={28} />
+              <BlushMapLogoInline size={26} />
               <span
-                className="hidden sm:block"
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontSize: "1.18rem",
+                  fontSize: "1.1rem",
                   fontWeight: 500,
                   letterSpacing: "-0.01em",
                   color: "#1a0a0e",
+                  whiteSpace: "nowrap",
                 }}
               >
                 BlushMap
@@ -169,7 +170,7 @@ export function NavBar() {
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-[11px] font-bold tracking-wider cursor-pointer hover:opacity-90 transition-all uppercase"
                 style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", letterSpacing: "0.08em" }}
               >
-                <ScanLine size={12} /> Scan
+                <ScanLine size={12} /> Scan Product
               </span>
             </Link>
             <Link href="/analyse">
@@ -177,7 +178,7 @@ export function NavBar() {
                 className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-white text-[11px] font-bold cursor-pointer hover:opacity-90 transition-all uppercase"
                 style={{ background: "linear-gradient(135deg, #c9944a, #b07830)", letterSpacing: "0.08em" }}
               >
-                <Sparkles size={12} /> Face Map
+                <Sparkles size={12} /> Analyse
               </span>
             </Link>
             <Link href="/try-on">
@@ -217,7 +218,7 @@ export function NavBar() {
                 className="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide"
                 style={{ background: "linear-gradient(135deg, #c9944a, #b07830)" }}
               >
-                <Sparkles size={11} /> AI
+                <Sparkles size={11} /> Analyse
               </span>
             </Link>
 
@@ -242,20 +243,20 @@ export function NavBar() {
               </button>
             )}
 
-            {/* Basket — rightmost */}
+            {/* Wish List — rightmost */}
             <button
               onClick={() => setShowBasket(true)}
               className="relative flex items-center justify-center w-9 h-9 rounded-xl hover:bg-pink-50 transition-colors"
               style={{ border: "1.5px solid #f0ccd6" }}
-              aria-label="Open basket"
+              aria-label="Open wish list"
             >
-              <ShoppingCart size={15} style={{ color: "#c9506e" }} />
-              {count > 0 && (
+              <Heart size={15} style={{ color: "#c9506e" }} fill={savedCount > 0 ? "#c9506e" : "none"} />
+              {savedCount > 0 && (
                 <span
                   className="absolute -top-1.5 -right-1.5 flex items-center justify-center text-[9px] font-bold text-white rounded-full"
                   style={{ background: "#c9506e", minWidth: 16, height: 16, padding: "0 3px" }}
                 >
-                  {count}
+                  {savedCount}
                 </span>
               )}
             </button>

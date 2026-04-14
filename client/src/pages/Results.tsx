@@ -596,7 +596,7 @@ export default function Results() {
                 Recommended for you
               </h2>
               <p className="text-xs text-muted-foreground mt-1">
-                {products.length} products · each with budget, luxury & organic alternatives
+                {products.length} products, each curated for your skin profile
               </p>
             </div>
           </div>
