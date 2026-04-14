@@ -130,11 +130,16 @@ CLINICAL SELECTION RULES:
 
 5. EVERY "usageTip" must be clinical and specific — include frequency, amount, zone, and any precautions (e.g. "patch test first if barrier is compromised", "avoid eye area if using AHA").
 
-6. "skinSummary" = consultant-level clinical note: cite Fitzpatrick type, barrier status, sebaceous activity, top 2 concerns with their clinical implications, and a single sentence on overall skin health trajectory.
+6. "skinSummary" — this is the FIRST thing the user sees. Write it as a FRIENDLY, WARM, EASY-TO-READ dermatologist consultation in this exact structure:
+   a) "headline" — a single short sentence (max 12 words) that sums up their skin in positive, encouraging plain English. Example: "Your skin is in great shape with a few easy wins."
+   b) "bulletPoints" — exactly 3-5 key takeaways, each 8-15 words, written in simple everyday language (no jargon). Each bullet should be actionable or informative. Examples: "Your skin barrier is healthy — keep using gentle cleansers", "Some mild dryness around your cheeks needs extra hydration", "SPF is your best friend — your fair skin burns easily"
+   c) "detailedAnalysis" — a 4-6 sentence paragraph written like an approachable dermatologist chatting to a friend. Use plain English but include the clinical detail: Fitzpatrick type explained simply (e.g. "You have fair skin that tends to burn before it tans — that's Fitzpatrick Type II"), barrier status, sebaceous activity in plain terms, top concerns and what they mean day-to-day. End with an encouraging note about their skin health trajectory.
+   d) "skinHealthScore" — a grade from A+ to D representing overall skin health, where A+ = excellent condition, minimal concerns; A = very healthy; B+ = good with minor areas to address; B = solid but 1-2 noticeable concerns; C = needs attention; D = several concerns, see a dermatologist
+   e) "quickWins" — 2-3 simple one-sentence tips the user can start TODAY, written in second person ("you"). Example: "Switch to a fragrance-free moisturiser to calm that redness."
 
-7. "topConcernToAddress" = the single highest clinical priority based on their profile (not just the most visible — the one that if untreated will worsen other concerns).
+7. "topConcernToAddress" = the single highest clinical priority, but EXPLAIN it in simple terms. Not just the concern name — tell the user WHY it matters and WHAT they can do. Example: "Your skin barrier is slightly weakened, which makes other products sting and lets moisture escape. Fixing this first will make everything else work better."
 
-8. "clinicalWarnings" = any ingredient categories or product types this patient must AVOID, explained clinically.
+8. "clinicalWarnings" = ingredient categories or product types to AVOID, written in plain English. Not "avoid comedogenic oils" — instead "avoid heavy oils like coconut oil which can clog your pores".
 
 Return ONLY valid JSON:
 {
@@ -149,9 +154,15 @@ Return ONLY valid JSON:
     }
   ],
   "routineOrder": ["Step 1: product name — brief clinical note", "Step 2: ..."],
-  "skinSummary": "Consultant-level clinical note (3-4 sentences)",
-  "topConcernToAddress": "Highest clinical priority with brief explanation of why",
-  "clinicalWarnings": ["Specific ingredients or product types to avoid for this profile"]
+  "skinSummary": {
+    "headline": "Short positive plain-English summary (max 12 words)",
+    "bulletPoints": ["Key takeaway 1 in simple language", "Key takeaway 2", "Key takeaway 3"],
+    "detailedAnalysis": "4-6 sentence friendly paragraph with clinical detail in plain English",
+    "skinHealthScore": "A+|A|B+|B|C|D",
+    "quickWins": ["Tip 1 the user can start today", "Tip 2"]
+  },
+  "topConcernToAddress": "Explain the top concern in simple terms — what it means and what to do",
+  "clinicalWarnings": ["Avoid X because Y (in plain English)"]
 }`;
 }
 

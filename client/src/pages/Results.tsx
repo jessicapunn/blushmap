@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, ExternalLink, ShoppingBag, AlertCircle, Sparkles, Leaf, Crown, Banknote, ChevronRight, Heart, User as UserIcon } from "lucide-react";
+import { ArrowLeft, ExternalLink, ShoppingBag, AlertCircle, Sparkles, Leaf, Crown, Banknote, ChevronRight, Heart, User as UserIcon, ChevronDown, ChevronUp, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
@@ -175,6 +175,164 @@ function KeyIngredientChips({ ingredients }: { ingredients: Array<{ name: string
       </div>
       {expandedIdx === null && (
         <p className="text-xs text-muted-foreground mt-1.5">Tap an ingredient to learn more</p>
+      )}
+    </div>
+  );
+}
+
+const SCORE_COLORS: Record<string, { bg: string; text: string; ring: string }> = {
+  "A+": { bg: "#e8f5e9", text: "#1b5e20", ring: "#4caf50" },
+  "A":  { bg: "#e8f5e9", text: "#2e7d32", ring: "#66bb6a" },
+  "B+": { bg: "#fff8e1", text: "#e65100", ring: "#ffa726" },
+  "B":  { bg: "#fff3e0", text: "#e65100", ring: "#ff9800" },
+  "C":  { bg: "#fbe9e7", text: "#bf360c", ring: "#ff7043" },
+  "D":  { bg: "#ffebee", text: "#b71c1c", ring: "#ef5350" },
+};
+
+function SkinSummaryCard({ skinAnalysis, recommendations, imageData }: { skinAnalysis: any; recommendations: any; imageData: string | null }) {
+  const [showDetail, setShowDetail] = useState(false);
+
+  // Support both old string format and new structured format
+  const summary = recommendations?.skinSummary;
+  const isStructured = summary && typeof summary === "object" && summary.headline;
+
+  const headline = isStructured
+    ? summary.headline
+    : (typeof summary === "string" ? summary : `${skinAnalysis.skinType} skin with ${skinAnalysis.undertone} undertone`);
+  const bullets: string[] = isStructured ? (summary.bulletPoints || []) : [];
+  const detailedAnalysis: string = isStructured ? (summary.detailedAnalysis || "") : (typeof summary === "string" ? summary : "");
+  const score: string = isStructured ? (summary.skinHealthScore || "") : "";
+  const quickWins: string[] = isStructured ? (summary.quickWins || []) : [];
+  const scoreStyle = SCORE_COLORS[score] || SCORE_COLORS["B+"];
+
+  return (
+    <div className="rounded-3xl overflow-hidden mb-8" style={{ background: "linear-gradient(135deg, hsl(340 30% 94%), hsl(30 35% 93%))" }}>
+      <div className="p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row gap-6 items-start">
+          {imageData && (
+            <div className="relative shrink-0">
+              <img src={imageData} alt="Your analysed photo" className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover shadow-md" />
+              <div className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--color-rose)" }}>
+                <Sparkles size={14} color="white" />
+              </div>
+            </div>
+          )}
+          <div className="flex-1">
+            {/* Label + score badge row */}
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>
+                AI Skin Profile
+              </span>
+              {score && (
+                <span
+                  className="text-xs font-bold px-2.5 py-1 rounded-full"
+                  style={{ background: scoreStyle.bg, color: scoreStyle.text, border: `1.5px solid ${scoreStyle.ring}` }}
+                >
+                  Skin Score: {score}
+                </span>
+              )}
+            </div>
+
+            {/* Headline */}
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.3rem, 3vw, 1.9rem)", marginBottom: "0.75rem", lineHeight: 1.25 }}>
+              {headline}
+            </h1>
+
+            {/* Skin type chips */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <div className="text-xs bg-white/60 px-3 py-1.5 rounded-full">
+                <SkinToneChip tone={skinAnalysis.skinTone} />
+              </div>
+              <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
+                {skinAnalysis.undertone} undertone
+              </span>
+              <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
+                {skinAnalysis.skinType} skin
+              </span>
+              {skinAnalysis.faceShape && (
+                <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
+                  {skinAnalysis.faceShape} face
+                </span>
+              )}
+            </div>
+
+            {/* Key bullet points */}
+            {bullets.length > 0 && (
+              <ul className="space-y-2 mb-4">
+                {bullets.map((b, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed">
+                    <ShieldCheck size={14} className="mt-0.5 shrink-0" style={{ color: "var(--color-rose)" }} />
+                    <span>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Quick wins */}
+            {quickWins.length > 0 && (
+              <div className="rounded-xl p-3.5 mb-4" style={{ background: "rgba(255,255,255,0.55)", border: "1px solid rgba(201,80,110,0.12)" }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap size={13} style={{ color: "var(--color-gold)" }} />
+                  <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--color-gold)", letterSpacing: "0.08em" }}>Quick wins</span>
+                </div>
+                <ul className="space-y-1.5">
+                  {quickWins.map((tip, i) => (
+                    <li key={i} className="text-xs leading-relaxed text-foreground/80 pl-5 relative">
+                      <span className="absolute left-0">{'\u2022'}</span>
+                      {tip}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Read more toggle */}
+            {detailedAnalysis && (
+              <div>
+                <button
+                  onClick={() => setShowDetail(!showDetail)}
+                  className="flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-80"
+                  style={{ color: "var(--color-rose)" }}
+                >
+                  {showDetail ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                  {showDetail ? "Show less" : "Read full analysis"}
+                </button>
+                {showDetail && (
+                  <div className="mt-3 p-4 rounded-xl text-sm leading-relaxed" style={{ background: "rgba(255,255,255,0.5)", borderLeft: "2px solid var(--color-rose)" }}>
+                    {detailedAnalysis}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Top concern banner */}
+      {recommendations?.topConcernToAddress && (
+        <div className="px-6 sm:px-8 pb-5">
+          <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(181,71,106,0.08)", border: "1px solid rgba(181,71,106,0.15)" }}>
+            <ChevronRight size={14} className="mt-0.5 shrink-0" style={{ color: "var(--color-rose)" }} />
+            <span><span className="font-semibold" style={{ color: "var(--color-rose)" }}>Top priority: </span>{recommendations.topConcernToAddress}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Clinical warnings */}
+      {recommendations?.clinicalWarnings && recommendations.clinicalWarnings.length > 0 && (
+        <div className="px-6 sm:px-8 pb-6">
+          <div className="rounded-xl p-3.5" style={{ background: "rgba(244,67,54,0.05)", border: "1px solid rgba(244,67,54,0.12)" }}>
+            <p className="text-xs font-semibold mb-1.5" style={{ color: "#c62828" }}>Things to avoid</p>
+            <ul className="space-y-1">
+              {recommendations.clinicalWarnings.map((w: string, i: number) => (
+                <li key={i} className="text-xs leading-relaxed" style={{ color: "#5d4037" }}>
+                  <AlertCircle size={10} className="inline mr-1.5" style={{ color: "#e53935" }} />
+                  {w}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -478,56 +636,12 @@ export default function Results() {
           </div>
         )}
 
-        {/* Hero profile card */}
-        <div className="rounded-3xl overflow-hidden mb-8" style={{ background: "linear-gradient(135deg, hsl(340 30% 94%), hsl(30 35% 93%))" }}>
-          <div className="p-6 sm:p-8">
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
-              {imageData && (
-                <div className="relative shrink-0">
-                  <img src={imageData} alt="Your analysed photo" className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover shadow-md" />
-                  <div className="absolute -bottom-1.5 -right-1.5 w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "var(--color-rose)" }}>
-                    <Sparkles size={14} color="white" />
-                  </div>
-                </div>
-              )}
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--color-rose)", letterSpacing: "0.12em" }}>
-                    AI Skin Profile
-                  </span>
-                </div>
-                <h1 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.3rem, 3vw, 2rem)", marginBottom: "1rem", lineHeight: 1.2 }}>
-                  {recommendations?.skinSummary || `${skinAnalysis.skinType} skin with ${skinAnalysis.undertone} undertone`}
-                </h1>
-                <div className="flex flex-wrap gap-2">
-                  <div className="text-xs bg-white/60 px-3 py-1.5 rounded-full">
-                    <SkinToneChip tone={skinAnalysis.skinTone} />
-                  </div>
-                  <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
-                    {skinAnalysis.undertone} undertone
-                  </span>
-                  <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
-                    {skinAnalysis.skinType} skin
-                  </span>
-                  {skinAnalysis.faceShape && (
-                    <span className="text-xs bg-white/60 px-3 py-1.5 rounded-full capitalize">
-                      {skinAnalysis.faceShape} face
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* Top concern banner */}
-          {recommendations?.topConcernToAddress && (
-            <div className="px-6 sm:px-8 pb-5">
-              <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm" style={{ background: "rgba(181,71,106,0.08)", border: "1px solid rgba(181,71,106,0.15)" }}>
-                <ChevronRight size={14} style={{ color: "var(--color-rose)", flexShrink: 0 }} />
-                <span><span className="font-semibold" style={{ color: "var(--color-rose)" }}>Top priority: </span>{recommendations.topConcernToAddress}</span>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Hero profile card — friendly summary */}
+        <SkinSummaryCard
+          skinAnalysis={skinAnalysis}
+          recommendations={recommendations}
+          imageData={imageData}
+        />
 
         {/* Two-column: Face map + Zone breakdown */}
         <div className="grid sm:grid-cols-2 gap-5 mb-8">
