@@ -80,7 +80,7 @@ export const CATALOG: Product[] = [
     tags: ["hydration","gel","lightweight","oily-skin","oil-free"],
     description: "An ultra-lightweight gel moisturiser that instantly quenches skin and keeps it hydrated all day. Its hyaluronic acid gel matrix retains water and releases it slowly to continuously hydrate throughout the day. Oil-free, non-comedogenic and absorbs instantly — perfect for oily or combination skin.",
     price: "£13.99",
-    image: "https://static.thcdn.com/productimg/original/11433774-1995319455128950.jpg"
+    image: "https://static.thcdn.com/productimg/original/11433774-1995319455128950.jpg",
     affiliateUrl: boots("Neutrogena Hydro Boost Water Gel"),
     zones: ["cheeks","forehead","t-zone"],
     suitableFor: ["oily","combination","normal"],
@@ -100,7 +100,7 @@ export const CATALOG: Product[] = [
     tags: ["hydration","pore-refining","oil-control","luxury","japanese"],
     description: "An oil-free, water-based moisturiser inspired by Japanese beauty rituals. Contains wild rose, leopard lily and hadasei-3 — a trio of anti-ageing superfoods. Melts instantly into skin, visibly minimising pores and controlling oil for up to 8 hours. A cult favourite for that blurred, filter-like finish.",
     price: "£74.00",
-    image: "https://static.thcdn.com/productimg/original/14979949-1015325096703413.jpg"
+    image: "https://static.thcdn.com/productimg/original/14979949-1015325096703413.jpg",
     affiliateUrl: snk("Tatcha Water Cream"),
     zones: ["t-zone","forehead","cheeks"],
     suitableFor: ["oily","combination","normal"],
@@ -165,7 +165,7 @@ export const CATALOG: Product[] = [
     tags: ["luxury","anti-ageing","regenerative","TFC8","healing"],
     description: "Developed by Professor Augustinus Bader, a world-renowned expert in stem cell biology. Powered by TFC8 technology, this luxurious cream directs the skin's own repair mechanisms to restore youthfulness. Clinical studies show visible reduction in fine lines in 4 weeks. The pinnacle of science-led skincare.",
     price: "£265.00",
-    image: "https://static.thcdn.com/productimg/original/13315097-1065322014262339.jpg"
+    image: "https://static.thcdn.com/productimg/original/13315097-1065322014262339.jpg",
     affiliateUrl: lf("Augustinus Bader The Rich Cream"),
     zones: ["full-face","neck"],
     suitableFor: ["mature","dry","all"],
@@ -187,7 +187,7 @@ export const CATALOG: Product[] = [
     tags: ["brightening","dark-spots","SPF","vitamin-c","glow"],
     description: "A dual-action moisturiser that hydrates and visibly corrects dark spots simultaneously. Fortified with activated vitamin C and activated C-Activator at 10% total concentration — clinically proven to reduce the look of dark spots in 4 weeks. SPF 30 ensures daily protection. Lightweight texture suitable for all skin tones.",
     price: "£49.00",
-    image: "https://static.thcdn.com/productimg/original/12916133-1174853889600705.jpg"
+    image: "https://static.thcdn.com/productimg/original/12916133-1174853889600705.jpg",
     affiliateUrl: lf("Kiehls Clearly Corrective Dark Spot Moisturiser"),
     zones: ["cheeks","forehead","t-zone"],
     suitableFor: ["all","combination","normal","dull"],
@@ -254,7 +254,7 @@ export const CATALOG: Product[] = [
     tags: ["vitamin-c","antioxidant","brightening","anti-ageing","luxury"],
     description: "The gold standard of vitamin C serums — clinically proven and dermatologist-endorsed globally. A patented combination of 15% pure vitamin C, 1% vitamin E and 0.5% ferulic acid provides eight times the natural photoprotection of untreated skin. Visibly brightens, firms and reduces the appearance of fine lines and wrinkles. A true skincare investment.",
     price: "£166.00",
-    image: "https://static.thcdn.com/productimg/original/11705727-4725323826126148.jpg"
+    image: "https://static.thcdn.com/productimg/original/11705727-4725323826126148.jpg",
     affiliateUrl: lf("SkinCeuticals C E Ferulic Serum"),
     zones: ["full-face","neck","décolletage"],
     suitableFor: ["normal","dry","mature","all"],
@@ -275,7 +275,7 @@ export const CATALOG: Product[] = [
     tags: ["anti-ageing","repair","hyaluronic-acid","night","classic"],
     description: "The iconic ANR serum, trusted for over 40 years. Powered by Chronolux Power Signal Technology and hyaluronic acid, it synchronises with the skin's natural night-time repair rhythms. Visibly reduces the look of multiple signs of ageing — lines, wrinkles and uneven tone — in as little as four weeks. Suitable for all skin types and skin tones.",
     price: "£100.00",
-    image: "https://static.thcdn.com/productimg/original/13924834-1784976743956681.jpg"
+    image: "https://static.thcdn.com/productimg/original/13924834-1784976743956681.jpg",
     affiliateUrl: lf("Estee Lauder Advanced Night Repair Serum"),
     zones: ["full-face","neck"],
     suitableFor: ["all","mature","dry","normal"],
@@ -297,7 +297,7 @@ export const CATALOG: Product[] = [
     tags: ["hydration","plumping","hyaluronic-acid","budget","all-skin"],
     description: "A multi-molecular weight hyaluronic acid serum that delivers surface and deep hydration simultaneously. Combined with vitamin B5 (panthenol) to improve moisture retention and support barrier function. Fragrance-free, vegan and suitable for all skin types. Layer under moisturiser for maximum plumping effect.",
     price: "£7.90",
-    image: "https://static.thcdn.com/productimg/original/15061690-1585328238824312.jpg"
+    image: "https://static.thcdn.com/productimg/original/15061690-1585328238824312.jpg",
     affiliateUrl: boots("The Ordinary Hyaluronic Acid 2% B5"),
     zones: ["full-face"],
     suitableFor: ["all","dry","dehydrated","sensitive"],
@@ -317,7 +317,7 @@ export const CATALOG: Product[] = [
     tags: ["retinol","anti-ageing","renewal","beginner","budget"],
     description: "An accessible entry point into retinol for beginners. Suspended in squalane — a lightweight, skin-identical oil — to minimise irritation while delivering proven anti-ageing benefits. At 0.2%, this is the ideal starting concentration: effective enough to stimulate cell turnover without the dryness and flaking of higher-strength formulas.",
     price: "£8.00",
-    image: "https://static.thcdn.com/productimg/original/11638501-1665328246956931.jpg"
+    image: "https://static.thcdn.com/productimg/original/11638501-1665328246956931.jpg",
     affiliateUrl: boots("The Ordinary Retinol Squalane"),
     zones: ["full-face","neck"],
     suitableFor: ["all","normal","mature","beginners"],
@@ -337,7 +337,7 @@ export const CATALOG: Product[] = [
     tags: ["snail","repair","hydration","K-beauty","soothing"],
     description: "A K-beauty hero essence that has earned global cult status. A concentrated 96% snail secretion filtrate delivers intense hydration, speeds skin repair and fades blemish marks. The lightweight, water-like texture layers seamlessly under moisturiser. Ideal after extractions, skin trauma or to maintain a smooth, glass-skin appearance.",
     price: "£22.00",
-    image: "https://static.thcdn.com/productimg/original/11401174-1415322543059229.jpg"
+    image: "https://static.thcdn.com/productimg/original/11401174-1415322543059229.jpg",
     affiliateUrl: boots("COSRX Snail Mucin 96% Essence"),
     zones: ["full-face"],
     suitableFor: ["all","blemish-prone","dry","sensitive"],
@@ -357,7 +357,7 @@ export const CATALOG: Product[] = [
     tags: ["vitamin-c","brightening","resurfacing","glow","luxury"],
     description: "A high-potency vitamin C serum featuring 15% stable vitamin C complex (THD ascorbate) combined with lactic acid for a dual brightening and resurfacing effect. THD ascorbate is oil-soluble, penetrating deeper into skin than water-soluble forms. Visibly reduces dark spots, evens tone and boosts collagen production. Bright, glassy skin in weeks.",
     price: "£85.00",
-    image: "https://static.thcdn.com/productimg/original/11588282-5745191359166704.jpg"
+    image: "https://static.thcdn.com/productimg/original/11588282-5745191359166704.jpg",
     affiliateUrl: lf("Sunday Riley CEO Vitamin C Serum"),
     zones: ["full-face","neck"],
     suitableFor: ["all","dull","hyperpigmentation","mature"],
@@ -378,7 +378,7 @@ export const CATALOG: Product[] = [
     tags: ["niacinamide","hydration","glow","hyaluronic-acid","dewy"],
     description: "A triple-action serum-essence hybrid that blurs, hydrates and shields simultaneously. Watermelon extract, niacinamide and hyaluronic acid combine to deliver a dewy, lit-from-within complexion. The gel-serum texture sits beautifully under makeup or alone for a glassy, glass-skin finish. Vegan and cruelty-free.",
     price: "£32.00",
-    image: "https://static.thcdn.com/productimg/original/16777061-9505323571298789.jpg"
+    image: "https://static.thcdn.com/productimg/original/16777061-9505323571298789.jpg",
     affiliateUrl: cult("Glow Recipe Watermelon Dew Drops"),
     zones: ["full-face"],
     suitableFor: ["oily","combination","dull","all"],
@@ -399,7 +399,7 @@ export const CATALOG: Product[] = [
     tags: ["peptides","anti-ageing","firmness","collagen","budget"],
     description: "A clinically-proven formula delivering visible anti-ageing results in 12 weeks. Multi-peptide complex stimulates collagen production and improves skin elasticity. Night-use formula maximises the skin's natural repair window. Fragrance-free and suitable for sensitive skin — excellent value for a peptide-based treatment.",
     price: "£24.99",
-    image: "https://static.thcdn.com/productimg/original/13447853-1865318444474448.jpg"
+    image: "https://static.thcdn.com/productimg/original/13447853-1865318444474448.jpg",
     affiliateUrl: boots("RoC Retinol Correxion Serum"),
     zones: ["full-face","neck"],
     suitableFor: ["mature","dry","sensitive","all"],
@@ -419,7 +419,7 @@ export const CATALOG: Product[] = [
     tags: ["night-oil","repair","lavender","anti-ageing","restoring"],
     description: "A nightly facial oil that works with the skin's biological repair process to dramatically restore skin's appearance by morning. Squalane and evening primrose oil replenish lipids while lavender essential oil provides a calming, sleep-inducing scent. Skin appears visibly smoother, firmer and radiant after just one night.",
     price: "£51.00",
-    image: "https://static.thcdn.com/productimg/original/12916110-1244853890914849.jpg"
+    image: "https://static.thcdn.com/productimg/original/12916110-1244853890914849.jpg",
     affiliateUrl: lf("Kiehls Midnight Recovery Concentrate"),
     zones: ["full-face","neck"],
     suitableFor: ["dry","mature","dull","normal"],
@@ -444,7 +444,7 @@ export const CATALOG: Product[] = [
     tags: ["SPF50+","UV","anti-ageing","invisible","daily"],
     description: "Award-winning next-generation sun protection featuring patented Mexoryl 400 technology — the first filter proven to block ultra-long UVA rays linked to photoageing. Ultra-light fluid formula with no white cast, suitable for all skin tones. Tested on post-procedure and sensitive skin. The benchmark for daily facial sun protection.",
     price: "£20.00",
-    image: "https://static.thcdn.com/productimg/original/13494906-3035227179966603.jpg"
+    image: "https://static.thcdn.com/productimg/original/13494906-3035227179966603.jpg",
     affiliateUrl: boots("La Roche-Posay Anthelios UVMune 400"),
     zones: ["full-face","neck"],
     suitableFor: ["all","sensitive","post-procedure","mature"],
@@ -465,7 +465,7 @@ export const CATALOG: Product[] = [
     tags: ["SPF50","once-a-day","anti-pigmentation","sensitive","no-white-cast"],
     description: "A once-a-day SPF50 that provides up to 12 hours of protection. Unique formula prevents photostimulation of melanin, making it ideal for those prone to pigmentation and melasma. Doubles as an anti-ageing treatment with antioxidants to combat free-radical damage. No perfume, preservatives or emulsifiers.",
     price: "£23.50",
-    image: "https://static.thcdn.com/productimg/original/12461159-1834934544073998.jpg"
+    image: "https://static.thcdn.com/productimg/original/12461159-1834934544073998.jpg",
     affiliateUrl: boots("Ultrasun Face SPF50"),
     zones: ["full-face"],
     suitableFor: ["sensitive","hyperpigmentation","all","mature"],
@@ -485,7 +485,7 @@ export const CATALOG: Product[] = [
     tags: ["tinted","SPF50+","mineral","coverage","sensitive"],
     description: "A tinted mineral sunscreen that acts as a lightweight, buildable BB cream. Iron oxides provide visible light protection (important for hyperpigmentation sufferers) while a sheer tint evening and adds a subtle glow. Reef-safe mineral formula suitable for the most sensitive and reactive skin.",
     price: "£22.00",
-    image: "https://static.thcdn.com/productimg/original/13494908-8634932952103553.jpg"
+    image: "https://static.thcdn.com/productimg/original/13494908-8634932952103553.jpg",
     affiliateUrl: boots("La Roche-Posay Anthelios Tinted SPF50+"),
     zones: ["full-face"],
     suitableFor: ["sensitive","hyperpigmentation","rosacea","all"],
@@ -509,7 +509,7 @@ export const CATALOG: Product[] = [
     tags: ["full-coverage","long-wear","airbrush","buildable","luxury"],
     description: "Charlotte Tilbury's bestselling foundation, worn on red carpets worldwide. A weightless liquid formula that delivers flawless, full-coverage results in one layer — adapting to your skin to smooth texture and conceal imperfections. Sweat-proof and humidity-proof. Available in 44 shades to suit every complexion from lightest to deepest.",
     price: "£36.00",
-    image: "https://static.thcdn.com/productimg/original/17767851-2075323330736925.jpg"
+    image: "https://static.thcdn.com/productimg/original/17767851-2075323330736925.jpg",
     affiliateUrl: ctLink("Airbrush Flawless Foundation"),
     zones: ["full-face"],
     suitableFor: ["all","combination","oily","normal"],
@@ -572,7 +572,7 @@ export const CATALOG: Product[] = [
     tags: ["full-coverage","24-hour","matte","long-wear","classic"],
     description: "The beauty industry's most award-winning foundation. A 24-hour wear formula that delivers full, natural-looking coverage that won't slip, fade or streak. Available in 56 shades. Ideal for long days, events and anyone who demands all-day flawless coverage. Sweat-resistant and humidity-resistant.",
     price: "£46.00",
-    image: "https://static.thcdn.com/productimg/original/17622272-8945303345083635.jpg"
+    image: "https://static.thcdn.com/productimg/original/17622272-8945303345083635.jpg",
     affiliateUrl: lf("Estee Lauder Double Wear Foundation"),
     zones: ["full-face"],
     suitableFor: ["oily","combination","all"],
@@ -596,7 +596,7 @@ export const CATALOG: Product[] = [
     tags: ["coverage","brightening","creamy","long-wear","under-eye"],
     description: "The concealer that broke the internet — sold every few seconds worldwide. A creamy, full-coverage formula with a radiant finish that conceals blemishes, dark circles and imperfections. Buildable coverage stays put for 16 hours. Caffeine reduces puffiness while optical brighteners reflect light for a well-rested, luminous look.",
     price: "£30.00",
-    image: "https://static.thcdn.com/productimg/original/10785712-1785249197799430.jpg"
+    image: "https://static.thcdn.com/productimg/original/10785712-1785249197799430.jpg",
     affiliateUrl: lf("NARS Radiant Creamy Concealer"),
     zones: ["under-eye","blemishes","nose","chin"],
     suitableFor: ["all","dry","normal","combination"],
@@ -617,7 +617,7 @@ export const CATALOG: Product[] = [
     tags: ["coverage","budget","natural","buildable","drugstore"],
     description: "One of the best-selling concealers in the world — and for good reason. Provides medium, buildable coverage with a natural, skin-like finish. Crease-resistant formula blends seamlessly and stays comfortable all day. Available in 40 shades. The ultimate drugstore concealer that consistently outperforms products at five times the price.",
     price: "£7.99",
-    image: "https://static.thcdn.com/productimg/original/11705438-1315247599309085.jpg"
+    image: "https://static.thcdn.com/productimg/original/11705438-1315247599309085.jpg",
     affiliateUrl: boots("Maybelline Fit Me Concealer"),
     zones: ["under-eye","blemishes"],
     suitableFor: ["all","combination","oily"],
@@ -636,7 +636,7 @@ export const CATALOG: Product[] = [
     tags: ["brightening","radiance","iconic","highlighter","pen"],
     description: "The iconic luminous pen that created the brightening concealer category. Used backstage at Paris Fashion Week for over 30 years. A light-reflecting formula with a built-in brush that instantly illuminates fatigue, lines and shadows. Not a heavy concealer — a radiance-boosting transformer that catches light beautifully.",
     price: "£34.50",
-    image: "https://static.thcdn.com/productimg/original/11794791-2095294817104262.jpg"
+    image: "https://static.thcdn.com/productimg/original/11794791-2095294817104262.jpg",
     affiliateUrl: lf("YSL Touche Eclat Radiant Touch"),
     zones: ["under-eye","inner-corner","cheekbones","brow-bone"],
     suitableFor: ["all","mature","dull","normal"],
@@ -680,7 +680,7 @@ export const CATALOG: Product[] = [
     tags: ["hydration","K-beauty","astragalus","soothing","minimalist"],
     description: "Formulated with 91.3% astragalus root extract — a deeply hydrating and healing ingredient used in Korean medicine for millennia. One of the simplest and most effective hydrating toners available: no alcohol, no fragrance, no fillers. Pat into skin after cleansing to flood cells with moisture and prep for serums.",
     price: "£18.00",
-    image: "https://static.thcdn.com/productimg/original/14866957-1695322004448622.jpg"
+    image: "https://static.thcdn.com/productimg/original/14866957-1695322004448622.jpg",
     affiliateUrl: cult("Pyunkang Yul Essence Toner"),
     zones: ["full-face"],
     suitableFor: ["dry","sensitive","all","dehydrated"],
@@ -699,7 +699,7 @@ export const CATALOG: Product[] = [
     tags: ["glycolic-acid","AHA","exfoliant","brightening","budget"],
     description: "A cult-favourite exfoliating toning solution at an unbeatable price. 7% glycolic acid removes dead skin cells, smooths texture and improves brightness with consistent use. Also contains amino acids, aloe vera and ginseng to support and balance the skin post-exfoliation. Use on cotton pad 3–4 nights per week.",
     price: "£11.80",
-    image: "https://static.thcdn.com/productimg/original/17767850-1015323330585356.jpg"
+    image: "https://static.thcdn.com/productimg/original/17767850-1015323330585356.jpg",
     affiliateUrl: boots("The Ordinary Glycolic Acid 7% Toning Solution"),
     zones: ["full-face","back","chest"],
     suitableFor: ["oily","combination","normal","hyperpigmentation"],
@@ -723,7 +723,7 @@ export const CATALOG: Product[] = [
     tags: ["retinol","anti-ageing","firmness","eye","budget"],
     description: "A breakthrough retinol eye treatment that delivers visible results at a fraction of the price of luxury alternatives. A dual-chamber applicator keeps retinol stable until the moment of application. Clinically proven to reduce the appearance of crow's feet and dark circles in 28 days. Gentle enough for the delicate eye area.",
     price: "£39.99",
-    image: "https://static.thcdn.com/productimg/original/12435689-2115324588700873.jpg"
+    image: "https://static.thcdn.com/productimg/original/12435689-2115324588700873.jpg",
     affiliateUrl: boots("Olay Retinol Eye Cream"),
     zones: ["eye-area","crow's-feet","under-eye"],
     suitableFor: ["mature","all","normal","dry"],
@@ -743,7 +743,7 @@ export const CATALOG: Product[] = [
     tags: ["hydration","avocado","nourishing","eye","classic"],
     description: "Kiehl's bestselling eye cream for over 30 years. A rich, concentrated treatment enriched with avocado oil and beta-carotene. Intensely nourishes the delicate periorbital area, reducing dryness and the appearance of fine lines. The rich texture and distinctive pot make it one of the most gifted beauty products in the world.",
     price: "£40.00",
-    image: "https://static.thcdn.com/productimg/original/12916107-1555129688365991.jpg"
+    image: "https://static.thcdn.com/productimg/original/12916107-1555129688365991.jpg",
     affiliateUrl: lf("Kiehls Creamy Eye Treatment Avocado"),
     zones: ["eye-area","under-eye","crow's-feet"],
     suitableFor: ["dry","mature","all","sensitive"],
@@ -764,7 +764,7 @@ export const CATALOG: Product[] = [
     tags: ["anti-ageing","repair","dark-circles","puffiness","luxury"],
     description: "The most powerful ANR formula for the eye area. Features the proprietary Chronolux Power Signal Technology enhanced for the delicate periorbital zone. Visibly reduces the appearance of multiple eye concerns: dark circles, puffiness, fine lines and loss of firmness. Peptides and hyaluronic acid deliver instant and long-term results.",
     price: "£70.00",
-    image: "https://static.thcdn.com/productimg/original/13924834-1784976743956681.jpg"
+    image: "https://static.thcdn.com/productimg/original/13924834-1784976743956681.jpg",
     affiliateUrl: lf("Estee Lauder ANR Eye Supercharged"),
     zones: ["eye-area","under-eye","crow's-feet"],
     suitableFor: ["mature","all","dry","normal"],
@@ -789,7 +789,7 @@ export const CATALOG: Product[] = [
     tags: ["foaming","ceramides","normal","oily","fragrance-free"],
     description: "A gentle, foaming cleanser developed with dermatologists. Removes excess oil, dirt and makeup while maintaining the skin's natural barrier. Three essential ceramides and niacinamide work in synergy to cleanse without stripping. Non-comedogenic, fragrance-free and suitable for normal to oily skin — the staple of every evidence-based skincare routine.",
     price: "£14.50",
-    image: "https://static.thcdn.com/productimg/original/11798697-1005324620847859.jpg"
+    image: "https://static.thcdn.com/productimg/original/11798697-1005324620847859.jpg",
     affiliateUrl: boots("CeraVe Foaming Facial Cleanser"),
     zones: ["full-face"],
     suitableFor: ["oily","combination","normal"],
@@ -810,7 +810,7 @@ export const CATALOG: Product[] = [
     tags: ["gentle","sensitive","soothing","non-stripping","ceramides"],
     description: "The number one dermatologist-recommended cleanser for sensitive and reactive skin in France. A soap-free formula with prebiotic thermal water, ceramides and niacinamide that cleanses without compromising the microbiome. No fragrance, no preservatives, no parabens. Rinse off or leave on as a mask for extra soothing effect.",
     price: "£15.00",
-    image: "https://static.thcdn.com/productimg/original/12631146-2044801019221119.jpg"
+    image: "https://static.thcdn.com/productimg/original/12631146-2044801019221119.jpg",
     affiliateUrl: boots("La Roche-Posay Toleriane Hydrating Cleanser"),
     zones: ["full-face"],
     suitableFor: ["sensitive","dry","rosacea","eczema-prone"],
@@ -830,7 +830,7 @@ export const CATALOG: Product[] = [
     tags: ["balm","luxury","anti-ageing","double-cleanse","nourishing"],
     description: "A cult cleansing balm that dissolves makeup — including waterproof mascara — while delivering intensive anti-ageing care. Egyptian rose, mimosa and elderberry blossom oils nourish and protect. The pearlescent balm melts on skin and transforms to a milky fluid when emulsified with water. Leaves skin visibly smoother and radiant.",
     price: "£49.00",
-    image: "https://static.thcdn.com/productimg/original/14940276-8845326900691604.jpg"
+    image: "https://static.thcdn.com/productimg/original/14940276-8845326900691604.jpg",
     affiliateUrl: lf("Elemis Pro-Collagen Cleansing Balm"),
     zones: ["full-face"],
     suitableFor: ["all","dry","mature","sensitive"],
@@ -855,7 +855,7 @@ export const CATALOG: Product[] = [
     tags: ["retinal","anti-ageing","advanced","overnight","firmness"],
     description: "Retinal (retinaldehyde) is 11× more potent than retinol but gentler than prescription tretinoin — and Crystal Retinal is the best-formulated version on the market. The 0.06% retinal concentration is encapsulated in a time-release system to minimise irritation. Skin appears visibly smoother, firmer and more youthful in 4 weeks. Use nightly, gradually.",
     price: "£49.00",
-    image: "https://static.thcdn.com/productimg/original/11899386-8785323840805661.jpg"
+    image: "https://static.thcdn.com/productimg/original/11899386-8785323840805661.jpg",
     affiliateUrl: lf("Medik8 Crystal Retinal 6"),
     zones: ["full-face","neck"],
     suitableFor: ["mature","normal","combination","experienced-retinol-users"],
@@ -876,7 +876,7 @@ export const CATALOG: Product[] = [
     tags: ["retinol","anti-ageing","fine-lines","budget","classic"],
     description: "A dermatologist-trusted retinol serum that delivers clinically proven results at a high-street price. Pure stabilised retinol combined with an exclusive mineral complex visibly reduces fine lines and wrinkles in 12 weeks. One of the most researched retinol formulas available without prescription. Fragrance-free.",
     price: "£28.99",
-    image: "https://static.thcdn.com/productimg/original/17692035-1815316062266431.jpg"
+    image: "https://static.thcdn.com/productimg/original/17692035-1815316062266431.jpg",
     affiliateUrl: boots("RoC Retinol Correxion Serum"),
     zones: ["full-face","neck","eye-area"],
     suitableFor: ["mature","all","normal","dry"],
@@ -900,7 +900,7 @@ export const CATALOG: Product[] = [
     tags: ["overnight","hydration","brightening","K-beauty","AHA"],
     description: "Wake up to visibly plumper, more luminous skin. This overnight sleeping mask delivers a powerhouse blend of watermelon extract, hyaluronic acid and AHAs that work while you sleep to exfoliate, hydrate and repair. The cool gel texture soothes as it sinks in — no rinse required. Consistently ranked among the world's best overnight masks.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/15620122-5155321770268880.jpg"
+    image: "https://static.thcdn.com/productimg/original/15620122-5155321770268880.jpg",
     affiliateUrl: cult("Glow Recipe Watermelon Sleeping Mask"),
     zones: ["full-face"],
     suitableFor: ["oily","combination","dull","all"],
@@ -921,7 +921,7 @@ export const CATALOG: Product[] = [
     tags: ["clay","pore-cleansing","luxury","glow","kaolin"],
     description: "A luxurious clay mask that deep-cleanses pores while maintaining a radiant, goddess-like glow. Unlike stripping clay masks, this formula includes skin-loving rosehip oil and vitamin E to counterbalance the purifying effect. Apply as a mask for 10 minutes or blend a thin layer overnight for an intensive treatment. Skin looks cleansed, refined and luminous.",
     price: "£42.00",
-    image: "https://static.thcdn.com/productimg/original/13313632-4884896616595484.jpg"
+    image: "https://static.thcdn.com/productimg/original/13313632-4884896616595484.jpg",
     affiliateUrl: ctLink("Goddess Skin Clay Mask"),
     zones: ["t-zone","forehead","nose","chin"],
     suitableFor: ["oily","combination","all"],
@@ -942,7 +942,7 @@ export const CATALOG: Product[] = [
     tags: ["lip","overnight","hydration","K-beauty","plumping"],
     description: "The world's bestselling lip mask — a viral K-beauty phenomenon for good reason. A concentrated barrier of shea butter, vitamin C and antioxidants repairs and plumps lips while you sleep. Wakes up fine lines and flakiness to reveal soft, smooth, pillowy lips by morning. Available in multiple delicious scents.",
     price: "£22.00",
-    image: "https://static.thcdn.com/productimg/original/16950328-1485325098287626.jpg"
+    image: "https://static.thcdn.com/productimg/original/16950328-1485325098287626.jpg",
     affiliateUrl: sep("Laneige Lip Sleeping Mask"),
     zones: ["lips"],
     suitableFor: ["all","dry","chapped"],
@@ -967,7 +967,7 @@ export const CATALOG: Product[] = [
     tags: ["lip-liner","pillow-talk","defining","nude-pink","bestseller"],
     description: "The lip liner that launched a thousand dupes. Pillow Talk — a universally flattering nude-pink with a hint of rose — has become a beauty icon in its own right. The chubby, creamy texture defines and shapes the lip with precision, preventing feathering. Can be used to fill in the entire lip as a base, extending lipstick wear.",
     price: "£27.00",
-    image: "https://static.thcdn.com/productimg/original/13323128-1604896486875481.jpg"
+    image: "https://static.thcdn.com/productimg/original/13323128-1604896486875481.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Lip Cheat Pillow Talk"),
     zones: ["lips"],
     suitableFor: ["all"],
@@ -1008,7 +1008,7 @@ export const CATALOG: Product[] = [
     tags: ["liquid-lipstick","matte","long-wear","full-coverage","dramatic"],
     description: "A revolutionary liquid-to-matte formula that delivers the most comfortable long-wearing matte lipstick experience. Infused with hyaluronic acid and vitamin E, it keeps lips hydrated and plump throughout wear. 24-hour transfer-proof formula available in 40 stunning shades from nudes to deep berries.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/13798792-2105271996253596.jpg"
+    image: "https://static.thcdn.com/productimg/original/13798792-2105271996253596.jpg",
     affiliateUrl: sep("Huda Beauty Comfort Matte Lipstick"),
     zones: ["lips"],
     suitableFor: ["all","mature","dry"],
@@ -1053,7 +1053,7 @@ export const CATALOG: Product[] = [
     tags: ["liquid-blush","blendable","buildable","long-wear","natural"],
     description: "Selena Gomez's beauty brand created one of the decade's most talked-about products. A concentrated liquid blush that requires just one drop for a natural-looking flush — two drops for something bolder. The lightweight formula blends in seconds and lasts all day. Available in 20 shades, from the softest peachy nudes to vivid berries.",
     price: "£22.00",
-    image: "https://static.thcdn.com/productimg/original/15810712-7665323813719003.jpg"
+    image: "https://static.thcdn.com/productimg/original/15810712-7665323813719003.jpg",
     affiliateUrl: sep("Rare Beauty Soft Pinch Liquid Blush"),
     zones: ["cheeks","temples","nose","lips"],
     suitableFor: ["all","oily","combination"],
@@ -1073,7 +1073,7 @@ export const CATALOG: Product[] = [
     tags: ["cream-blush","stick","buildable","glow","travel-friendly"],
     description: "A feather-light cream blush in a sleek bullet format. Swipe onto cheeks for an effortless, natural flush of colour that mimics the skin-from-within glow of good health. The sheer, blendable formula can be built up for more drama or sheered out for a barely-there tint. No brush needed — blend with fingertips in seconds.",
     price: "£32.00",
-    image: "https://static.thcdn.com/productimg/original/13798776-8634958926784037.jpg"
+    image: "https://static.thcdn.com/productimg/original/13798776-8634958926784037.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Cheek Kiss Blush"),
     zones: ["cheeks"],
     suitableFor: ["all","dry","mature"],
@@ -1097,7 +1097,7 @@ export const CATALOG: Product[] = [
     tags: ["pore-minimising","silky","long-wear","oil-control","classic"],
     description: "A globally bestselling primer that instantly minimises the look of pores and fine lines for a smooth, perfected canvas. The weightless, balm-to-silicone formula fills imperfections on contact and extends foundation wear by up to 8 hours. Works under foundation, on its own or mixed into foundation. A makeup artist staple.",
     price: "£31.50",
-    image: "https://static.thcdn.com/productimg/original/10552666-1265325375025611.jpg"
+    image: "https://static.thcdn.com/productimg/original/10552666-1265325375025611.jpg",
     affiliateUrl: boots("Benefit POREfessional Face Primer"),
     zones: ["full-face","t-zone"],
     suitableFor: ["oily","combination","normal","all"],
@@ -1117,7 +1117,7 @@ export const CATALOG: Product[] = [
     tags: ["primer","long-wear","flexible","glow","luxury"],
     description: "A primer that flexes with facial movements for all-day wear without cracking. Flexi-hold technology grips foundation and prevents movement throughout the day while hyaluronic acid keeps skin hydrated underneath. A subtle illuminating finish imparts a radiant base beneath any foundation finish.",
     price: "£35.00",
-    image: "https://static.thcdn.com/productimg/original/13313743-5795257983812988.jpg"
+    image: "https://static.thcdn.com/productimg/original/13313743-5795257983812988.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Flexi-Hold Primer"),
     zones: ["full-face"],
     suitableFor: ["all","dry","normal"],
@@ -1141,7 +1141,7 @@ export const CATALOG: Product[] = [
     tags: ["bronze","contour","highlighter","duo","luxury"],
     description: "The two-in-one palette that sculpts and illuminates like a Hollywood lighting team. One side holds Charlotte's iconic bronze sculpting powder, the other a champagne-gold highlighter. Used to contour, bronzing and add a blinding glow — described as having the best lighting filter permanently attached to your face. A perennial bestseller.",
     price: "£67.00",
-    image: "https://static.thcdn.com/productimg/original/13322990-2094896481880610.jpg"
+    image: "https://static.thcdn.com/productimg/original/13322990-2094896481880610.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Filmstar Bronze Glow"),
     zones: ["cheekbones","temples","forehead","nose","chin"],
     suitableFor: ["all","medium","deep","light"],
@@ -1161,7 +1161,7 @@ export const CATALOG: Product[] = [
     tags: ["highlighter","inclusive","buildable","glow","diverse"],
     description: "A highlighter palette designed to flatter all skin tones. Six shades range from the palest champagne to the deepest bronze, allowing for precise colour-matching and multi-dimensional highlighting. The finely-milled pigments deliver a lit-from-within glow without chalkiness or fallout — even on deeper skin tones.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/15654108-1555257727558919.jpg"
+    image: "https://static.thcdn.com/productimg/original/15654108-1555257727558919.jpg",
     affiliateUrl: sep("Fenty Beauty Glow Heat Highlighter Palette"),
     zones: ["cheekbones","brow-bone","nose","cupid's-bow"],
     suitableFor: ["all","deeper-tones","medium","fair"],
@@ -1184,7 +1184,7 @@ export const CATALOG: Product[] = [
     tags: ["azelaic-acid","brightening","rosacea","blemishes","budget"],
     description: "An effective, multi-tasking treatment for blemishes, rosacea and hyperpigmentation. 10% azelaic acid inhibits tyrosinase (the enzyme responsible for dark spot formation) and targets the bacteria that cause spots. The smooth suspension formula applies evenly and dries to a matte finish. Fragrance-free and suitable for sensitive skin.",
     price: "£10.50",
-    image: "https://static.thcdn.com/productimg/original/15236645-1715328242172465.jpg"
+    image: "https://static.thcdn.com/productimg/original/15236645-1715328242172465.jpg",
     affiliateUrl: boots("The Ordinary Azelaic Acid Suspension 10%"),
     zones: ["t-zone","blemishes","cheeks"],
     suitableFor: ["oily","blemish-prone","rosacea","sensitive"],
@@ -1203,7 +1203,7 @@ export const CATALOG: Product[] = [
     tags: ["salicylic-acid","blemish","anti-acne","niacinamide","targeted"],
     description: "France's #1 anti-acne moisturiser — a dual-action treatment that targets blemishes while preventing new ones. Salicylic acid unclogs pores and reduces existing spots; niacinamide calms redness; procerad prevents scarring. Lightweight and non-comedogenic. Used by millions of teens and adults globally as a daily anti-blemish moisturiser.",
     price: "£16.50",
-    image: "https://static.thcdn.com/productimg/original/11091821-6925227169727024.jpg"
+    image: "https://static.thcdn.com/productimg/original/11091821-6925227169727024.jpg",
     affiliateUrl: boots("La Roche-Posay Effaclar Duo+"),
     zones: ["t-zone","blemishes","cheeks"],
     suitableFor: ["oily","blemish-prone","combination","sensitive"],
@@ -1228,7 +1228,7 @@ export const CATALOG: Product[] = [
     tags: ["setting-powder","matte","long-wear","pore-blurring","luxury"],
     description: "An ultra-fine loose setting powder that blurs, perfects and extends foundation wear all day. Micro-sieve particles fill fine lines and pores for an airbrush-like finish. Available in two shades: Fair and Medium. Humidity and sweat-proof — ideal for oily skin or long events. The finishing touch that makes makeup last 16+ hours.",
     price: "£39.00",
-    image: "https://static.thcdn.com/productimg/original/14681054-1565257730307036.jpg"
+    image: "https://static.thcdn.com/productimg/original/14681054-1565257730307036.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Airbrush Flawless Setting Powder"),
     zones: ["t-zone","full-face"],
     suitableFor: ["oily","combination","all"],
@@ -1248,7 +1248,7 @@ export const CATALOG: Product[] = [
     tags: ["pressed-powder","luxury","vegan","setting","glow"],
     description: "A luxurious pressed powder that sets makeup with a soft, luminous finish. The ultra-fine formula is 100% vegan and cruelty-free, made without talc, parabens or phthalates. Delivers buildable coverage and a semi-matte, natural skin finish. One of the cleanest luxury face powders available.",
     price: "£56.00",
-    image: "https://static.thcdn.com/productimg/original/11219598-9215318375319099.jpg"
+    image: "https://static.thcdn.com/productimg/original/11219598-9215318375319099.jpg",
     affiliateUrl: sep("Hourglass Transcendence Pressed Powder"),
     zones: ["t-zone","full-face"],
     suitableFor: ["all","sensitive","oily","dry"],
@@ -1271,7 +1271,7 @@ export const CATALOG: Product[] = [
     tags: ["body","retinol","firming","anti-ageing","budget"],
     description: "A targeted body lotion that brings retinol's proven anti-ageing benefits to the body. Clinically proven to visibly reduce the appearance of cellulite, sagging and crepey skin texture on body areas prone to ageing. The fast-absorbing formula is suitable for daily use on arms, thighs, décolletage and beyond.",
     price: "£19.99",
-    image: "https://static.thcdn.com/productimg/original/13447856-1825318441823951.jpg"
+    image: "https://static.thcdn.com/productimg/original/13447856-1825318441823951.jpg",
     affiliateUrl: boots("RoC Retinol Correxion Body Lotion"),
     zones: ["body","décolletage","arms","thighs"],
     suitableFor: ["all","mature","dry"],
@@ -1291,7 +1291,7 @@ export const CATALOG: Product[] = [
     tags: ["firming","body","luxury","lifting","nourishing"],
     description: "A targeted firming lotion that visibly tightens and improves skin elasticity. Seaweed extracts and hop leaf extract work synergistically with shea butter to firm, hydrate and smooth. Clinical results show measurable improvement in skin firmness after 4 weeks. Absorbs quickly without greasiness.",
     price: "£42.00",
-    image: "https://static.thcdn.com/productimg/original/15151963-6735320425073956.jpg"
+    image: "https://static.thcdn.com/productimg/original/15151963-6735320425073956.jpg",
     affiliateUrl: lf("Elemis Body Firm Lotion"),
     zones: ["body","thighs","abdomen","arms"],
     suitableFor: ["all","mature","dry"],
@@ -1315,7 +1315,7 @@ export const CATALOG: Product[] = [
     tags: ["eyeshadow","smoky","luxury","palette","wearable"],
     description: "Charlotte's signature palette featuring a curated range of warm neutrals, deep smokes and illuminating shimmers. Each shade is expertly formulated to blend effortlessly, with long-wearing pigments that resist creasing. The universally flattering colour story creates Charlotte's iconic smoky eye in minutes — for day drama or night glamour.",
     price: "£55.00",
-    image: "https://static.thcdn.com/productimg/original/13313677-1694896607551432.jpg"
+    image: "https://static.thcdn.com/productimg/original/13313677-1694896607551432.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Smokey Eye Palette"),
     zones: ["eyes"],
     suitableFor: ["all"],
@@ -1334,7 +1334,7 @@ export const CATALOG: Product[] = [
     tags: ["eyeshadow","rose-gold","neutral","wearable","long-wear"],
     description: "A 12-pan rose-gold neutral palette that became a global phenomenon. Buttery formulas in matte, satin and shimmer finishes deliver buildable colour payoff. The rosy-warm tones complement all eye colours and skin tones. Includes shades from champagne sheers to deep burgundies for versatile everyday to evening looks.",
     price: "£43.00",
-    image: "https://static.thcdn.com/productimg/original/11560452-2095322793640130.jpg"
+    image: "https://static.thcdn.com/productimg/original/11560452-2095322793640130.jpg",
     affiliateUrl: sep("Urban Decay Naked3 Eyeshadow Palette"),
     zones: ["eyes"],
     suitableFor: ["all"],
@@ -1357,7 +1357,7 @@ export const CATALOG: Product[] = [
     tags: ["mascara","volumising","lengthening","long-wear","bestseller"],
     description: "The world's bestselling mascara — and the name says it all. A film-forming formula with a unique hourglass-shaped brush that wraps each lash in intense black pigment, delivering immediate volume and length. Buildable from natural to dramatic. Collagen-infused for flexible, flexible, all-day wear without clumping or flaking.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/10949847-8885320553285145.jpg"
+    image: "https://static.thcdn.com/productimg/original/10949847-8885320553285145.jpg",
     affiliateUrl: sep("Too Faced Better Than Sex Mascara"),
     zones: ["eyes"],
     suitableFor: ["all"],
@@ -1378,7 +1378,7 @@ export const CATALOG: Product[] = [
     tags: ["mascara","volumising","budget","wand","feathery"],
     description: "A voluminising mascara that delivers salon-worthy lashes at a drugstore price. The oversized, dome-shaped wand is packed with over 200 bristles to catch every lash and load on product for maximum volume. Soft, feathery lashes without clumping — buildable from natural to full glam. Consistently beats luxury competitors in blind tests.",
     price: "£13.99",
-    image: "https://static.thcdn.com/productimg/original/15009389-1115256171455859.jpg"
+    image: "https://static.thcdn.com/productimg/original/15009389-1115256171455859.jpg",
     affiliateUrl: boots("L'Oreal Paris Lash Paradise Mascara"),
     zones: ["eyes"],
     suitableFor: ["all"],
@@ -1402,7 +1402,7 @@ export const CATALOG: Product[] = [
     tags: ["brow","defining","micro-tip","buildable","long-wear"],
     description: "A ultra-fine brow pencil with a micro-precision tip that replicates individual hair strokes for a natural, filled-in look. The angled micro-tip allows for precise, controlled application and buildable intensity — from barely-there definition to bold, sculpted arches. Includes a spoolie to blend and groom.",
     price: "£25.50",
-    image: "https://static.thcdn.com/productimg/original/11277199-9755231050659726.jpg"
+    image: "https://static.thcdn.com/productimg/original/11277199-9755231050659726.jpg",
     affiliateUrl: boots("Benefit Precisely My Brow Pencil"),
     zones: ["brows"],
     suitableFor: ["all"],
@@ -1421,7 +1421,7 @@ export const CATALOG: Product[] = [
     tags: ["brow","soap","lamination","setting","affordable"],
     description: "The OG brow soap that launched the laminated-brow trend. Creates the brushed-up, fluffy brow look without the permanent commitment of brow lamination. Simply wet the spoolie and swipe through the clear soap, then brush hairs upward. Holds all day. The professional secret weapon that costs a fraction of in-salon brow treatments.",
     price: "£18.00",
-    image: "https://static.thcdn.com/productimg/original/15810719-1735323806847041.jpg"
+    image: "https://static.thcdn.com/productimg/original/15810719-1735323806847041.jpg",
     affiliateUrl: cult("Soap Brow lamination"),
     zones: ["brows"],
     suitableFor: ["all"],
@@ -1444,7 +1444,7 @@ export const CATALOG: Product[] = [
     tags: ["eyeliner","waterproof","long-wear","kohl","smudge-proof"],
     description: "MAC's most reliable waterproof eyeliner — a professional staple that withstands sweat, tears and humidity. The ultra-smooth, kohl formula glides on effortlessly and sets to a long-wearing finish that won't budge. Available in shades from carbon black to navy, deep plum and bronze. Sharpens to a precision point for tight-line or flick application.",
     price: "£20.00",
-    image: "https://static.thcdn.com/productimg/original/11471155-6365322232255758.jpg"
+    image: "https://static.thcdn.com/productimg/original/11471155-6365322232255758.jpg",
     affiliateUrl: lf("MAC Pro Longwear Waterproof Eyeliner"),
     zones: ["eyes"],
     suitableFor: ["all"],
@@ -1467,7 +1467,7 @@ export const CATALOG: Product[] = [
     tags: ["setting-spray","long-wear","hydrating","natural-finish","staple"],
     description: "The professional's setting spray of choice. A weightless mist of green tea, chamomile and cucumber that locks makeup in place and adds a dewy, skin-like finish. Also works as a hydrating face mist, brush cleaner or mixing medium for powder products. The final step in every makeup artist's kit worldwide.",
     price: "£24.50",
-    image: "https://static.thcdn.com/productimg/original/15361331-1225326721820939.jpg"
+    image: "https://static.thcdn.com/productimg/original/15361331-1225326721820939.jpg",
     affiliateUrl: lf("MAC Fix+ Setting Spray"),
     zones: ["full-face"],
     suitableFor: ["all"],
@@ -1491,7 +1491,7 @@ export const CATALOG: Product[] = [
     tags: ["exfoliant","gentle","brightening","enzyme","daily"],
     description: "A rice bran-based daily exfoliating powder that activates upon contact with water. Salicylic acid, papain and phytic acid work together to gently resurface skin with each use, revealing brighter and smoother skin. The innovative powder format allows you to control the intensity. Suitable for daily use even on sensitised skin.",
     price: "£64.00",
-    image: "https://static.thcdn.com/productimg/original/11480968-1895131029041412.jpg"
+    image: "https://static.thcdn.com/productimg/original/11480968-1895131029041412.jpg",
     affiliateUrl: lf("Dermalogica Daily Microfoliant"),
     zones: ["full-face"],
     suitableFor: ["all","sensitive","combination","dry"],
@@ -1512,7 +1512,7 @@ export const CATALOG: Product[] = [
     tags: ["AHA","BHA","chemical-peel","brightening","budget"],
     description: "The viral red solution that sold out globally within days of launch. A professional-grade 30% AHA (glycolic, lactic, tartaric and citric acids) combined with 2% BHA exfoliates both the skin surface and inside pores. Results are visible after a single 10-minute use. Use weekly — not daily — to avoid over-exfoliation.",
     price: "£8.70",
-    image: "https://static.thcdn.com/productimg/original/11429304-6155328245430621.jpg"
+    image: "https://static.thcdn.com/productimg/original/11429304-6155328245430621.jpg",
     affiliateUrl: boots("The Ordinary AHA 30% BHA 2% Peeling Solution"),
     zones: ["full-face"],
     suitableFor: ["oily","combination","hyperpigmentation","experienced-users"],
@@ -1537,7 +1537,7 @@ export const CATALOG: Product[] = [
     tags: ["mineral","SPF35","clean","no-white-cast","antioxidant"],
     description: "A clean-formula mineral SPF that absorbs invisibly without the chalky finish of traditional mineral sunscreens. Powered by hyaluronic acid, superberry extracts and an antioxidant blend. Reef-safe and free from oxybenzone, octinoxate and avobenzone. Perfect for clean beauty enthusiasts who want effective sun protection.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/15237890-1495319192747264.jpg"
+    image: "https://static.thcdn.com/productimg/original/15237890-1495319192747264.jpg",
     affiliateUrl: sep("Youth To The People Invisible Shield SPF35"),
     zones: ["full-face"],
     suitableFor: ["all","sensitive","clean-beauty"],
@@ -1562,7 +1562,7 @@ export const CATALOG: Product[] = [
     tags: ["fragrance","floral","luxury","signature","bestseller"],
     description: "One of the world's bestselling feminine fragrances. An explosive bouquet of jasmine, rose, freesia, cattleya orchid and patchouli — rich, warm and addictive. The iconic grenade-shaped bottle has become a collector's piece. Wear it layered with the matching shower gel and body lotion for an all-day fragrance experience.",
     price: "£78.00",
-    image: "https://static.thcdn.com/productimg/original/12740377-1525318376323394.jpg"
+    image: "https://static.thcdn.com/productimg/original/12740377-1525318376323394.jpg",
     affiliateUrl: lf("Viktor Rolf Flowerbomb EDP"),
     zones: ["pulse-points"],
     suitableFor: ["all"],
@@ -1587,7 +1587,7 @@ export const CATALOG: Product[] = [
     tags: ["bronzer","matte","contour","buildable","classic"],
     description: "The bronzer that taught the world how to contour. A matte, skin-like bronzer with a finely-milled powder that blends seamlessly without patchiness. Available in four shades to suit all skin tones. The classic round pot with oversized brush is a beauty icon. Use to add warmth, depth and dimension to the face.",
     price: "£32.50",
-    image: "https://static.thcdn.com/productimg/original/12434491-1895325378749250.jpg"
+    image: "https://static.thcdn.com/productimg/original/12434491-1895325378749250.jpg",
     affiliateUrl: boots("Benefit Hoola Matte Bronzer"),
     zones: ["cheekbones","forehead","jawline","temples"],
     suitableFor: ["all","fair","medium"],
@@ -1607,7 +1607,7 @@ export const CATALOG: Product[] = [
     tags: ["bronzer","inclusive","buildable","deeper-tones","natural"],
     description: "A fan-favourite bronzer formulated to work across the full spectrum of skin tones — from the palest ivory to the richest ebony. The buttery, blendable formula delivers natural-looking warmth without ashiness on darker tones. Six shades, each with a warm undertone that mimics sun-kissed skin. Finely-milled and buildable.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/15654112-1545257480917234.jpg"
+    image: "https://static.thcdn.com/productimg/original/15654112-1545257480917234.jpg",
     affiliateUrl: sep("Fenty Beauty Sun Stalker Bronzer"),
     zones: ["cheekbones","temples","forehead","jawline"],
     suitableFor: ["all","deeper-tones","medium"],
@@ -1630,7 +1630,7 @@ export const CATALOG: Product[] = [
     tags: ["lip-gloss","pillow-talk","plumping","glossy","luxury"],
     description: "A high-shine, plumping lip gloss in the iconic Pillow Talk shade. The comfortable formula delivers a juicy, full-lipped look with a hint of rose-pink tint and light-reflecting shimmer particles. Formulated with hyaluronic acid and collagen to hydrate and visibly plump lips over time. Packaging doubles as a mirror.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/17165067-7005274316245756.jpg"
+    image: "https://static.thcdn.com/productimg/original/17165067-7005274316245756.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Lipsync Gloss Pillow Talk"),
     zones: ["lips"],
     suitableFor: ["all"],
@@ -1655,7 +1655,7 @@ export const CATALOG: Product[] = [
     tags: ["vitamin-c","SPF","glow","brightening","luxury"],
     description: "A two-in-one brightening serum and SPF30 that reduces dark spots while protecting against further UV-induced pigmentation. Stabilised vitamin C combined with retinol-alternative bakuchiol works synergistically to even skin tone. Lightweight texture and a subtle luminous finish make this the ideal daily serum-SPF hybrid.",
     price: "£54.00",
-    image: "https://static.thcdn.com/productimg/original/17638978-8095316825438463.jpg"
+    image: "https://static.thcdn.com/productimg/original/17638978-8095316825438463.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Super Glow Serum SPF30"),
     zones: ["full-face"],
     suitableFor: ["all","dull","hyperpigmentation","mature"],
@@ -1680,7 +1680,7 @@ export const CATALOG: Product[] = [
     tags: ["hair","bond-repair","treatment","damaged","professional"],
     description: "The at-home treatment from the professional bond-building system used in salons worldwide. A weekly pre-shampoo treatment that reconnects broken disulfide bonds in the hair structure to improve strength and reduce breakage. Clinically proven to reduce damage and transform hair health in as few as three uses. The gold standard of hair repair.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/17649955-8275313218407536.jpg"
+    image: "https://static.thcdn.com/productimg/original/17649955-8275313218407536.jpg",
     affiliateUrl: cult("Olaplex No 3 Hair Perfector"),
     zones: ["hair"],
     suitableFor: ["all","damaged","colour-treated","bleached"],
@@ -1703,7 +1703,7 @@ export const CATALOG: Product[] = [
     tags: ["sheet-mask","budget","hydration","hyaluronic-acid","instant"],
     description: "A budget-hero sheet mask that delivers visible hydration in just 15 minutes. Saturated with a hyaluronic acid serum, the cellulose bio-material sheet adheres to every contour of the face for maximum ingredient absorption. Skin is visibly plumper and glowing immediately after. An accessible introduction to the Korean sheet mask ritual.",
     price: "£3.99",
-    image: "https://static.thcdn.com/productimg/original/11919605-5945290381168359.jpg"
+    image: "https://static.thcdn.com/productimg/original/11919605-5945290381168359.jpg",
     affiliateUrl: boots("Garnier Pure Source Sheet Mask Hyaluronic Acid"),
     zones: ["full-face"],
     suitableFor: ["all","dry","dehydrated"],
@@ -1726,7 +1726,7 @@ export const CATALOG: Product[] = [
     tags: ["blush","sculpting","buildable","long-wear","luxury"],
     description: "A sophisticated sculpting blush with a unique pressed texture that delivers buildable colour with a velvety finish. The universally flattering shades blend and layer seamlessly for precise cheek definition. Infused with skin-conditioning ingredients for a comfortable, all-day wear experience.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/11141180-3835252042107449.jpg"
+    image: "https://static.thcdn.com/productimg/original/11141180-3835252042107449.jpg",
     affiliateUrl: lf("Estee Lauder Pure Color Envy Blush"),
     zones: ["cheeks"],
     suitableFor: ["all","dry","mature"],
@@ -1749,7 +1749,7 @@ export const CATALOG: Product[] = [
     tags: ["face-oil","rosehip","clean","anti-ageing","dry"],
     description: "A clean, cold-pressed rosehip oil that delivers a potent dose of omega fatty acids and natural retinol precursors (trans-retinoic acid esters). Proven to reduce fine lines, dark spots and improve skin elasticity. 100% organic rosehip cold-pressed oil in its purest form — maximum efficacy, zero unnecessary ingredients.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/10528440-9815323031407323.jpg"
+    image: "https://static.thcdn.com/productimg/original/10528440-9815323031407323.jpg",
     affiliateUrl: lf("REN Clean Skincare Rosehip BioRegenerate Oil"),
     zones: ["full-face","neck"],
     suitableFor: ["dry","mature","sensitive","normal"],
@@ -1769,7 +1769,7 @@ export const CATALOG: Product[] = [
     tags: ["face-oil","dry-oil","glow","non-greasy","luxury"],
     description: "A luxurious, multi-benefiting dry facial oil that absorbs instantly without any greasiness. A blend of plant-based oils including hazelnut, jojoba and camellia nourishes and replenishes while leaving skin with a lit-from-within satin finish. Use alone as a night treatment, or blend with moisturiser for a daily glow boost.",
     price: "£39.00",
-    image: "https://static.thcdn.com/productimg/original/11798688-6525322246259146.jpg"
+    image: "https://static.thcdn.com/productimg/original/11798688-6525322246259146.jpg",
     affiliateUrl: lf("Clarins Facial Dry Oil"),
     zones: ["full-face","neck"],
     suitableFor: ["dry","normal","mature","dull"],
@@ -1794,7 +1794,7 @@ export const CATALOG: Product[] = [
     tags: ["vitamin-c","stable","professional","brightening","anti-ageing"],
     description: "A professional-grade vitamin C serum formulated for maximum stability. The innovative oil-soluble form of vitamin C (tetrahexyldecyl ascorbate) penetrates deeper than standard ascorbic acid, providing superior brightening and antioxidant protection. 30% concentration delivers measurable results in fine lines and dark spots within 4 weeks.",
     price: "£55.00",
-    image: "https://static.thcdn.com/productimg/original/11795619-6425323839366129.jpg"
+    image: "https://static.thcdn.com/productimg/original/11795619-6425323839366129.jpg",
     affiliateUrl: lf("Medik8 Vitamin C Serum"),
     zones: ["full-face"],
     suitableFor: ["all","dull","mature","hyperpigmentation"],
@@ -1818,7 +1818,7 @@ export const CATALOG: Product[] = [
     tags: ["peptides","anti-ageing","firming","Korean","luxury"],
     description: "A high-performance peptide serum from Korean clean beauty brand Huxley, formulated with nine types of collagen-stimulating peptides. Targets multiple signs of ageing simultaneously — fine lines, loss of firmness and uneven texture — with visible results in 4 weeks. The lightweight, fast-absorbing formula is suitable for all skin types.",
     price: "£42.00",
-    image: "https://static.thcdn.com/productimg/original/17538813-1975324587011972.jpg"
+    image: "https://static.thcdn.com/productimg/original/17538813-1975324587011972.jpg",
     affiliateUrl: amz("Huxley Multi-Peptide Serum"),
     zones: ["full-face","neck"],
     suitableFor: ["all","mature","normal","dry"],
@@ -1837,7 +1837,7 @@ export const CATALOG: Product[] = [
     tags: ["plumping","hyaluronic-acid","anti-ageing","luxury","firming"],
     description: "A next-generation hyaluronic acid serum that harnesses four different molecular weights of hyaluronic acid plus bio-fermented hyaluronic acid for unparalleled multi-depth hydration. Clinical trials show a visible reduction in the depth of wrinkles in 24 hours. Skin appears visibly plumper, smoother and more youthful.",
     price: "£75.00",
-    image: "https://static.thcdn.com/productimg/original/14843751-1535222193400986.jpg"
+    image: "https://static.thcdn.com/productimg/original/14843751-1535222193400986.jpg",
     affiliateUrl: lf("Elemis Pro-Collagen Instant Plump Serum"),
     zones: ["full-face","neck"],
     suitableFor: ["dry","mature","dehydrated","all"],
@@ -1861,7 +1861,7 @@ export const CATALOG: Product[] = [
     tags: ["microcurrent","lifting","toning","anti-ageing","device"],
     description: "The world's leading microcurrent facial toning device, FDA-cleared and clinically proven. Sends low-level electrical currents through the skin to tone, lift and contour — the effect has been described as a non-invasive facelift. 5-minute daily treatment shows visible results in 60 days. The device endorsed by A-list celebrities and dermatologists worldwide.",
     price: "£319.00",
-    image: "https://static.thcdn.com/productimg/original/13837547-1765319172745928.jpg"
+    image: "https://static.thcdn.com/productimg/original/13837547-1765319172745928.jpg",
     affiliateUrl: lf("NuFACE Trinity Facial Toning Device"),
     zones: ["jawline","cheeks","forehead","neck"],
     suitableFor: ["mature","all"],
@@ -1884,7 +1884,7 @@ export const CATALOG: Product[] = [
     tags: ["barrier","ceramides","peptides","soothing","repair"],
     description: "A restorative serum that repairs a compromised skin barrier after over-exfoliation, harsh cleansers or environmental stress. A trio of ceramides, peptides and fatty acids rebuilds the skin's defensive layer while soothing redness and tightness. Essential for anyone using actives (retinoids, AHAs, BHAs) in their routine.",
     price: "£49.00",
-    image: "https://static.thcdn.com/productimg/original/13310310-1305177668937349.jpg"
+    image: "https://static.thcdn.com/productimg/original/13310310-1305177668937349.jpg",
     affiliateUrl: boots("Paula's Choice Barrier Restore Serum"),
     zones: ["full-face"],
     suitableFor: ["sensitive","compromised-barrier","dry","all"],
@@ -1905,7 +1905,7 @@ export const CATALOG: Product[] = [
     tags: ["repair","soothing","sensitive","barrier","centella"],
     description: "The go-to recovery balm recommended by French dermatologists for irritated, post-procedure and sensitised skin. Centella asiatica, madecassoside and vitamin B5 accelerate skin repair, soothe redness and restore the barrier. Suitable for face and body, even on babies. A medicine cabinet essential that doubles as a lip balm, cuticle cream and healing ointment.",
     price: "£15.50",
-    image: "https://static.thcdn.com/productimg/original/15066464-1855116494567966.jpg"
+    image: "https://static.thcdn.com/productimg/original/15066464-1855116494567966.jpg",
     affiliateUrl: boots("La Roche-Posay Cicaplast Baume B5"),
     zones: ["full-face","body","lips"],
     suitableFor: ["sensitive","post-procedure","eczema-prone","all"],
@@ -1926,7 +1926,7 @@ export const CATALOG: Product[] = [
     tags: ["eye-patches","collagen","plumping","depuffing","instant"],
     description: "Professional-grade under-eye patches infused with marine collagen and hyaluronic acid. A 20-minute treatment that visibly reduces puffiness, dark circles and fine lines — the ultimate pre-event rescue. The bio-cellulose material locks ingredients against skin with minimal evaporation for maximum absorption.",
     price: "£24.00",
-    image: "https://static.thcdn.com/productimg/original/11432737-1565319916080837.jpg"
+    image: "https://static.thcdn.com/productimg/original/11432737-1565319916080837.jpg",
     affiliateUrl: amz("Marine Collagen Under Eye Patches"),
     zones: ["under-eye"],
     suitableFor: ["all","mature","tired-looking"],
@@ -1946,7 +1946,7 @@ export const CATALOG: Product[] = [
     tags: ["luxury","plant-based","anti-ageing","firming","French"],
     description: "Sisley Paris's most advanced anti-ageing moisturiser, formulated with a concentrated complex of seven plant-based actives that mimic the effects of skin's own regulatory hormones. Clinical results demonstrate measurable improvement in firmness, radiance and hydration after four weeks. A prestige skincare experience from one of France's most respected laboratories.",
     price: "£295.00",
-    image: "https://static.thcdn.com/productimg/original/16818015-3915257713146145.jpg"
+    image: "https://static.thcdn.com/productimg/original/16818015-3915257713146145.jpg",
     affiliateUrl: lf("Sisley Paris No1 Phytoharmony Cream"),
     zones: ["full-face","neck"],
     suitableFor: ["mature","dry","all"],
@@ -1966,7 +1966,7 @@ export const CATALOG: Product[] = [
     tags: ["bakuchiol","retinol-alternative","peptides","anti-ageing","clean"],
     description: "A gentle yet effective anti-ageing moisturiser combining bakuchiol (a plant-based retinol alternative from babchi plant seeds) with a collagen-stimulating peptide complex. Delivers retinol-comparable results in fine line reduction and skin renewal without the irritation, dryness or sun sensitivity associated with retinol. Ideal for sensitive skin or daytime use.",
     price: "£15.99",
-    image: "https://static.thcdn.com/productimg/original/14272888-1655324594263410.jpg"
+    image: "https://static.thcdn.com/productimg/original/14272888-1655324594263410.jpg",
     affiliateUrl: cult("Inkey List Bakuchiol Moisturiser"),
     zones: ["full-face","neck"],
     suitableFor: ["sensitive","dry","all","retinol-intolerant"],
@@ -1986,7 +1986,7 @@ export const CATALOG: Product[] = [
     tags: ["exfoliant","glycolic-acid","pads","brightening","luxury"],
     description: "Pre-soaked glycolic and lactic acid pads that resurface and brighten skin without the mess of a liquid exfoliant. The dual-textured pad exfoliates with one side and smooths with the other. Rose water and aloe vera soothe post-exfoliation. A luxurious spa-like treatment experience at home, recommended 3 nights per week.",
     price: "£45.00",
-    image: "https://static.thcdn.com/productimg/original/14209149-5685326900207668.jpg"
+    image: "https://static.thcdn.com/productimg/original/14209149-5685326900207668.jpg",
     affiliateUrl: lf("Elemis Peeling Solution"),
     zones: ["full-face","neck"],
     suitableFor: ["all","dull","hyperpigmentation","mature"],
@@ -2007,7 +2007,7 @@ export const CATALOG: Product[] = [
     tags: ["lipstick","luxury","pigmented","iconic","bold"],
     description: "From the Godmother of Makeup herself — a richly pigmented lipstick in a stunning jewelled packaging that is worth collecting. The ultra-nourishing formula delivers full, opaque colour in a single swipe with a creamy, comfortable finish. Available in Pat's signature bold, fashion-forward shades. The lipstick preferred by every major fashion house.",
     price: "£36.00",
-    image: "https://static.thcdn.com/productimg/original/13951184-9775250505251498.jpg"
+    image: "https://static.thcdn.com/productimg/original/13951184-9775250505251498.jpg",
     affiliateUrl: sep("Pat McGrath Labs Iconic Lip Color"),
     zones: ["lips"],
     suitableFor: ["all"],
@@ -2027,7 +2027,7 @@ export const CATALOG: Product[] = [
     tags: ["hyaluronic-acid","hydration","budget","plumping","dehydrated"],
     description: "An effective budget hyaluronic acid serum that delivers results at an accessible price point. Three molecular weights of hyaluronic acid penetrate to different depths for comprehensive hydration. Vitamin B5 enhances moisture retention and barrier recovery. Simple, transparent formulation with no unnecessary fillers or fragrance.",
     price: "£7.99",
-    image: "https://static.thcdn.com/productimg/original/15312300-1425324590559190.jpg"
+    image: "https://static.thcdn.com/productimg/original/15312300-1425324590559190.jpg",
     affiliateUrl: cult("Inkey List Hyaluronic Acid Serum"),
     zones: ["full-face"],
     suitableFor: ["all","dehydrated","dry","sensitive"],
@@ -2047,7 +2047,7 @@ export const CATALOG: Product[] = [
     tags: ["CC-cream","SPF50","full-coverage","anti-ageing","dermatologist-approved"],
     description: "The bestselling CC cream in the US — developed with plastic surgeons for full coverage with skincare benefits. SPF50 broad-spectrum protection, physical pigments and an anti-ageing complex of collagen, hyaluronic acid, peptides and antioxidants deliver flawless coverage while treating skin simultaneously. Available in 50 shades.",
     price: "£34.00",
-    image: "https://static.thcdn.com/productimg/original/12920739-1205245015932249.jpg"
+    image: "https://static.thcdn.com/productimg/original/12920739-1205245015932249.jpg",
     affiliateUrl: boots("IT Cosmetics CC Cream SPF50"),
     zones: ["full-face"],
     suitableFor: ["all","sensitive","mature","combination"],
@@ -2068,7 +2068,7 @@ export const CATALOG: Product[] = [
     tags: ["sensitive","gentle","exfoliant","calming","daily"],
     description: "A gentle variant of the cult Daily Microfoliant specifically formulated for sensitised and reactive skin. Oat flour, allantoin and colloidal oat soothe as the enzyme and rice-bran exfoliants resurface skin softly. No abrasive particles — just enzymatic and mild chemical action for polished, calm skin. Suitable for rosacea-prone skin.",
     price: "£64.00",
-    image: "https://static.thcdn.com/productimg/original/11480968-1895131029041412.jpg"
+    image: "https://static.thcdn.com/productimg/original/11480968-1895131029041412.jpg",
     affiliateUrl: lf("Dermalogica Daily Microfoliant Sensitive"),
     zones: ["full-face"],
     suitableFor: ["sensitive","rosacea","dry","mature"],
@@ -2089,7 +2089,7 @@ export const CATALOG: Product[] = [
     tags: ["cushion","K-beauty","SPF50+","dewy","lightweight"],
     description: "The Korean cushion foundation that started a global beauty revolution. Buildable, skin-like coverage with SPF50+ in a convenient cushion format. Hyaluronic acid, ceramides and a brightening complex deliver skincare benefits with every application. The hygienic cushion compact stays fresh and mess-free for on-the-go touch-ups.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/15395612-1865234366254053.jpg"
+    image: "https://static.thcdn.com/productimg/original/15395612-1865234366254053.jpg",
     affiliateUrl: amz("IOPE Cushion Foundation SPF50+"),
     zones: ["full-face"],
     suitableFor: ["normal","dry","combination","dewy-lovers"],
@@ -2105,15 +2105,13 @@ export const CATALOG: Product[] = [
     }
   },
 
-    }
-  },
 
   {
     id: "p74", name: "Vital Perfection Uplifting & Firming Cream 50ml", brand: "Shiseido", category: "moisturiser",
     tags: ["firming","lifting","anti-aging","luxury","peptides"],
     description: "Shiseido's flagship firming moisturiser powered by KOMBU-Bounce Complex and Forest Berry Stem Cells. Clinically proven to improve skin firmness, elasticity and definition in 4 weeks. The rich yet non-greasy cream replenishes moisture at multiple skin layers while visibly lifting facial contours. A Japanese skincare icon.",
     price: "£85.00",
-    image: "https://static.thcdn.com/productimg/original/17234626-1335323876971168.jpg"
+    image: "https://static.thcdn.com/productimg/original/17234626-1335323876971168.jpg",
     affiliateUrl: lf("Shiseido Vital Perfection Uplifting Firming Cream"),
     zones: ["full-face","cheeks","jawline"],
     suitableFor: ["mature","normal","dry","combination"],
@@ -2134,7 +2132,7 @@ export const CATALOG: Product[] = [
     tags: ["matte","long-lasting","lip","bold","iconic"],
     description: "MAC's legendary Matte lipstick in the cult Savage shade — a warm brick-red nude that flatters all skin tones. Intensely pigmented and long-wearing with a velvety matte finish that doesn't dry out lips. Enriched with Vitamin E and sunflower oil wax, this is the lipstick that built MAC's reputation. A perennial best-seller for 30+ years.",
     price: "£20.00",
-    image: "https://static.thcdn.com/productimg/original/15063861-2735260283790426.jpg"
+    image: "https://static.thcdn.com/productimg/original/15063861-2735260283790426.jpg",
     affiliateUrl: lf("MAC Matte Lipstick Savage"),
     zones: ["lips"],
     suitableFor: ["all-skin-types"],
@@ -2155,7 +2153,7 @@ export const CATALOG: Product[] = [
     tags: ["mascara","lengthening","drugstore","volumising","buildable"],
     description: "The mascara that broke the internet — over 1 million units sold in its first month. The flexible fibre brush bends to coat every single lash from root to tip, creating runway-worthy length and lift. Infused with bamboo extract and fibre technology for buildable volume without clumping. Waterproof formula locks in curl all day.",
     price: "£12.99",
-    image: "https://static.thcdn.com/productimg/original/13027919-6505318441708292.jpg"
+    image: "https://static.thcdn.com/productimg/original/13027919-6505318441708292.jpg",
     affiliateUrl: boots("Maybelline Sky High Mascara"),
     zones: ["eyes"],
     suitableFor: ["all-skin-types"],
@@ -2177,7 +2175,7 @@ export const CATALOG: Product[] = [
     tags: ["acne","blemish","salicylic-acid","clinical","oily"],
     description: "Clinique's dermatologist-developed anti-blemish system combining targeted salicylic acid treatment with lightweight coverage. The 3-step system (cleanser, clarifying lotion, oil-control moisturiser) clears existing blemishes while preventing new ones. The lightweight gel-cream formula is non-comedogenic and fragrance-free — safe for even the most reactive, spot-prone skin.",
     price: "£28.00",
-    image: "https://static.thcdn.com/productimg/original/11316226-1735231033531028.jpg"
+    image: "https://static.thcdn.com/productimg/original/11316226-1735231033531028.jpg",
     affiliateUrl: lf("Clinique Anti-Blemish Solutions"),
     zones: ["forehead","chin","nose","cheeks"],
     suitableFor: ["oily","acne-prone","combination","sensitive"],
@@ -2198,7 +2196,7 @@ export const CATALOG: Product[] = [
     tags: ["liquid-highlighter","glow","dewy","strobe","versatile"],
     description: "Charlotte Tilbury's coveted liquid highlighter delivers a lit-from-within glow that works as a standalone product or mixed into foundation. The ultra-fine pearl pigments catch light without chunky glitter, creating a natural luminosity reminiscent of professional studio lighting. Apply to cheekbones, cupid's bow, inner corners and décolletage for instant radiance.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/13313657-1925257983798201.jpg"
+    image: "https://static.thcdn.com/productimg/original/13313657-1925257983798201.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Glow Drops Liquid Highlighter"),
     zones: ["cheeks","brow-bone","nose-bridge"],
     suitableFor: ["all-skin-types","mature","dull-skin"],
@@ -2219,7 +2217,7 @@ export const CATALOG: Product[] = [
     tags: ["bronzer","luxury","powder","sculpting","buildable"],
     description: "Hourglass's vegan powder bronzer in an ultra-silky, talc-free formula that blends like a dream. The eight interconnected dome-shaped pans of pressed powder provide multiple shading options for hyper-natural contouring and bronzing. Oil-free and long-wearing with a skin-true finish that photographs beautifully. Cruelty-free and 100% vegan.",
     price: "£58.00",
-    image: "https://static.thcdn.com/productimg/original/13317826-1494897436620434.jpg"
+    image: "https://static.thcdn.com/productimg/original/13317826-1494897436620434.jpg",
     affiliateUrl: snk("Hourglass Ambient Lighting Bronzer"),
     zones: ["cheeks","temples","forehead","jawline"],
     suitableFor: ["all-skin-types","oily","combination"],
@@ -2240,7 +2238,7 @@ export const CATALOG: Product[] = [
     tags: ["brow","micro-precision","long-wearing","natural","defining"],
     description: "The brow pencil that redefined the industry. ABH's ultra-fine 0.085mm tip mimics real hair strokes for a hyper-realistic, feathery brow that lasts up to 24 hours. The triangular tip can create both hairstrokes and fills depending on how you angle it. Pairs with a spoolie brush for a polished, natural finish. Available in 13 shades.",
     price: "£24.00",
-    image: "https://static.thcdn.com/productimg/original/12275825-1185281036949292.jpg"
+    image: "https://static.thcdn.com/productimg/original/12275825-1185281036949292.jpg",
     affiliateUrl: cult("Anastasia Beverly Hills Micro Precision Brow Pencil"),
     zones: ["brows"],
     suitableFor: ["all-skin-types"],
@@ -2262,7 +2260,7 @@ export const CATALOG: Product[] = [
     tags: ["SPF35","mineral","clean","invisible","daily"],
     description: "Supergoop!'s breakthrough invisible sunscreen that disappears completely into skin with no white cast, greasiness or sunscreen smell. The water-gel formula is powered by Blue Sea Kale and Meadowfoam Seed Oil that protect skin from UV, pollution and blue light. Wears beautifully under makeup and doesn't pill. A fan favourite for those who hate traditional sunscreen textures.",
     price: "£34.00",
-    image: "https://static.thcdn.com/productimg/original/15839824-1905319203884650.jpg"
+    image: "https://static.thcdn.com/productimg/original/15839824-1905319203884650.jpg",
     affiliateUrl: cult("Supergoop Invisible Shield SPF35"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","oily","sensitive","darker-skin-tones"],
@@ -2284,7 +2282,7 @@ export const CATALOG: Product[] = [
     tags: ["powder","matte","setting","transfer-proof","buildable"],
     description: "NARS's universally flattering setting powder with a buildable, skin-perfecting matte finish. Ultra-fine micro-powders blur pores, control shine and set foundation for up to 16 hours of wear without cakiness. The talc-free formula absorbs excess sebum instantly and holds up under heat, humidity and long days. Available in 8 shades from translucent to deep.",
     price: "£40.00",
-    image: "https://static.thcdn.com/productimg/original/14292106-4235231283691773.jpg"
+    image: "https://static.thcdn.com/productimg/original/14292106-4235231283691773.jpg",
     affiliateUrl: lf("NARS Soft Matte Complete Powder"),
     zones: ["full-face","t-zone","under-eyes"],
     suitableFor: ["oily","combination","normal","mature"],
@@ -2305,7 +2303,7 @@ export const CATALOG: Product[] = [
     tags: ["mascara","drugstore","volumising","buildable","fluffy"],
     description: "L'Oréal's bestselling Lash Paradise mascara delivers luxurious, voluminous lashes at an accessible price point. The wavy bristle brush grips and coats every lash from root to tip, building intense volume without clumping or flaking. Castor oil conditions lashes while the formula builds up to five times the volume. The closest drugstore dupe to luxury mascaras.",
     price: "£13.99",
-    image: "https://static.thcdn.com/productimg/original/15009389-1115256171455859.jpg"
+    image: "https://static.thcdn.com/productimg/original/15009389-1115256171455859.jpg",
     affiliateUrl: boots("L'Oréal Lash Paradise Mascara"),
     zones: ["eyes"],
     suitableFor: ["all-skin-types"],
@@ -2327,7 +2325,7 @@ export const CATALOG: Product[] = [
     tags: ["eye-cream","vitamin-c","brightening","dark-circles","caffeine"],
     description: "Ole Henriksen's cult Banana Bright Eye Crème brightens dark circles with a patented Banana Bright Complex — a cocktail of high-potency Vitamin C, collagen-boosting peptides and banana powder that mimics the colour-correcting effect of banana-toned concealer. Caffeine depuffs while optical diffusers create an instant wide-awake effect.",
     price: "£40.00",
-    image: "https://static.thcdn.com/productimg/original/14887411-2085128685018292.jpg"
+    image: "https://static.thcdn.com/productimg/original/14887411-2085128685018292.jpg",
     affiliateUrl: cult("Ole Henriksen Banana Bright Eye Crème"),
     zones: ["eye-area","under-eyes"],
     suitableFor: ["all-skin-types","mature","dull-skin"],
@@ -2348,7 +2346,7 @@ export const CATALOG: Product[] = [
     tags: ["SPF30","anti-aging","moisturiser","peptides","daily"],
     description: "Clinique's award-winning Youth Surge uses Sirtuin technology — a cellular anti-aging innovation — to slow visible skin aging at the source. The multi-tasking day cream hydrates, fights free radicals, firms and provides SPF30 broad-spectrum protection in a single step. Oil-free and allergy-tested, it suits all skin types including oily and sensitive.",
     price: "£60.00",
-    image: "https://static.thcdn.com/productimg/original/12849046-1415231036491176.jpg"
+    image: "https://static.thcdn.com/productimg/original/12849046-1415231036491176.jpg",
     affiliateUrl: lf("Clinique Youth Surge SPF30 Moisturiser"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","mature","sensitive","oily"],
@@ -2369,7 +2367,7 @@ export const CATALOG: Product[] = [
     tags: ["vitamin-c","brightening","luxury","serum","anti-aging"],
     description: "Sisley's luxury vitamin C brightening serum harnesses botanical intelligence — Phyto-Vitamin C (a plant-derived, highly stable form of ascorbic acid) combined with Peony Extract and Camellia Oil. The formula visibly corrects dark spots and uneven skin tone in four weeks while improving radiance and firmness. Ultra-sensorial texture absorbs instantly without stickiness.",
     price: "£195.00",
-    image: "https://static.thcdn.com/productimg/original/16288094-5825323848696243.jpg"
+    image: "https://static.thcdn.com/productimg/original/16288094-5825323848696243.jpg",
     affiliateUrl: lf("Sisley Phyto-C Brightening Serum"),
     zones: ["full-face","cheeks","forehead"],
     suitableFor: ["all-skin-types","mature","dull-skin","hyperpigmentation"],
@@ -2390,7 +2388,7 @@ export const CATALOG: Product[] = [
     tags: ["luxury","finishing","brightening","photography","highlighter"],
     description: "Dior's iconic loose powder with light-diffusing micro-pearls for a flawless, airbrushed complexion finish. The translucent formula blurs pores and imperfections while imparting a subtle luminosity that photographs beautifully. Beloved by makeup artists worldwide as the final step on any red-carpet look. The pink-beige tint suits all skin tones.",
     price: "£52.00",
-    image: "https://static.thcdn.com/productimg/original/12908485-2074858815715932.jpg"
+    image: "https://static.thcdn.com/productimg/original/12908485-2074858815715932.jpg",
     affiliateUrl: lf("Dior Diorskin Forever Cushion Powder"),
     zones: ["full-face","under-eyes","t-zone"],
     suitableFor: ["all-skin-types","mature","normal"],
@@ -2411,7 +2409,7 @@ export const CATALOG: Product[] = [
     tags: ["cleanser","superfood","vitamin-c","green-tea","vegan"],
     description: "The cult superfood gel cleanser that cleansed its way to viral fame. Kale, spinach and green tea deliver antioxidant protection while Vitamin C brightens with each wash. The pH-balanced gel formula dissolves makeup, excess oil and environmental debris without stripping the skin barrier. Vegan, cruelty-free and packaged in 100% recyclable glass.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/13324148-1175121624564591.jpg"
+    image: "https://static.thcdn.com/productimg/original/13324148-1175121624564591.jpg",
     affiliateUrl: cult("Youth To The People Superfood Cleanser"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","normal","combination","oily"],
@@ -2434,7 +2432,7 @@ export const CATALOG: Product[] = [
     tags: ["eyeliner","kohl","smoky","long-lasting","iconic"],
     description: "Charlotte Tilbury's Rock 'n' Kohl Eyeliner delivers the smudged, sexy eye of your dreams. The ultra-smooth, waterproof formula glides on effortlessly and can be blended immediately for a smoky effect or left to set for 24-hour intense colour. The creamy yet long-lasting texture never crumbles or flakes. Available in 12 shades from classic black to vivid colour.",
     price: "£24.00",
-    image: "https://static.thcdn.com/productimg/original/16303570-5365240318790522.jpg"
+    image: "https://static.thcdn.com/productimg/original/16303570-5365240318790522.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Rock 'n' Kohl Eyeliner"),
     zones: ["eyes","waterline","lash-line"],
     suitableFor: ["all-skin-types"],
@@ -2455,7 +2453,7 @@ export const CATALOG: Product[] = [
     tags: ["peptides","firming","eye-cream","anti-aging","clinical"],
     description: "Paula's Choice's clinical-grade peptide eye cream targets all major signs of eye area aging — crow's feet, loss of firmness, dark circles and puffiness — with a proven peptide complex and retinol alternative. The fragrance-free, ophthalmologist-tested formula is gentle enough for contact lens wearers and delivers measurable tightening and brightening results within 4 weeks.",
     price: "£55.00",
-    image: "https://static.thcdn.com/productimg/original/14886924-7055305148500260.jpg"
+    image: "https://static.thcdn.com/productimg/original/14886924-7055305148500260.jpg",
     affiliateUrl: lf("Paula's Choice Rapid Firming Peptide Eye Cream"),
     zones: ["eye-area","under-eyes","crow's-feet"],
     suitableFor: ["all-skin-types","mature","sensitive"],
@@ -2476,7 +2474,7 @@ export const CATALOG: Product[] = [
     tags: ["filter","glow","primer","highlighter","versatile"],
     description: "Charlotte Tilbury's iconic Flawless Filter is the multi-tasking complexion booster that works as a primer, highlighter or standalone glow base. The award-winning formula filters skin with prismatic, pearl-infused pigments for an instant Instagram-filter effect without the filter. Blurs imperfections, smooths texture and imparts a lit-from-within luminosity. Worn alone or mixed into foundation.",
     price: "£40.00",
-    image: "https://static.thcdn.com/productimg/original/14996140-1845247120926250.jpg"
+    image: "https://static.thcdn.com/productimg/original/14996140-1845247120926250.jpg",
     affiliateUrl: ctLink("Charlotte Tilbury Flawless Filter"),
     zones: ["full-face","cheeks","brow-bone"],
     suitableFor: ["all-skin-types","mature","dull-skin"],
@@ -2498,7 +2496,7 @@ export const CATALOG: Product[] = [
     tags: ["lip-gloss","plumping","hydrating","luxury","shine"],
     description: "Dior's Addict Lip Maximizer delivers instant volume and lasting hydration with a dazzling, cushiony shine. Hyaluronic acid provides instant plumping as collagen-boosting peptides work long-term to define the lip contour. The comfortable, non-sticky formula is enriched with cherry oil for a nourishing wear experience. Available in 16 buildable shades from nudes to corals.",
     price: "£34.00",
-    image: "https://static.thcdn.com/productimg/original/15065622-2035161797961518.jpg"
+    image: "https://static.thcdn.com/productimg/original/15065622-2035161797961518.jpg",
     affiliateUrl: lf("Dior Addict Lip Maximizer Plumping Gloss"),
     zones: ["lips"],
     suitableFor: ["all-skin-types","dry-lips"],
@@ -2519,7 +2517,7 @@ export const CATALOG: Product[] = [
     tags: ["skin-tint","SPF30","dewy","buildable","natural"],
     description: "Trinny London's BFF Cream provides SPF30 protection with buildable, skin-like coverage that adapts to your skin tone. The ultra-lightweight texture blurs and evens while the cushion-effect formula adds a healthy glow. Hyaluronic acid and niacinamide work as skincare actives within the formula. Loved for giving the 'your skin but better' finish without foundation feel.",
     price: "£38.00",
-    image: "https://static.thcdn.com/productimg/original/12866107-2075322027441651.jpg"
+    image: "https://static.thcdn.com/productimg/original/12866107-2075322027441651.jpg",
     affiliateUrl: lf("Trinny London BFF De-Stress Cream SPF30"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","normal","dry","combination"],
@@ -2541,7 +2539,7 @@ export const CATALOG: Product[] = [
     tags: ["serum","glow","anti-aging","adaptogen","luxury"],
     description: "Fresh's advanced adaptogen serum defends against urban stress and visible aging using a 5-mushroom complex. Chaga, Lion's Mane, Reishi, Shiitake and Cordyceps each bring unique antioxidant and anti-fatigue properties, while Vitamin C brightens and Glycerin deeply hydrates. Skin is visibly more luminous, firm and even-toned in 2 weeks. A luxury wellbeing treatment for skin.",
     price: "£95.00",
-    image: "https://static.thcdn.com/productimg/original/13127445-1314876948653555.jpg"
+    image: "https://static.thcdn.com/productimg/original/13127445-1314876948653555.jpg",
     affiliateUrl: lf("Fresh Phytodefiant Glowing Serum"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","mature","dull-skin","stressed-skin"],
@@ -2562,7 +2560,7 @@ export const CATALOG: Product[] = [
     tags: ["eye-cream","brightening","vitamin-c","drugstore","anti-aging"],
     description: "Origins' award-winning Ginzing Brightening Eye Cream is the ultimate morning rescue for tired, puffy eyes. Coffee extract energises sluggish circulation to deflate puffiness while Optical Brighteners create an instant lightening effect. Ginger Root boosts micro-circulation and Vitamin C addresses dark circles over time. Refresh mode in a tube — lightweight, fast-absorbing, instantly transformative.",
     price: "£30.00",
-    image: "https://static.thcdn.com/productimg/original/14229325-9815328212619315.jpg"
+    image: "https://static.thcdn.com/productimg/original/14229325-9815328212619315.jpg",
     affiliateUrl: lf("Origins GinZing Brightening Eye Cream"),
     zones: ["eye-area","under-eyes"],
     suitableFor: ["all-skin-types","normal","combination"],
@@ -2583,7 +2581,7 @@ export const CATALOG: Product[] = [
     tags: ["luxury","caviar","firming","anti-aging","iconic"],
     description: "La Prairie's legendary Skin Caviar Luxe Cream is the ultimate luxury anti-aging moisturiser. Charged with Caviar Absolute — a proprietary concentration of Caviar Extract — it activates cellular energy renewal while a lifting complex visibly firms and restructures facial contours. Swiss technology meets marine biology in an ultra-sensorial cream that transforms skin density overnight. The ultimate indulgence.",
     price: "£490.00",
-    image: "https://static.thcdn.com/productimg/original/14920801-4765310615871989.jpg"
+    image: "https://static.thcdn.com/productimg/original/14920801-4765310615871989.jpg",
     affiliateUrl: lf("La Prairie Skin Caviar Luxe Cream"),
     zones: ["full-face","neck","décolletage"],
     suitableFor: ["mature","dry","normal"],
@@ -2604,7 +2602,7 @@ export const CATALOG: Product[] = [
     tags: ["organic","natural","rosehip","SPF15","balm"],
     description: "Neal's Yard Remedies' flagship beauty balm is a certified organic, multi-award-winning moisturiser powered by the highest concentration of wild rose hip and rosehip seed oil. The rich, nourishing balm protects with SPF15 while delivering intense hydration and radiance. Free from synthetic fragrances, parabens and SLS — a gold standard for clean, organic skincare.",
     price: "£42.00",
-    image: "https://static.thcdn.com/productimg/original/13938508-1485227181179494.jpg"
+    image: "https://static.thcdn.com/productimg/original/13938508-1485227181179494.jpg",
     affiliateUrl: lf("Neals Yard Remedies Wild Rose Beauty Balm"),
     zones: ["full-face"],
     suitableFor: ["dry","sensitive","mature","all-skin-types"],
@@ -2625,7 +2623,7 @@ export const CATALOG: Product[] = [
     tags: ["serum","anti-aging","microbiome","prebiotics","luxury"],
     description: "Lancôme's iconic Génifique serum has been refomulated with 7 Fermented Ingredients and Bifidus Extract to target the skin's microbiome — the first luxury serum to do so clinically. Hyaluronic acid fragments penetrate at multiple skin layers while vitamin Cg brightens and Vitamin E protects. In 7 days, skin is visibly more radiant, smooth and youthful. Over 1 serum sold every 5 seconds globally.",
     price: "£58.00",
-    image: "https://static.thcdn.com/productimg/original/15452165-2005169051380055.jpg"
+    image: "https://static.thcdn.com/productimg/original/15452165-2005169051380055.jpg",
     affiliateUrl: lf("Lancome Advanced Genifique Youth Activating Serum"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","mature","dull-skin"],
@@ -2647,7 +2645,7 @@ export const CATALOG: Product[] = [
     tags: ["drugstore","peptides","anti-aging","accessible","UK-favourite"],
     description: "No7's groundbreaking Future Renew Serum became the fastest-selling beauty product in UK history, selling out in 72 hours at launch. Powered by a patented UV shield peptide complex backed by 10 years of research, it visibly reverses signs of UV damage and aging. Clinically proven to reduce wrinkles and improve skin texture in 4 weeks. Award-winning, dermatologist-approved and accessible to all.",
     price: "£34.95",
-    image: "https://static.thcdn.com/productimg/original/13494904-2074935001507137.jpg"
+    image: "https://static.thcdn.com/productimg/original/13494904-2074935001507137.jpg",
     affiliateUrl: boots("No7 Future Renew Serum"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","mature","sensitive","combination"],
@@ -2669,7 +2667,7 @@ export const CATALOG: Product[] = [
     tags: ["hyaluronic-acid","dewy","plumping","brightening","vegan"],
     description: "Glow Recipe's Plum Plump Hyaluronic Acid Serum-in-Moisturiser delivers plump, bouncy, glass-skin hydration with five forms of hyaluronic acid working at different molecular weights. Plum extract provides antioxidant protection and a natural pink tint that imparts a healthy glow. Polyglutamic acid holds 2x more moisture than standard HA for lasting dewiness. K-beauty inspired, globally adored.",
     price: "£39.00",
-    image: "https://static.thcdn.com/productimg/original/14512691-1005321768111667.jpg"
+    image: "https://static.thcdn.com/productimg/original/14512691-1005321768111667.jpg",
     affiliateUrl: cult("Glow Recipe Plum Plump Hyaluronic Acid Moisturiser"),
     zones: ["full-face"],
     suitableFor: ["all-skin-types","dry","dehydrated","combination"],
