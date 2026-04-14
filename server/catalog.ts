@@ -9,11 +9,26 @@ export interface Product {
   keyIngredients: { name: string; benefit: string }[];
   alternatives: { budget: AltProduct; luxury: AltProduct; organic: AltProduct };
   bestSeller?: boolean; newIn?: boolean;
+  sponsored?: boolean; sponsorLabel?: string;
 }
 
 interface AltProduct { name: string; brand: string; price: string; affiliateUrl: string; }
 
-const amz = (q: string) => `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
+const amz  = (q: string) => `https://www.amazon.co.uk/s?k=${encodeURIComponent(q)}&tag=blushmap-21`;
+const lf   = (q: string) => `https://www.lookfantastic.com/search?q=${encodeURIComponent(q)}`;
+const cult = (q: string) => `https://www.cultbeauty.co.uk/search?query=${encodeURIComponent(q)}`;
+const boots = (q: string) => `https://www.boots.com/search?q=${encodeURIComponent(q)}`;
+const spaceNK = (q: string) => `https://www.spacenk.com/uk/search#q=${encodeURIComponent(q)}`;
+
+// primary() — selects best affiliate per brand:
+// Charlotte Tilbury → CT direct, NARS/MAC/Estee Lauder/SkinCeuticals → LOOKFANTASTIC, 
+// The Ordinary/Paula's Choice/CeraVe/Neutrogena → Boots/Cult, La Roche-Posay/Ultrasun → LOOKFANTASTIC
+function primary(brand: string, q: string): string {
+  if (brand.toLowerCase().includes("charlotte tilbury")) return `https://www.charlottetilbury.com/uk/search?q=${encodeURIComponent(q)}`;
+  if (["nars","mac","estée lauder","estee lauder","clinique","la prairie","augustinus bader","sisley","tatcha","fresh","murad","kiehl"].some(b => brand.toLowerCase().includes(b))) return lf(q);
+  if (["the ordinary","paula's choice","cerave","neutrogena","garnier","simple","la roche-posay","ultrasun","drunk elephant"].some(b => brand.toLowerCase().includes(b))) return boots(q);
+  return lf(q);
+}
 
 // Unsplash images that visually match the product TYPE (reliable, no hotlink block)
 // Key: product id → dedicated image query-matched URL

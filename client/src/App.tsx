@@ -13,6 +13,8 @@ import Search from "@/pages/Search";
 import Profile from "@/pages/Profile";
 import TryOn from "@/pages/TryOn";
 import ProductDetail from "@/pages/ProductDetail";
+import ColourAnalysis from "@/pages/ColourAnalysis";
+import Advertise from "@/pages/Advertise";
 import NotFound from "@/pages/not-found";
 
 export default function App() {
@@ -30,6 +32,8 @@ export default function App() {
             <Route path="/profile" component={Profile} />
             <Route path="/try-on" component={TryOn} />
             <Route path="/product/:id" component={ProductDetail} />
+            <Route path="/colour-analysis" component={ColourAnalysis} />
+            <Route path="/advertise" component={Advertise} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

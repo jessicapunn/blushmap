@@ -3,10 +3,11 @@ import { NavBar } from "@/components/NavBar";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, Heart, Star, Sparkles, TrendingUp, Zap, X, CheckCircle, Banknote, Crown, Leaf } from "lucide-react";
+import { ArrowLeft, Search, SlidersHorizontal, ExternalLink, ShoppingBag, Heart, Star, Sparkles, TrendingUp, Zap, X, CheckCircle, Banknote, Crown, Leaf, Tag, Percent } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { LIVE_DEALS, RETAILERS } from "@/lib/affiliates";
 
 // ── Quick-access filters ──────────────────────────────────────────────────────
 const QUICK_CONCERNS = [
@@ -378,6 +379,50 @@ export default function SearchPage() {
                   <span className="text-xs font-semibold leading-snug">{c.label}</span>
                 </button>
               ))}
+            </div>
+
+            {/* Live Deals & Offers */}
+            <div className="mb-10">
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <p className="label-eyebrow mb-1">Current offers</p>
+                  <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem" }}>Live Deals</h2>
+                </div>
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold"
+                  style={{ background: "#fef0f3", color: "#c9506e", border: "1px solid #f0ccd6" }}>
+                  <span className="w-2 h-2 rounded-full bg-rose-400 animate-pulse" />
+                  Updated daily
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                {LIVE_DEALS.map(deal => (
+                  <a key={deal.id} href={deal.url} target="_blank" rel="noopener noreferrer sponsored"
+                    className="rounded-2xl p-4 block transition-all hover:shadow-md hover:-translate-y-0.5"
+                    style={{ background: "white", border: "1px solid #f0ccd6" }}>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <span className="text-[10px] font-bold px-2 py-1 rounded-full"
+                        style={{ background: "#fef0f3", color: "#c9506e" }}>{deal.discount}</span>
+                      <ExternalLink size={11} style={{ color: "#c0a0a8", flexShrink: 0 }} />
+                    </div>
+                    <p className="text-xs font-bold mb-0.5" style={{ color: "#c9944a" }}>{deal.retailer}</p>
+                    <p className="text-sm font-semibold leading-snug mb-1" style={{ color: "#1a0a0e" }}>{deal.title}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: "#9b6674" }}>{deal.description}</p>
+                  </a>
+                ))}
+              </div>
+              {/* Retailer directory */}
+              <div className="rounded-2xl p-5" style={{ background: "linear-gradient(135deg, #fff0f4, #fff8f0)", border: "1px solid #f0ccd6" }}>
+                <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#c9506e", letterSpacing: "0.12em" }}>Shop at our partner retailers</p>
+                <div className="flex flex-wrap gap-2">
+                  {RETAILERS.map(r => (
+                    <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer sponsored"
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all hover:opacity-80"
+                      style={{ background: "white", border: "1px solid #f0ccd6", color: "#1a0a0e" }}>
+                      {r.logo} {r.name}
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Best sellers preview */}

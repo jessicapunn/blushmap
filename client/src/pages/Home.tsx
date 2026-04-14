@@ -724,6 +724,69 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Colour Analysis Teaser ── */}
+      <section className="py-20 px-6" style={{ background: "linear-gradient(135deg, #fff0f4 0%, #fff8f0 100%)" }}>
+        <div className="max-w-5xl mx-auto">
+          <div className="rounded-3xl overflow-hidden grid md:grid-cols-2 gap-0" style={{ background: "white", border: "1px solid #f0ccd6" }}>
+            <div className="p-10 flex flex-col justify-center">
+              <p className="label-eyebrow mb-3">New feature</p>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: "#1a0a0e", lineHeight: 1.1, marginBottom: "1rem" }}>
+                Find your colour season
+              </h2>
+              <p className="text-sm leading-relaxed mb-6" style={{ color: "#5a3a42", maxWidth: "38ch" }}>
+                Spring, Summer, Autumn or Winter — our 6-question colour analysis reveals your perfect makeup palette, undertone and curated product picks.
+              </p>
+              <Link href="/colour-analysis">
+                <Button size="lg" className="w-fit gap-2 text-white font-semibold px-8"
+                  style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", border: "none" }}>
+                  <Sparkles size={15} /> Find my palette
+                </Button>
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3 p-6" style={{ background: "linear-gradient(135deg, #fff8f9, #fffaf5)" }}>
+              {[
+                { season: "Spring", sub: "Warm & Light", colours: ["#f7c5a8", "#f4845f", "#f6ca45", "#c9a06e"] },
+                { season: "Summer", sub: "Cool & Light", colours: ["#f5c6d0", "#c8869e", "#c3aed6", "#a0c4e0"] },
+                { season: "Autumn", sub: "Warm & Deep",  colours: ["#c45c3a", "#c8902a", "#6b7a30", "#5a3020"] },
+                { season: "Winter", sub: "Cool & Deep",  colours: ["#cc1a2a", "#5a1090", "#1a1a50", "#cc1a70"] },
+              ].map(s => (
+                <div key={s.season} className="rounded-2xl p-4" style={{ background: "white", border: "1px solid #f0ccd6" }}>
+                  <p style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "#1a0a0e", marginBottom: "0.2rem" }}>{s.season}</p>
+                  <p className="text-[10px] mb-3" style={{ color: "#9b6674" }}>{s.sub}</p>
+                  <div className="flex gap-1.5">
+                    {s.colours.map(c => <div key={c} className="w-6 h-6 rounded-full" style={{ background: c, border: "1.5px solid rgba(0,0,0,0.08)" }} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Advertise CTA ── */}
+      <section className="py-16 px-6" style={{ background: "hsl(var(--card))" }}>
+        <div className="max-w-4xl mx-auto rounded-3xl p-10 flex flex-col sm:flex-row items-center justify-between gap-6"
+          style={{ background: "linear-gradient(135deg, #1a0a0e, #2a1018)", border: "1px solid #3a1520" }}>
+          <div>
+            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: "#c9944a", letterSpacing: "0.14em" }}>For Brands</p>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 2.5vw, 2rem)", color: "white", lineHeight: 1.2, marginBottom: "0.6rem" }}>
+              Get your products in front<br />of beauty buyers
+            </h2>
+            <p className="text-sm" style={{ color: "rgba(255,255,255,0.6)", maxWidth: "40ch" }}>
+              Sponsored placement, editorial features and affiliate tracking — all in one platform.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 flex-shrink-0">
+            <Link href="/advertise">
+              <Button size="lg" className="gap-2 font-semibold px-8 whitespace-nowrap"
+                style={{ background: "linear-gradient(135deg, #c9944a, #a3744a)", color: "white", border: "none" }}>
+                <Tag size={15} /> View packages
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── Final CTA ── */}
       <section className="py-24 px-6 text-center relative overflow-hidden" style={{ background: "linear-gradient(135deg, #c9506e 0%, #e8a0b0 100%)" }}>
         <div className="absolute inset-0 pointer-events-none" style={{ opacity: 0.07 }}>
@@ -768,6 +831,8 @@ export default function Home() {
             <Link href="/analyse"><span className="hover:text-foreground cursor-pointer transition-colors">Analyse</span></Link>
             <Link href="/search"><span className="hover:text-foreground cursor-pointer transition-colors">Products</span></Link>
             <Link href="/try-on"><span className="hover:text-foreground cursor-pointer transition-colors">Try-On</span></Link>
+            <Link href="/colour-analysis"><span className="hover:text-foreground cursor-pointer transition-colors">Colours</span></Link>
+            <Link href="/advertise"><span className="hover:text-foreground cursor-pointer transition-colors">Advertise</span></Link>
             <button onClick={() => setShowSignup(true)} className="hover:text-foreground transition-colors" style={{ color: "var(--color-rose)", fontWeight: 500 }}>Join</button>
           </div>
           <p className="text-xs text-center sm:text-right" style={{ maxWidth: "30ch" }}>

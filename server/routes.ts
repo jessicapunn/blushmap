@@ -509,6 +509,25 @@ Ingredients: ${ingredientsText || "Not available — score based on product name
     }
   });
 
+  // ── Advertise enquiry ───────────────────────────────────────────────────
+  app.post("/api/advertise-enquiry", async (req, res) => {
+    try {
+      const { brand, email, package: pkg, message } = req.body as {
+        brand: string; email: string; package?: string; message?: string;
+      };
+      if (!brand || !email) {
+        return res.status(400).json({ error: "Brand and email required" });
+      }
+      // Log enquiry (could send to Resend / CRM in production)
+      console.log(`[ADVERTISE ENQUIRY] Brand: ${brand} | Email: ${email} | Package: ${pkg || 'TBD'} | Message: ${message || '-'}`);
+      // Store as a subscriber tag for now
+      await storage.subscribeEmail(email, brand, `advertise-enquiry:${pkg || 'general'}`).catch(() => {});
+      return res.json({ ok: true });
+    } catch (err: any) {
+      res.status(500).json({ error: "Enquiry failed", detail: err.message });
+    }
+  });
+
   // ── Email signup ──────────────────────────────────────────────────────────
   app.post("/api/subscribe", async (req, res) => {
     try {
