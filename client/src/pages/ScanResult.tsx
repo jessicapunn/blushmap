@@ -113,7 +113,7 @@ function IngredientRow({ ing }: { ing: Ingredient }) {
       </div>
       {open && (
         <div className="mt-2 pt-2 border-t text-xs text-muted-foreground pl-6" style={{ borderColor: border }}>
-          {ing.inci && ing.inci !== ing.name && <p className="mb-1"><span className="font-medium">INCI:</span> {ing.inci}</p>}
+          {ing.inci && ing.inci !== ing.name && <p className="mb-1"><span className="font-medium">Also listed as:</span> {ing.inci}</p>}
           <p>{ing.detail}</p>
         </div>
       )}
@@ -323,8 +323,8 @@ export default function ScanResult() {
           </div>
         )}
 
-        {/* Fitzpatrick notes */}
-        {data.fitzpatrickNotes && (
+        {/* Skin tone notes */}
+        {data.fitzpatrickNotes && data.fitzpatrickNotes.length > 0 && (
           <div className="rounded-2xl border p-4" style={{ background: "hsl(38 25% 97%)", borderColor: "hsl(38 40% 85%)" }}>
             <p className="text-xs font-bold mb-1" style={{ color: "#c9a96e" }}>Skin tone considerations</p>
             <p className="text-sm" style={{ color: "#6b4226" }}>{data.fitzpatrickNotes}</p>
@@ -361,7 +361,7 @@ export default function ScanResult() {
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">{data.overallVerdict}</p>
           <p className="text-xs text-muted-foreground mt-3 pt-3 border-t" style={{ borderColor: "hsl(340 30% 88%)" }}>
-            Barcode: {data.barcode} · Data: Open Beauty Facts · AI: Claude · For informational purposes only
+            Barcode: {data.barcode} · Data: Open Beauty Facts, Open Food Facts · AI: Claude · For informational purposes only
           </p>
         </div>
 

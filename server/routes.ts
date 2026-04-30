@@ -431,32 +431,92 @@ export async function registerRoutes(httpServer: any, app: Express) {
   });
 
   // ── Barcode lookup — tries Open Beauty Facts then Open Food Facts ──
+  // ── Detect product type from barcode prefix ──
+  function detectProductType(code: string): "cosmetic" | "food" | "unknown" {
+    // Korean beauty / cosmetic GS1 prefixes: 880 (South Korea)
+    if (code.startsWith("880")) return "cosmetic";
+    // Japanese: 45x, 49x — often cosmetic
+    if (code.startsWith("45") || code.startsWith("49")) return "cosmetic";
+    return "unknown";
+  }
+
   app.get("/api/barcode/:code", async (req, res) => {
     const { code } = req.params;
     try {
-      // Race all three databases in parallel — take the first hit
-      const sources = [
+      const productType = detectProductType(code);
+
+      // ── Try multiple databases & URL formats ──
+      const beautyUrls = [
         `https://world.openbeautyfacts.org/api/v2/product/${code}.json`,
+        `https://world.openbeautyfacts.org/api/v0/product/${code}.json`,
+        `https://uk.openbeautyfacts.org/api/v2/product/${code}.json`,
+        `https://fr.openbeautyfacts.org/api/v2/product/${code}.json`,
+      ];
+      const foodUrls = [
         `https://world.openfoodfacts.org/api/v2/product/${code}.json`,
+        `https://world.openfoodfacts.org/api/v0/product/${code}.json`,
+        `https://uk.openfoodfacts.org/api/v2/product/${code}.json`,
+      ];
+      const generalUrls = [
         `https://world.openproductsfacts.org/api/v2/product/${code}.json`,
+        `https://world.openproductsfacts.org/api/v0/product/${code}.json`,
       ];
 
       const tryFetch = async (url: string) => {
-        const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
-        const d = await r.json() as any;
-        if (d?.status === 1 && d.product) return d.product;
-        return null;
+        try {
+          const r = await fetch(url, {
+            signal: AbortSignal.timeout(6000),
+            headers: { "User-Agent": "BlushMap/1.0 (blushmap.com; contact: blushmap@gmail.com)" },
+          });
+          if (!r.ok) return null;
+          const d = await r.json() as any;
+          if (d?.status === 1 && d.product) return d.product;
+          if (d?.product && (d.product.product_name || d.product.ingredients_text)) return d.product;
+          return null;
+        } catch {
+          return null;
+        }
       };
 
-      // Run all in parallel, resolve with first non-null result
+      // Try beauty DBs in parallel first (fast path for cosmetics)
       let productData: any = null;
-      const results = await Promise.allSettled(sources.map(tryFetch));
-      for (const r of results) {
+      const beautyResults = await Promise.allSettled(beautyUrls.map(tryFetch));
+      for (const r of beautyResults) {
         if (r.status === "fulfilled" && r.value) { productData = r.value; break; }
+      }
+      // If not found in beauty, try food + general in parallel
+      if (!productData) {
+        const remainingResults = await Promise.allSettled([...foodUrls, ...generalUrls].map(tryFetch));
+        for (const r of remainingResults) {
+          if (r.status === "fulfilled" && r.value) { productData = r.value; break; }
+        }
       }
 
       if (!productData) {
-        return res.status(404).json({ error: "Product not found", code });
+        return res.status(404).json({
+          error: "Product not found",
+          code,
+          message: "We couldn't find this product in our databases. Try entering the ingredients manually or search by product name.",
+        });
+      }
+
+      // ── Infer product category from database tags ──
+      const rawCategories: string = productData.categories || productData.food_groups || "";
+      const catLower = rawCategories.toLowerCase();
+      let inferredCategory = "skincare"; // default for beauty
+      if (catLower.includes("foundation") || catLower.includes("concealer") || catLower.includes("mascara") ||
+          catLower.includes("lipstick") || catLower.includes("eyeshadow") || catLower.includes("blush") ||
+          catLower.includes("makeup") || catLower.includes("cosmetic")) {
+        inferredCategory = "makeup";
+      } else if (catLower.includes("shampoo") || catLower.includes("conditioner") || catLower.includes("hair")) {
+        inferredCategory = "haircare";
+      } else if (catLower.includes("food") || catLower.includes("drink") || catLower.includes("beverage") ||
+                 catLower.includes("snack") || catLower.includes("dairy") || productType === "food") {
+        inferredCategory = "food";
+      } else if (catLower.includes("serum") || catLower.includes("moisturis") || catLower.includes("cleanser") ||
+                 catLower.includes("toner") || catLower.includes("sunscreen") || catLower.includes("spf") ||
+                 catLower.includes("skincare")) {
+        inferredCategory = "skincare";
       }
 
       const p = productData;
@@ -494,6 +554,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         image: p.image_front_url || p.image_url || p.image_small_url || null,
         imageNutrition: p.image_nutrition_url || null,
         categories: p.categories || p.food_groups || null,
+        productCategory: inferredCategory,
         labels: p.labels || null,
         quantity: p.quantity || null,
         // Yuka-equivalent scores
@@ -522,7 +583,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
 
   // ── Ingredient score via Claude ──
   app.post("/api/score-ingredients", async (req, res) => {
-    const { productName, brand, ingredientsText, barcode } = req.body;
+    const { productName, brand, ingredientsText, barcode, productCategory } = req.body;
 
     // Allow scoring with barcode alone — Claude will do best-effort analysis
     if (!ingredientsText && !productName && !barcode) {
@@ -534,6 +595,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       const userContent = `Product: ${productName || "Unknown"}
 Brand: ${brand || "Unknown"}
 Barcode: ${barcode || "Unknown"}
+Product Category: ${productCategory || "unknown — infer from product name"}
 Ingredients: ${ingredientsText || "Not available — score based on product name and brand reputation only"}`;
 
       const msg = await anthropic.messages.create({

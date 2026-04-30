@@ -203,6 +203,7 @@ export default function Scanner() {
           productName: product?.productName ?? null,
           brand: product?.brand ?? null,
           ingredientsText: product?.ingredientsText ?? null,
+          productCategory: product?.productCategory ?? null,
         }),
       });
 
@@ -227,7 +228,13 @@ export default function Scanner() {
       sessionStorage.setItem("barcodeResult", JSON.stringify(payload));
       setLocation("/scan-result");
     } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
+      const rawMsg = err.message || "";
+      const friendlyMsg = rawMsg.toLowerCase().includes("scoring failed")
+        ? "We had trouble analysing this product. Please try again or enter the barcode manually."
+        : rawMsg.toLowerCase().includes("product not found") || rawMsg.toLowerCase().includes("not found")
+        ? "We couldn't find this product in our databases. Try entering the barcode number manually."
+        : rawMsg || "Something went wrong. Please try again.";
+      setError(friendlyMsg);
       setLoading(false);
     }
   };
