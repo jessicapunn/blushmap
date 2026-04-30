@@ -159,7 +159,7 @@ export default function TermsConditions() {
         </Para>
         <SubHeading>4.2 Account Security</SubHeading>
         <Para>
-          You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. You must notify us immediately at jessica_punn@hotmail.com if you suspect unauthorised use of your account. We will not be liable for any loss resulting from unauthorised use of your account.
+          You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. You must notify us immediately at contactus@blushmap.com if you suspect unauthorised use of your account. We will not be liable for any loss resulting from unauthorised use of your account.
         </Para>
         <SubHeading>4.3 Account Termination</SubHeading>
         <Para>
@@ -276,7 +276,7 @@ export default function TermsConditions() {
           style={{ background: "white", border: "1px solid #f0ccd6", color: "#5a3a42" }}
         >
           <strong style={{ color: "#1a0a0e" }}>BlushMap</strong><br />
-          Email: <a href="mailto:jessica_punn@hotmail.com" style={{ color: "#c9506e" }}>jessica_punn@hotmail.com</a><br />
+          Email: <a href="mailto:contactus@blushmap.com" style={{ color: "#c9506e" }}>contactus@blushmap.com</a><br />
           Website: <a href="https://blushmap.com" style={{ color: "#c9506e" }}>blushmap.com</a>
         </div>
 
@@ -296,7 +296,7 @@ export default function TermsConditions() {
             </Link>
           </div>
           <p className="text-center text-[11px] mt-4" style={{ color: "#c9b0b8" }}>
-            © {new Date().getFullYear()} BlushMap · blushmap.com · jessica_punn@hotmail.com
+            © {new Date().getFullYear()} BlushMap · blushmap.com · contactus@blushmap.com
           </p>
         </footer>
       </div>

@@ -111,7 +111,7 @@ export default function PrivacyPolicy() {
         >
           <strong style={{ color: "#1a0a0e" }}>BlushMap</strong><br />
           Website: blushmap.com<br />
-          Email: <a href="mailto:jessica_punn@hotmail.com" style={{ color: "#c9506e" }}>jessica_punn@hotmail.com</a>
+          Email: <a href="mailto:contactus@blushmap.com" style={{ color: "#c9506e" }}>contactus@blushmap.com</a>
         </div>
         <Para>
           For all data protection enquiries, including subject access requests and deletion requests, please contact us at the email address above.
@@ -253,7 +253,7 @@ export default function PrivacyPolicy() {
           "CCPA Rights (California residents) — right to know, delete, and opt out of the sale of personal information. We do not sell personal information.",
         ]} />
         <Para>
-          To exercise any of these rights, contact us at <a href="mailto:jessica_punn@hotmail.com" style={{ color: "#c9506e" }}>jessica_punn@hotmail.com</a>. We will respond within 30 days (or within the statutory period required by applicable law). You also have the right to lodge a complaint with the <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener noreferrer" style={{ color: "#c9506e" }}>Information Commissioner's Office (ICO)</a> if you believe we have not complied with applicable data protection law.
+          To exercise any of these rights, contact us at <a href="mailto:contactus@blushmap.com" style={{ color: "#c9506e" }}>contactus@blushmap.com</a>. We will respond within 30 days (or within the statutory period required by applicable law). You also have the right to lodge a complaint with the <a href="https://ico.org.uk/make-a-complaint/" target="_blank" rel="noopener noreferrer" style={{ color: "#c9506e" }}>Information Commissioner's Office (ICO)</a> if you believe we have not complied with applicable data protection law.
         </Para>
 
         {/* 8. International Transfers */}
@@ -290,7 +290,7 @@ export default function PrivacyPolicy() {
           style={{ background: "white", border: "1px solid #f0ccd6", color: "#5a3a42" }}
         >
           <strong style={{ color: "#1a0a0e" }}>BlushMap — Data Controller</strong><br />
-          Email: <a href="mailto:jessica_punn@hotmail.com" style={{ color: "#c9506e" }}>jessica_punn@hotmail.com</a><br />
+          Email: <a href="mailto:contactus@blushmap.com" style={{ color: "#c9506e" }}>contactus@blushmap.com</a><br />
           Website: <a href="https://blushmap.com" style={{ color: "#c9506e" }}>blushmap.com</a>
         </div>
 
@@ -310,7 +310,7 @@ export default function PrivacyPolicy() {
             </Link>
           </div>
           <p className="text-center text-[11px] mt-4" style={{ color: "#c9b0b8" }}>
-            © {new Date().getFullYear()} BlushMap · blushmap.com · jessica_punn@hotmail.com
+            © {new Date().getFullYear()} BlushMap · blushmap.com · contactus@blushmap.com
           </p>
         </footer>
       </div>
