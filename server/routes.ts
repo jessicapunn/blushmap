@@ -492,7 +492,42 @@ export async function registerRoutes(httpServer: any, app: Express) {
         }
       }
 
+      // ── UPCitemdb fallback — free tier, no auth, 100 lookups/day ──
+      let upcFallback: { productName: string; brand: string; description: string; image: string | null; inferredCategoryHint: string } | null = null;
       if (!productData) {
+        try {
+          const upcRes = await fetch(`https://api.upcitemdb.com/prod/trial/lookup?upc=${code}`, {
+            signal: AbortSignal.timeout(5000),
+            headers: { "User-Agent": "BlushMap/1.0 (blushmap.com)" },
+          });
+          if (upcRes.ok) {
+            const upcData = await upcRes.json() as any;
+            const item = upcData?.items?.[0];
+            if (item && item.title) {
+              const titleLower = (item.title || "").toLowerCase();
+              const descLower = (item.description || "").toLowerCase();
+              let catHint = "skincare";
+              if (titleLower.includes("cleanser") || titleLower.includes("cleansing") || descLower.includes("cleanser")) catHint = "cleanser";
+              else if (titleLower.includes("serum") || descLower.includes("serum")) catHint = "serum";
+              else if (titleLower.includes("moisturis") || titleLower.includes("cream") || titleLower.includes("lotion")) catHint = "moisturiser";
+              else if (titleLower.includes("toner")) catHint = "toner";
+              else if (titleLower.includes("sunscreen") || titleLower.includes("spf") || titleLower.includes("sun")) catHint = "sunscreen";
+              else if (titleLower.includes("foundation") || titleLower.includes("concealer") || titleLower.includes("mascara") || titleLower.includes("blush") || titleLower.includes("lipstick")) catHint = "makeup";
+              else if (titleLower.includes("shampoo") || titleLower.includes("conditioner") || titleLower.includes("hair")) catHint = "haircare";
+              else if (titleLower.includes("food") || titleLower.includes("snack") || titleLower.includes("drink")) catHint = "food";
+              upcFallback = {
+                productName: item.title,
+                brand: item.brand || "",
+                description: item.description || "",
+                image: item.images?.[0] || null,
+                inferredCategoryHint: catHint,
+              };
+            }
+          }
+        } catch { /* UPC lookup failed — carry on */ }
+      }
+
+      if (!productData && !upcFallback) {
         return res.status(404).json({
           error: "Product not found",
           code,
@@ -501,9 +536,9 @@ export async function registerRoutes(httpServer: any, app: Express) {
       }
 
       // ── Infer product category from database tags ──
-      const rawCategories: string = productData.categories || productData.food_groups || "";
+      const rawCategories: string = productData?.categories || productData?.food_groups || "";
       const catLower = rawCategories.toLowerCase();
-      let inferredCategory = "skincare"; // default for beauty
+      let inferredCategory = upcFallback?.inferredCategoryHint || "skincare"; // default for beauty
       if (catLower.includes("foundation") || catLower.includes("concealer") || catLower.includes("mascara") ||
           catLower.includes("lipstick") || catLower.includes("eyeshadow") || catLower.includes("blush") ||
           catLower.includes("makeup") || catLower.includes("cosmetic")) {
@@ -519,7 +554,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
         inferredCategory = "skincare";
       }
 
-      const p = productData;
+      const p = productData || {}; // may be null when using UPC fallback
 
       // ── Build enriched ingredient list like Yuka ──
       const ingredientsList: {name: string; id: string; percent?: number; vegan?: boolean; vegetarian?: boolean}[] = [];
@@ -547,11 +582,13 @@ export async function registerRoutes(httpServer: any, app: Express) {
 
       res.json({
         barcode: code,
-        productName: p.product_name || p.product_name_en || p.generic_name || null,
-        brand: p.brands || null,
+        productName: p.product_name || p.product_name_en || p.generic_name || upcFallback?.productName || null,
+        brand: p.brands || upcFallback?.brand || null,
         ingredientsText: p.ingredients_text || p.ingredients_text_en || null,
+        // Pass UPC description to Claude as extra context when no ingredient list is found
+        ingredientsHint: (!p.ingredients_text && !p.ingredients_text_en && upcFallback?.description) ? upcFallback.description : null,
         ingredientsList: ingredientsList.slice(0, 50),
-        image: p.image_front_url || p.image_url || p.image_small_url || null,
+        image: p.image_front_url || p.image_url || p.image_small_url || upcFallback?.image || null,
         imageNutrition: p.image_nutrition_url || null,
         categories: p.categories || p.food_groups || null,
         productCategory: inferredCategory,
@@ -583,7 +620,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
 
   // ── Ingredient score via Claude ──
   app.post("/api/score-ingredients", async (req, res) => {
-    const { productName, brand, ingredientsText, barcode, productCategory } = req.body;
+    const { productName, brand, ingredientsText, ingredientsHint, barcode, productCategory } = req.body;
 
     // Allow scoring with barcode alone — Claude will do best-effort analysis
     if (!ingredientsText && !productName && !barcode) {
@@ -592,11 +629,20 @@ export async function registerRoutes(httpServer: any, app: Express) {
 
     try {
       const anthropic = getAnthropicClient();
+      // Build ingredients context: use full list if available, fall back to product description hint
+      let ingredientsContext: string;
+      if (ingredientsText) {
+        ingredientsContext = ingredientsText;
+      } else if (ingredientsHint) {
+        ingredientsContext = `Full ingredient list not available. Product description from retailer: "${ingredientsHint}". Use this description to infer the product type, likely key ingredients, and formulation standards.`;
+      } else {
+        ingredientsContext = "Not available — score based on product name and brand reputation only";
+      }
       const userContent = `Product: ${productName || "Unknown"}
 Brand: ${brand || "Unknown"}
 Barcode: ${barcode || "Unknown"}
 Product Category: ${productCategory || "unknown — infer from product name"}
-Ingredients: ${ingredientsText || "Not available — score based on product name and brand reputation only"}`;
+Ingredients: ${ingredientsContext}`;
 
       const msg = await anthropic.messages.create({
         model: "claude-sonnet-4-5",

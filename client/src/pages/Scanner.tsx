@@ -203,6 +203,8 @@ export default function Scanner() {
           productName: product?.productName ?? null,
           brand: product?.brand ?? null,
           ingredientsText: product?.ingredientsText ?? null,
+          // ingredientsHint: product description from UPC fallback when no ingredient list found
+          ingredientsHint: product?.ingredientsHint ?? null,
           productCategory: product?.productCategory ?? null,
         }),
       });
