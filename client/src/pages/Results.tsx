@@ -7,6 +7,7 @@ import { getProductImage } from "@/lib/productImages";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
+import { AffiliateButton } from "@/components/AffiliateButton";
 
 // Zone positions on the face SVG map (relative to 200x260 viewBox)
 const ZONE_POSITIONS: Record<string, { x: number; y: number; label: string }> = {
@@ -352,15 +353,17 @@ function AlternativeCard({ alt, type }: { alt: any; type: "budget" | "luxury" | 
         <span className="text-sm font-semibold shrink-0" style={{ color: config.color }}>{alt.price}</span>
       </div>
       <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{alt.reason}</p>
-      <a
+      <AffiliateButton
         href={alt.affiliateUrl}
+        productId={`results-alt-${alt.name}`}
+        productName={`${alt.brand} ${alt.name}`}
         target="_blank"
         rel="noopener noreferrer sponsored"
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-white transition-opacity hover:opacity-90"
         style={{ background: config.color }}
       >
-        <ShoppingBag size={11} /> Shop on Amazon <ExternalLink size={10} />
-      </a>
+        <ShoppingBag size={11} /> Shop <ExternalLink size={10} />
+      </AffiliateButton>
     </div>
   );
 }
@@ -445,8 +448,10 @@ function ProductCard({ rec, index, user, savedIds, saveProduct }: { rec: any; in
                   <Heart size={14} style={{ color: savedIds.has(product.id || product.name) ? "#c9506e" : "#c0a0a8", fill: savedIds.has(product.id || product.name) ? "#c9506e" : "none" }} />
                 </button>
               )}
-              <a
+              <AffiliateButton
                 href={product.affiliateUrl}
+                productId={product.id || product.name}
+                productName={product.name}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 data-testid={`buy-link-${index}`}
@@ -454,7 +459,7 @@ function ProductCard({ rec, index, user, savedIds, saveProduct }: { rec: any; in
                 style={{ background: "var(--color-rose)" }}
               >
                 <ShoppingBag size={13} /> Buy now <ExternalLink size={11} />
-              </a>
+              </AffiliateButton>
             </div>
           </div>
         </div>

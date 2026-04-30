@@ -2,6 +2,7 @@ import { X, Heart, Trash2, ExternalLink, ShoppingBag, Package } from "lucide-rea
 import { getProductImage } from "@/lib/productImages";
 import { useBasket } from "@/lib/basket";
 import { Button } from "@/components/ui/button";
+import { AffiliateButton } from "./AffiliateButton";
 
 interface Props { open: boolean; onClose: () => void; }
 
@@ -56,15 +57,17 @@ export function BasketDrawer({ open, onClose }: Props) {
                 <div className="text-xs" style={{ color: "#9b6674" }}>{item.brand}</div>
                 <div className="text-sm font-semibold mt-0.5" style={{ color: "#c9506e" }}>{item.price}</div>
                 <div className="flex items-center gap-2 mt-2.5">
-                  <a
+                  <AffiliateButton
                     href={item.affiliateUrl}
+                    productId={item.id}
+                    productName={item.name}
                     target="_blank"
                     rel="noopener noreferrer sponsored"
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition-opacity hover:opacity-90"
                     style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
                   >
                     <ShoppingBag size={11} /> Buy now <ExternalLink size={9} />
-                  </a>
+                  </AffiliateButton>
                   <button onClick={() => unsave(item.id)} className="text-gray-300 hover:text-red-400 transition-colors ml-auto">
                     <Trash2 size={13} />
                   </button>

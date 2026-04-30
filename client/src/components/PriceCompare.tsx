@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Heart, ExternalLink, TrendingDown, CheckCircle2, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AffiliateButton } from "./AffiliateButton";
 import {
   getPricesForProduct,
   getBestPrice,
@@ -40,9 +41,11 @@ export default function PriceCompare({
         </p>
         <div className="flex flex-wrap gap-2">
           {sorted.slice(0, 4).map((r) => (
-            <a
+            <AffiliateButton
               key={r.retailerId}
               href={r.url}
+              productId={`price-${productId}-${r.retailerId}`}
+              productName={`${productName} at ${r.retailer}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-medium transition-all hover:scale-105 ${
@@ -59,7 +62,7 @@ export default function PriceCompare({
                   Best
                 </span>
               )}
-            </a>
+            </AffiliateButton>
           ))}
         </div>
         {savings > 0 && (
@@ -155,8 +158,10 @@ export default function PriceCompare({
                   {r.inStock ? r.price : "OOS"}
                 </span>
 
-                <a
+                <AffiliateButton
                   href={r.url}
+                  productId={`price-${productId}-${r.retailerId}`}
+                  productName={`${productName} at ${r.retailer}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   data-testid={`price-buy-${r.retailerId}`}
@@ -168,7 +173,7 @@ export default function PriceCompare({
                 >
                   Buy
                   <ExternalLink size={9} />
-                </a>
+                </AffiliateButton>
               </div>
             </div>
           );

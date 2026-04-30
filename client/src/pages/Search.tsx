@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { LIVE_DEALS, RETAILERS } from "@/lib/affiliates";
 import { getProductImage } from "@/lib/productImages";
+import { AffiliateButton } from "@/components/AffiliateButton";
 
 // ── Quick-access filters ──────────────────────────────────────────────────────
 const QUICK_CONCERNS = [
@@ -96,36 +97,36 @@ function ProductQuickView({ product, onClose }: { product: any; onClose: () => v
               <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#c9506e", letterSpacing: "0.12em" }}>Alternatives</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {alts.budget && (
-                  <a href={alts.budget.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(130 25% 97%)", borderColor: "hsl(var(--border))" }}>
+                  <AffiliateButton href={alts.budget.affiliateUrl} productId={`qv-budget-${alts.budget.name}`} productName={`${alts.budget.brand} ${alts.budget.name}`} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(130 25% 97%)", borderColor: "hsl(var(--border))" }}>
                     <div className="flex items-center gap-1 mb-1"><Banknote size={11} style={{ color: "#4a9b6a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#4a9b6a" }}>Budget</span></div>
                     <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.budget.name}</p>
                     <p className="text-xs text-muted-foreground">{alts.budget.brand} · {alts.budget.price}</p>
-                  </a>
+                  </AffiliateButton>
                 )}
                 {alts.luxury && (
-                  <a href={alts.luxury.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(36 40% 97%)", borderColor: "hsl(var(--border))" }}>
+                  <AffiliateButton href={alts.luxury.affiliateUrl} productId={`qv-luxury-${alts.luxury.name}`} productName={`${alts.luxury.brand} ${alts.luxury.name}`} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(36 40% 97%)", borderColor: "hsl(var(--border))" }}>
                     <div className="flex items-center gap-1 mb-1"><Crown size={11} style={{ color: "#c9944a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#c9944a" }}>Luxury</span></div>
                     <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.luxury.name}</p>
                     <p className="text-xs text-muted-foreground">{alts.luxury.brand} · {alts.luxury.price}</p>
-                  </a>
+                  </AffiliateButton>
                 )}
                 {alts.organic && (
-                  <a href={alts.organic.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(145 25% 97%)", borderColor: "hsl(var(--border))" }}>
+                  <AffiliateButton href={alts.organic.affiliateUrl} productId={`qv-organic-${alts.organic.name}`} productName={`${alts.organic.brand} ${alts.organic.name}`} target="_blank" rel="noopener noreferrer sponsored" className="rounded-xl border p-3 block" style={{ background: "hsl(145 25% 97%)", borderColor: "hsl(var(--border))" }}>
                     <div className="flex items-center gap-1 mb-1"><Leaf size={11} style={{ color: "#5a8a5a" }} /><span className="text-[10px] font-bold uppercase" style={{ color: "#5a8a5a" }}>Organic</span></div>
                     <p className="text-xs font-semibold" style={{ color: "#1a0a0e" }}>{alts.organic.name}</p>
                     <p className="text-xs text-muted-foreground">{alts.organic.brand} · {alts.organic.price}</p>
-                  </a>
+                  </AffiliateButton>
                 )}
               </div>
             </div>
           )}
 
           <div className="flex flex-col sm:flex-row gap-3">
-            <a href={product.affiliateUrl} target="_blank" rel="noopener noreferrer sponsored"
+            <AffiliateButton href={product.affiliateUrl} productId={product.id} productName={product.name} target="_blank" rel="noopener noreferrer sponsored"
               className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-white font-semibold text-sm hover:opacity-90 transition-opacity"
               style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
               <ShoppingBag size={15} /> Buy now <ExternalLink size={12} />
-            </a>
+            </AffiliateButton>
             <Link href={`/product/${product.id}`}>
               <button onClick={onClose} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm transition-all hover:bg-pink-50"
                 style={{ border: "1.5px solid #f0ccd6", color: "#c9506e", background: "white" }}>
@@ -174,16 +175,18 @@ function ProductCard({ product, onQuickView }: { product: any; onQuickView: (p: 
           <span className="font-bold" style={{ color: "var(--color-rose)", fontFamily: "var(--font-display)", fontSize: "1rem" }}>
             {product.price}
           </span>
-          <a
+          <AffiliateButton
             href={product.affiliateUrl}
+            productId={product.id}
+            productName={product.name}
             target="_blank"
             rel="noopener noreferrer sponsored"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "var(--color-rose)" }}
-            onClick={e => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             <ShoppingBag size={11} /> Buy <ExternalLink size={9} />
-          </a>
+          </AffiliateButton>
         </div>
       </div>
     </div>
@@ -397,7 +400,7 @@ export default function SearchPage() {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                 {LIVE_DEALS.map(deal => (
-                  <a key={deal.id} href={deal.url} target="_blank" rel="noopener noreferrer sponsored"
+                  <AffiliateButton key={deal.id} href={deal.url} productId={`deal-${deal.id}`} productName={deal.title} target="_blank" rel="noopener noreferrer sponsored"
                     className="rounded-2xl p-4 block transition-all hover:shadow-md hover:-translate-y-0.5"
                     style={{ background: "white", border: "1px solid #f0ccd6" }}>
                     <div className="flex items-start justify-between gap-2 mb-2">
@@ -408,7 +411,7 @@ export default function SearchPage() {
                     <p className="text-xs font-bold mb-0.5" style={{ color: "#c9944a" }}>{deal.retailer}</p>
                     <p className="text-sm font-semibold leading-snug mb-1" style={{ color: "#1a0a0e" }}>{deal.title}</p>
                     <p className="text-xs leading-relaxed" style={{ color: "#9b6674" }}>{deal.description}</p>
-                  </a>
+                  </AffiliateButton>
                 ))}
               </div>
               {/* Retailer directory */}
@@ -416,11 +419,11 @@ export default function SearchPage() {
                 <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#c9506e", letterSpacing: "0.12em" }}>Shop at our partner retailers</p>
                 <div className="flex flex-wrap gap-2">
                   {RETAILERS.map(r => (
-                    <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer sponsored"
+                    <AffiliateButton key={r.id} href={r.url} productId={`retailer-${r.id}`} productName={r.name} target="_blank" rel="noopener noreferrer sponsored"
                       className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all hover:opacity-80"
                       style={{ background: "white", border: "1px solid #f0ccd6", color: "#1a0a0e" }}>
                       {r.logo} {r.name}
-                    </a>
+                    </AffiliateButton>
                   ))}
                 </div>
               </div>
