@@ -97,13 +97,8 @@ ${JSON.stringify(analysis, null, 2)}
 
 PATIENT PREFERENCES: ${preferences.length ? preferences.join(", ") : "none specified"}
 
-PRODUCT CATALOG:
-${JSON.stringify(
-  (catalog || []).map(p => ({
-    id: p.id, name: p.name, brand: p.brand, category: p.category,
-    tags: p.tags, suitableFor: p.suitableFor, description: p.description,
-    keyIngredients: p.keyIngredients
-  })), null, 1)}
+PRODUCT CATALOG (id | brand | name | category | key tags/ingredients):
+${(catalog || []).map(p => `${p.id} | ${p.brand} | ${p.name} | ${p.category} | ${[...(p.tags||[]).slice(0,4), ...(p.keyIngredients||[]).slice(0,3)].join(', ')}`).join('\n')}
 
 CLINICAL SELECTION RULES:
 1. CONTRAINDICATIONS FIRST — never recommend:

@@ -227,7 +227,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       try {
         analysisMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
-          max_tokens: 3000,
+          max_tokens: 4096,
           messages: [{
             role: "user",
             content: [
@@ -277,7 +277,7 @@ export async function registerRoutes(httpServer: any, app: Express) {
       try {
         recMsg = await anthropic.messages.create({
           model: "claude-sonnet-4-5",
-          max_tokens: 4000,
+          max_tokens: 8000,
           messages: [{ role: "user", content: buildRecommendationPrompt(skinAnalysis, preferences, focus, PRODUCT_CATALOG as any[]) }],
         });
         log("Recommendations response received");
@@ -293,30 +293,42 @@ export async function registerRoutes(httpServer: any, app: Express) {
         const rawText = (recMsg.content[0] as any).text.trim();
         // Strip markdown code fences if present
         const cleaned = rawText.replace(/^```json?\s*/i, "").replace(/\s*```$/i, "").trim();
-        // Attempt 1: direct parse
-        try {
-          recommendations = JSON.parse(cleaned);
-        } catch {
-          // Attempt 2: extract first {...} block via regex
-          const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
-          if (jsonMatch) {
-            try {
-              recommendations = JSON.parse(jsonMatch[0]);
-            } catch {
-              // Attempt 3: recover truncated JSON by cutting to last closing brace of outer object
-              const lastBrace = jsonMatch[0].lastIndexOf("}");
-              if (lastBrace > 0) {
-                recommendations = JSON.parse(jsonMatch[0].substring(0, lastBrace + 1));
-              } else {
-                throw new Error("No closing brace found");
-              }
+
+        const tryRepairJSON = (text: string): any => {
+          // Attempt 1: direct parse
+          try { return JSON.parse(text); } catch {}
+          // Attempt 2: extract first { ... } block
+          const jsonMatch = text.match(/\{[\s\S]*/);
+          const candidate = jsonMatch ? jsonMatch[0] : text;
+          // Attempt 3: find last complete product object — truncate to last },\n  ]
+          // Cut to last complete } inside recommendedProducts array
+          const lastProductEnd = candidate.lastIndexOf('"clinicalBenefit"');
+          let truncated = candidate;
+          if (lastProductEnd > 0) {
+            // Find closing } after last clinicalBenefit
+            const closingBrace = candidate.indexOf('}', lastProductEnd);
+            if (closingBrace > 0) {
+              // Close the array and outer object
+              truncated = candidate.substring(0, closingBrace + 1) + '\n  ],\n  "routineOrder": [],\n  "skinSummary": { "headline": "Analysis complete", "bulletPoints": [], "detailedAnalysis": "", "skinHealthScore": "B", "quickWins": [] },\n  "topConcernToAddress": "",\n  "clinicalWarnings": []\n}';
             }
-          } else {
-            throw new Error("No JSON object found in response");
           }
+          // Attempt 4: try truncated
+          try { return JSON.parse(truncated); } catch {}
+          // Attempt 5: last resort — find last } and close
+          const lastBrace = candidate.lastIndexOf('}');
+          if (lastBrace > 0) {
+            try { return JSON.parse(candidate.substring(0, lastBrace + 1) + '}'); } catch {}
+            try { return JSON.parse(candidate.substring(0, lastBrace + 1)); } catch {}
+          }
+          throw new Error('All JSON repair attempts failed');
         }
-        // Ensure required field exists
+
+        recommendations = tryRepairJSON(cleaned);
+        // Ensure required fields exist
         if (!recommendations.recommendedProducts) recommendations.recommendedProducts = [];
+        if (!recommendations.skinSummary) recommendations.skinSummary = { headline: 'Analysis complete', bulletPoints: [], detailedAnalysis: '', skinHealthScore: 'B', quickWins: [] };
+        if (!recommendations.routineOrder) recommendations.routineOrder = [];
+        if (!recommendations.clinicalWarnings) recommendations.clinicalWarnings = [];
         log(`Recommendations parsed OK: ${recommendations.recommendedProducts?.length} products`);
       } catch (parseErr: any) {
         log(`Recommendations parse failed: ${parseErr.message}`);
