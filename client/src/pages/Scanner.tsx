@@ -212,7 +212,18 @@ export default function Scanner() {
       }
       const scoreData = await scoreRes.json();
 
-      const payload = { ...scoreData, barcode: code, productImage: product?.image ?? null };
+      // Merge enriched OFF data (allergens, additives, ingredientsList) into payload
+      const payload = {
+        ...scoreData,
+        barcode: code,
+        productImage: product?.image ?? null,
+        ingredientsList: product?.ingredientsList ?? null,
+        additives: product?.additives ?? null,
+        allergens: product?.allergens ?? null,
+        labels: product?.labels ?? null,
+        quantity: product?.quantity ?? null,
+        offUrl: product?.offUrl ?? null,
+      };
       sessionStorage.setItem("barcodeResult", JSON.stringify(payload));
       setLocation("/scan-result");
     } catch (err: any) {

@@ -15,6 +15,9 @@ import TryOn from "@/pages/TryOn";
 import ProductDetail from "@/pages/ProductDetail";
 import ColourAnalysis from "@/pages/ColourAnalysis";
 import Advertise from "@/pages/Advertise";
+import About from "@/pages/About";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsConditions from "@/pages/TermsConditions";
 import NotFound from "@/pages/not-found";
 
 export default function App() {
@@ -34,6 +37,9 @@ export default function App() {
             <Route path="/product/:id" component={ProductDetail} />
             <Route path="/colour-analysis" component={ColourAnalysis} />
             <Route path="/advertise" component={Advertise} />
+            <Route path="/about" component={About} />
+            <Route path="/privacy" component={PrivacyPolicy} />
+            <Route path="/terms" component={TermsConditions} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

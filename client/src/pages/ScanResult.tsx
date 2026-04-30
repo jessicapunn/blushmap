@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { ArrowLeft, CheckCircle, AlertTriangle, XCircle, ChevronDown, ChevronUp, ScanLine, Sparkles } from "lucide-react";
+import { ArrowLeft, CheckCircle, AlertTriangle, XCircle, ChevronDown, ChevronUp, ScanLine, Sparkles, ExternalLink, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+// Awin affiliate helper (publisher 2854395)
+const AWIN_LF = (q: string) => `https://www.awin1.com/cread.php?awinmid=2082&awinaffid=2854395&ued=${encodeURIComponent('https://www.lookfantastic.com/search?q=' + q)}`;
 
 interface Ingredient {
   name: string;
@@ -12,6 +15,14 @@ interface Ingredient {
   detail: string;
 }
 
+interface Alternative {
+  name: string;
+  brand: string;
+  reason: string;
+  category: string;
+  affiliateSearch: string;
+}
+
 interface ScanResultData {
   productName: string;
   brand: string;
@@ -20,14 +31,23 @@ interface ScanResultData {
   scoreColour: string;
   summary: string;
   ingredients: Ingredient[];
+  redIngredients?: string[];
+  greenIngredients?: string[];
   pros: string[];
   cons: string[];
   certifications: string[];
   bestFor: string[];
   avoid: string[];
+  fitzpatrickNotes?: string;
   overallVerdict: string;
+  alternatives?: Alternative[];
   barcode: string;
   productImage: string | null;
+  // enriched OFF data
+  ingredientsList?: {name: string; vegan?: boolean; vegetarian?: boolean}[];
+  additives?: {code: string; name: string}[];
+  allergens?: string;
+  labels?: string;
 }
 
 function ScoreRing({ score, colour }: { score: number; colour: string }) {
@@ -264,6 +284,70 @@ export default function ScanResult() {
           </div>
         )}
 
+        {/* Alternatives — always shown */}
+        {data.alternatives && data.alternatives.length > 0 && (
+          <div className="rounded-2xl border p-5" style={{ background: "hsl(var(--card))", borderColor: "hsl(340 30% 88%)" }}>
+            <div className="flex items-center gap-2 mb-3">
+              <ThumbsUp size={16} style={{ color: "#c9506e" }} />
+              <span className="font-semibold text-sm" style={{ fontFamily: "var(--font-display)" }}>
+                {data.score < 75 ? "Better alternatives" : "Pairs well with"}
+              </span>
+              {data.score < 75 && (
+                <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#fef0f3", color: "#c9506e", border: "1px solid #f0ccd6" }}>Recommended switch</span>
+              )}
+            </div>
+            <div className="space-y-3">
+              {data.alternatives.map((alt, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: "hsl(340 20% 97%)", border: "1px solid hsl(340 25% 90%)" }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm font-bold" style={{ background: "#fef0f3", color: "#c9506e" }}>{i + 1}</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-bold" style={{ color: "#c9a96e" }}>{alt.brand}</div>
+                    <div className="text-sm font-semibold" style={{ color: "#1a0a0e" }}>{alt.name}</div>
+                    <div className="text-xs mt-0.5" style={{ color: "#9b6674" }}>{alt.reason}</div>
+                  </div>
+                  <a href={AWIN_LF(alt.affiliateSearch || `${alt.brand} ${alt.name}`)}
+                    target="_blank" rel="noopener noreferrer sponsored"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 text-white"
+                    style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+                    Shop <ExternalLink size={10} />
+                  </a>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs mt-3" style={{ color: "#bbb" }}>*Affiliate links — we earn a small commission at no extra cost to you.</p>
+          </div>
+        )}
+
+        {/* Fitzpatrick notes */}
+        {data.fitzpatrickNotes && (
+          <div className="rounded-2xl border p-4" style={{ background: "hsl(38 25% 97%)", borderColor: "hsl(38 40% 85%)" }}>
+            <p className="text-xs font-bold mb-1" style={{ color: "#c9a96e" }}>Skin tone considerations</p>
+            <p className="text-sm" style={{ color: "#6b4226" }}>{data.fitzpatrickNotes}</p>
+          </div>
+        )}
+
+        {/* Allergen & additive info */}
+        {(data.allergens || (data.additives && data.additives.length > 0)) && (
+          <div className="rounded-2xl border p-4" style={{ background: "hsl(38 25% 97%)", borderColor: "hsl(38 40% 85%)" }}>
+            {data.allergens && (
+              <div className="mb-2">
+                <p className="text-xs font-bold mb-1" style={{ color: "#c9506e" }}>Allergens</p>
+                <p className="text-xs" style={{ color: "#7a4a3a" }}>{data.allergens}</p>
+              </div>
+            )}
+            {data.additives && data.additives.length > 0 && (
+              <div>
+                <p className="text-xs font-bold mb-1" style={{ color: "#c9506e" }}>Additives ({data.additives.length})</p>
+                <div className="flex flex-wrap gap-1">
+                  {data.additives.map((a, i) => (
+                    <span key={i} className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#fff3cd", color: "#856404", border: "1px solid #ffe69c" }}>{a.code}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Overall verdict */}
         <div className="rounded-2xl border p-5" style={{ background: "linear-gradient(135deg, hsl(340 30% 97%), hsl(30 30% 97%))", borderColor: "hsl(340 30% 88%)" }}>
           <div className="flex items-center gap-2 mb-2">
@@ -272,7 +356,7 @@ export default function ScanResult() {
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed">{data.overallVerdict}</p>
           <p className="text-xs text-muted-foreground mt-3 pt-3 border-t" style={{ borderColor: "hsl(340 30% 88%)" }}>
-            Barcode: {data.barcode} · Powered by Claude AI · For informational purposes only
+            Barcode: {data.barcode} · Data: Open Beauty Facts · AI: Claude · For informational purposes only
           </p>
         </div>
 

@@ -4,7 +4,7 @@ import {
   X, ScanLine, Sparkles, Wand2, Search, User, ShoppingBag,
   ChevronRight, Droplets, Sun, Zap, Shield, Leaf, Star,
   FlaskConical, Palette, Package, BookOpen, Home, Heart,
-  Tag, Mail
+  Tag, Mail, Info, FileText, Lock
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { BlushMapLogoInline } from "@/components/BlushMapLogo";
@@ -257,6 +257,25 @@ export function SideMenu({ open, onClose, onOpenAuth }: SideMenuProps) {
               { icon: Leaf,     label: "Clean Beauty",       href: "/search?q=clean" },
               { icon: Star,     label: "Luxury Picks",       href: "/search?q=luxury" },
               { icon: Package,  label: "Budget Friendly",    href: "/search?q=budget" },
+            ].map(({ icon: Icon, label, href }) => (
+              <Link key={href} href={href}>
+                <div className="flex items-center gap-3 px-5 py-2.5 cursor-pointer transition-colors hover:bg-pink-50">
+                  <Icon size={13} style={{ color: "#c9a96e", flexShrink: 0 }} />
+                  <span className="text-sm" style={{ color: "#3a1520" }}>{label}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Legal links */}
+          <div>
+            <p className="px-5 pt-4 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: "#c9506e" }}>
+              Legal
+            </p>
+            {[
+              { icon: Info,     label: "About BlushMap",  href: "/about" },
+              { icon: Lock,     label: "Privacy Policy",  href: "/privacy" },
+              { icon: FileText, label: "Terms & Conditions", href: "/terms" },
             ].map(({ icon: Icon, label, href }) => (
               <Link key={href} href={href}>
                 <div className="flex items-center gap-3 px-5 py-2.5 cursor-pointer transition-colors hover:bg-pink-50">

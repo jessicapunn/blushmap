@@ -233,8 +233,19 @@ Return ONLY valid JSON — no markdown:
   "bestFor": ["specific skin types and conditions this is clinically appropriate for"],
   "avoid": ["specific skin conditions, types, or concerns this product is clinically unsuitable for"],
   "fitzpatrickNotes": "Any implications for specific Fitzpatrick types (e.g. fragrance risk for reactive darker skin, photoirritation risk for lighter types)",
-  "overallVerdict": "Consultant-level clinical verdict in 2-3 sentences. State what makes this product stand out or fall short from a dermatological perspective."
+  "overallVerdict": "Consultant-level clinical verdict in 2-3 sentences. State what makes this product stand out or fall short from a dermatological perspective.",
+  "alternatives": [
+    {
+      "name": "Full product name",
+      "brand": "Brand name",
+      "reason": "1-sentence plain-English reason why this is a better choice",
+      "category": "same category as the scanned product (cleanser/moisturiser/foundation etc)",
+      "affiliateSearch": "search query for lookfantastic.com"
+    }
+  ]
 }
+
+IMPORTANT: The "alternatives" field is MANDATORY. Always provide 3 alternatives regardless of score. If the score is below 75 (Average or Poor), recommend clinically superior products. If the score is 75+, recommend complementary products from the same routine step. Alternatives must be real products available in the UK beauty market.
 
 Score guide:
 85-100: Excellent — clean formulation, evidence-based actives, minimal irritant risk #2E7D32

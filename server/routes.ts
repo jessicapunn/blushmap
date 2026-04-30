@@ -460,16 +460,60 @@ export async function registerRoutes(httpServer: any, app: Express) {
       }
 
       const p = productData;
+
+      // ── Build enriched ingredient list like Yuka ──
+      const ingredientsList: {name: string; id: string; percent?: number; vegan?: boolean; vegetarian?: boolean}[] = [];
+      if (p.ingredients && Array.isArray(p.ingredients)) {
+        for (const ing of p.ingredients) {
+          ingredientsList.push({
+            name: ing.text || ing.id || "",
+            id: ing.id || "",
+            percent: ing.percent_estimate || ing.percent || undefined,
+            vegan: ing.vegan === "yes" ? true : ing.vegan === "no" ? false : undefined,
+            vegetarian: ing.vegetarian === "yes" ? true : ing.vegetarian === "no" ? false : undefined,
+          });
+        }
+      }
+
+      // ── Additive analysis (like Yuka) ──
+      const additivesList: {code: string; name: string; riskLevel?: string}[] = [];
+      if (p.additives_tags && Array.isArray(p.additives_tags)) {
+        for (const tag of p.additives_tags) {
+          const code = tag.replace("en:", "").toUpperCase();
+          const riskTag = p.additives_original_tags?.find((t: string) => t.includes(code.toLowerCase()));
+          additivesList.push({ code, name: code, riskLevel: undefined });
+        }
+      }
+
       res.json({
         barcode: code,
         productName: p.product_name || p.product_name_en || p.generic_name || null,
         brand: p.brands || null,
         ingredientsText: p.ingredients_text || p.ingredients_text_en || null,
-        image: p.image_front_url || p.image_url || null,
+        ingredientsList: ingredientsList.slice(0, 50),
+        image: p.image_front_url || p.image_url || p.image_small_url || null,
+        imageNutrition: p.image_nutrition_url || null,
         categories: p.categories || p.food_groups || null,
+        labels: p.labels || null,
+        quantity: p.quantity || null,
+        // Yuka-equivalent scores
         nutriScore: p.nutriscore_grade || null,
         ecoScore: p.ecoscore_grade || null,
         novaGroup: p.nova_group || null,
+        // Cosmetic-specific fields
+        cosmeticScore: p.cosmetics_score || null,
+        // Allergens
+        allergens: p.allergens || p.allergens_from_ingredients || null,
+        traceAllergens: p.traces || null,
+        // Palm oil
+        ingredientsFromPalmOil: p.ingredients_from_palm_oil_n || 0,
+        // Additives
+        additives: additivesList,
+        additiveCount: additivesList.length,
+        // Environmental
+        packagingMaterials: p.packaging || null,
+        // OFF-specific metadata
+        offUrl: `https://world.openbeautyfacts.org/product/${code}`,
       });
     } catch (err: any) {
       res.status(500).json({ error: "Lookup failed", detail: err.message });
