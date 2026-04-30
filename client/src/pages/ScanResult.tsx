@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { ArrowLeft, CheckCircle, AlertTriangle, XCircle, ChevronDown, ChevronUp, ScanLine, Sparkles, ExternalLink, ThumbsUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AffiliateButton } from "@/components/AffiliateButton";
 
 // Awin affiliate helper (publisher 2854395)
 const AWIN_LF = (q: string) => `https://www.awin1.com/cread.php?awinmid=2082&awinaffid=2854395&ued=${encodeURIComponent('https://www.lookfantastic.com/search?q=' + q)}`;
@@ -305,12 +306,16 @@ export default function ScanResult() {
                     <div className="text-sm font-semibold" style={{ color: "#1a0a0e" }}>{alt.name}</div>
                     <div className="text-xs mt-0.5" style={{ color: "#9b6674" }}>{alt.reason}</div>
                   </div>
-                  <a href={AWIN_LF(alt.affiliateSearch || `${alt.brand} ${alt.name}`)}
+                  <AffiliateButton
+                    href={AWIN_LF(alt.affiliateSearch || `${alt.brand} ${alt.name}`)}
+                    productId={`scan-alt-${i}-${alt.name}`}
+                    productName={`${alt.brand} ${alt.name}`}
                     target="_blank" rel="noopener noreferrer sponsored"
                     className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 text-white"
-                    style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}>
+                    style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
+                  >
                     Shop <ExternalLink size={10} />
-                  </a>
+                  </AffiliateButton>
                 </div>
               ))}
             </div>

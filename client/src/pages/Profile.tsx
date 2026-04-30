@@ -6,11 +6,12 @@ import { NavBar } from "@/components/NavBar";
 import {
   Heart, ShoppingBag, ScanLine, TrendingUp, User, LogOut,
   Camera, Clock, Sparkles, ChevronRight, Star, CheckCircle,
-  Package, ExternalLink, Trash2, Tag, ArrowLeft,
+  Package, ExternalLink, Trash2, Tag, ArrowLeft, Gift,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { fetchPoints, fetchPointsHistory } from "@/lib/points";
 
-type Tab = "overview" | "skin-history" | "saved" | "scans";
+type Tab = "overview" | "skin-history" | "saved" | "scans" | "points";
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -19,6 +20,8 @@ export default function Profile() {
   const [savedProducts, setSP]      = useState<any[]>([]);
   const [productScans, setPS]       = useState<any[]>([]);
   const [analyses, setAN]           = useState<any[]>([]);
+  const [points,   setPts]           = useState<{ totalPoints: number; lifetimePoints: number } | null>(null);
+  const [clickHistory, setCH]        = useState<any[]>([]);
   const [loading, setLoading]       = useState(false);
 
   useEffect(() => { if (user) loadAll(); }, [user]);
@@ -26,16 +29,20 @@ export default function Profile() {
   async function loadAll() {
     setLoading(true);
     try {
-      const [fsh, sp, ps, an] = await Promise.all([
+      const [fsh, sp, ps, an, pts, ch] = await Promise.all([
         fetch("/api/profile/face-scans").then(r => r.json()),
         fetch("/api/profile/saved-products").then(r => r.json()),
         fetch("/api/profile/product-scans").then(r => r.json()),
         fetch("/api/profile/analyses").then(r => r.json()),
+        fetchPoints(),
+        fetchPointsHistory(),
       ]);
       setFSH(fsh.history || []);
       setSP(sp.products || []);
       setPS(ps.scans || []);
       setAN(an.analyses || []);
+      setPts(pts);
+      setCH(ch);
     } finally { setLoading(false); }
   }
 
@@ -74,6 +81,7 @@ export default function Profile() {
     { id: "skin-history", label: "Skin history",  icon: Camera, count: faceScanHistory.length },
     { id: "saved",        label: "Saved",          icon: Heart, count: savedProducts.length },
     { id: "scans",        label: "Scanned",        icon: ScanLine, count: productScans.length },
+    { id: "points",       label: "Points",         icon: Star, count: points?.totalPoints ?? 0 },
   ];
 
   return (
@@ -317,6 +325,72 @@ export default function Profile() {
                         </button>
                       </div>
                     </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab === "points" && (
+          <div>
+            {/* Balance card */}
+            <div
+              className="rounded-2xl p-6 mb-6 text-center"
+              style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", boxShadow: "0 4px 20px rgba(201,80,110,0.25)" }}
+            >
+              <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style={{ background: "rgba(255,255,255,0.2)" }}>
+                <Star size={26} fill="white" color="white" />
+              </div>
+              <p className="text-white/80 text-sm mb-1">Your BlushPoints balance</p>
+              <p className="text-5xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>
+                {points?.totalPoints ?? 0}
+              </p>
+              <p className="text-white/60 text-xs mt-1">{points?.lifetimePoints ?? 0} lifetime points earned</p>
+            </div>
+
+            {/* How it works */}
+            <div className="rounded-2xl p-5 mb-5" style={{ background: "#fff", border: "1px solid #f0ccd6" }}>
+              <h3 className="text-sm font-bold mb-3" style={{ color: "#1a0a0e" }}>How BlushPoints work</h3>
+              <div className="space-y-2.5">
+                {[
+                  { pts: 10, label: "Click any affiliate product link" },
+                  { pts: 10, label: "Shop a recommended alternative" },
+                  { pts: 10, label: "Click a promotional banner link" },
+                ].map(({ pts, label }) => (
+                  <div key={label} className="flex items-center gap-3">
+                    <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-xs font-bold text-white" style={{ background: "#c9506e" }}>+{pts}</span>
+                    <span className="text-sm" style={{ color: "#3d1a24" }}>{label}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs mt-4" style={{ color: "#bbb" }}>Points are awarded once per product per day. Reward redemption coming soon.</p>
+            </div>
+
+            {/* Click history */}
+            <h3 className="text-sm font-semibold mb-3" style={{ color: "#1a0a0e" }}>Recent activity</h3>
+            {clickHistory.length === 0 ? (
+              <EmptyState
+                icon={Gift}
+                title="No points yet"
+                desc="Click any shop link on a product or scan result to start earning."
+                cta="Browse products"
+                href="/search"
+              />
+            ) : (
+              <div className="space-y-2">
+                {clickHistory.map((c: any) => (
+                  <div key={c.id} className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: "#fff", border: "1px solid #f0ccd6" }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#fef0f3" }}>
+                      <Star size={14} style={{ color: "#c9506e" }} fill="#c9506e" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate" style={{ color: "#1a0a0e" }}>{c.productName || "Product link"}</p>
+                      <p className="text-xs" style={{ color: "#9b6674" }}>
+                        {c.retailer || "Shop"} · {new Date(c.createdAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                    </div>
+                    <span className="text-sm font-bold" style={{ color: "#c9506e" }}>+{c.pointsEarned}</span>
                   </div>
                 ))}
               </div>

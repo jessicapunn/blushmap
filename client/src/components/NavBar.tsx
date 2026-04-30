@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import {
   ScanLine, Sparkles, Search, Heart, User as UserIcon,
-  LogIn, Wand2, Menu, X, Tag
+  LogIn, Wand2, Menu, X, Tag, Star
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useBasket } from "@/lib/basket";
+import { fetchPoints } from "@/lib/points";
 import { BlushMapLogoInline } from "@/components/BlushMapLogo";
 import { AuthModal } from "@/components/AuthModal";
 import { BasketDrawer } from "@/components/BasketDrawer";
@@ -115,6 +116,15 @@ export function NavBar() {
   const [showAuth,   setShowAuth]   = useState(false);
   const [showBasket, setShowBasket] = useState(false);
   const [showMenu,   setShowMenu]   = useState(false);
+  const [points,     setPoints]     = useState<number | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchPoints().then(p => { if (p) setPoints(p.totalPoints); });
+    } else {
+      setPoints(null);
+    }
+  }, [user]);
 
   return (
     <>
@@ -226,11 +236,22 @@ export function NavBar() {
             {user ? (
               <Link href="/profile">
                 <button
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold hover:bg-pink-50 transition-colors uppercase tracking-wide"
-                  style={{ color: "var(--color-rose)", border: "1.5px solid #f0ccd6", letterSpacing: "0.05em" }}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold hover:bg-pink-50 transition-colors"
+                  style={{ color: "var(--color-rose)", border: "1.5px solid #f0ccd6" }}
                 >
                   <UserIcon size={12} />
-                  {user.name?.split(" ")[0] || "Profile"}
+                  <span className="uppercase tracking-wide" style={{ letterSpacing: "0.05em" }}>
+                    {user.name?.split(" ")[0] || "Profile"}
+                  </span>
+                  {points !== null && (
+                    <span
+                      className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
+                      style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", color: "#fff", marginLeft: 2 }}
+                    >
+                      <Star size={8} fill="white" color="white" />
+                      {points}
+                    </span>
+                  )}
                 </button>
               </Link>
             ) : (

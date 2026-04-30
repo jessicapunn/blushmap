@@ -87,6 +87,27 @@ export const subscribers = sqliteTable("subscribers", {
   createdAt: integer("created_at").notNull().default(0),
 });
 
+// ── Affiliate clicks (points log) ───────────────────────────────────────────
+export const affiliateClicks = sqliteTable("affiliate_clicks", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id").notNull(),
+  productId: text("product_id"),
+  productName: text("product_name"),
+  retailer: text("retailer"),          // e.g. "LOOKFANTASTIC", "Cult Beauty"
+  affiliateUrl: text("affiliate_url"),
+  pointsEarned: integer("points_earned").notNull().default(10),
+  createdAt: integer("created_at").notNull().default(0),
+});
+
+// ── User points balance ───────────────────────────────────────────────────────
+export const userPoints = sqliteTable("user_points", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  userId: integer("user_id").notNull().unique(),
+  totalPoints: integer("total_points").notNull().default(0),
+  lifetimePoints: integer("lifetime_points").notNull().default(0),
+  updatedAt: integer("updated_at").notNull().default(0),
+});
+
 // ── Insert schemas ────────────────────────────────────────────────────────────
 export const insertAnalysisSchema = createInsertSchema(analyses).omit({ id: true, createdAt: true });
 export const insertUserSchema = createInsertSchema(users).omit({ id: true, createdAt: true, lastLoginAt: true });
@@ -98,3 +119,5 @@ export type User = typeof users.$inferSelect;
 export type FaceScanHistory = typeof faceScanHistory.$inferSelect;
 export type SavedProduct = typeof savedProducts.$inferSelect;
 export type ProductScan = typeof productScans.$inferSelect;
+export type AffiliateClick = typeof affiliateClicks.$inferSelect;
+export type UserPoints = typeof userPoints.$inferSelect;

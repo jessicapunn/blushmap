@@ -60,4 +60,38 @@ export function registerProfileRoutes(app: Express) {
     const scans = await storage.getProductScanHistory(uid);
     res.json({ scans });
   });
+
+  // ── Points balance ──
+  app.get("/api/profile/points", requireAuth, async (req, res) => {
+    const uid = (req.session as any).userId;
+    const points = await storage.getPoints(uid);
+    res.json({ points });
+  });
+
+  // ── Points history (click log) ──
+  app.get("/api/profile/points/history", requireAuth, async (req, res) => {
+    const uid = (req.session as any).userId;
+    const history = await storage.getClickHistory(uid);
+    res.json({ history });
+  });
+
+  // ── Track affiliate click & award points ──
+  // Called from frontend when a signed-in user clicks an affiliate link
+  app.post("/api/affiliate/track", requireAuth, async (req, res) => {
+    const uid = (req.session as any).userId;
+    const { productId, productName, retailer, affiliateUrl } = req.body;
+    // 10 pts per click, deduplicate per product per day
+    const history = await storage.getClickHistory(uid);
+    const today = new Date().toDateString();
+    const alreadyToday = history.some(h =>
+      h.productId === productId &&
+      new Date(h.createdAt).toDateString() === today
+    );
+    if (alreadyToday) {
+      // Still open the link, just don’t double award
+      return res.json({ ok: true, awarded: 0, reason: "already_awarded_today" });
+    }
+    const updated = await storage.awardPoints(uid, 10, { productId, productName, retailer, affiliateUrl });
+    res.json({ ok: true, awarded: 10, totalPoints: updated.totalPoints });
+  });
 }

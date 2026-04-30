@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useBasket } from "@/lib/basket";
+import { AffiliateButton } from "@/components/AffiliateButton";
 import { getProductImage } from "@/lib/productImages";
 import { useAuth } from "@/lib/auth";
 import PriceCompare from "@/components/PriceCompare";
@@ -206,15 +207,17 @@ export default function ProductDetail() {
               </div>
 
               {/* Primary Buy Now CTA */}
-              <a
+              <AffiliateButton
                 href={primary.url}
+                productId={product.id}
+                productName={product.name}
                 target="_blank"
                 rel="noopener noreferrer sponsored"
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-white text-sm font-bold transition-all hover:opacity-90 mb-3"
                 style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", boxShadow: "0 4px 16px rgba(201,80,110,0.28)" }}
               >
                 <Zap size={14} /> Buy Now <ExternalLink size={12} />
-              </a>
+              </AffiliateButton>
 
               {/* Wishlist + Save row */}
               <div className="flex items-center gap-2">
@@ -298,15 +301,17 @@ export default function ProductDetail() {
                           </div>
                           <span className="text-sm font-bold shrink-0" style={{ color }}>{alt.price}</span>
                         </div>
-                        <a
+                        <AffiliateButton
                           href={alt.affiliateUrl}
+                          productId={`${product.id}-alt-${alt.name}`}
+                          productName={alt.name}
                           target="_blank"
                           rel="noopener noreferrer sponsored"
                           className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full text-xs font-semibold text-white hover:opacity-90 transition-opacity"
                           style={{ background: color }}
                         >
                           <ShoppingBag size={11} /> Shop <ExternalLink size={10} />
-                        </a>
+                        </AffiliateButton>
                       </div>
                     );
                   })}

@@ -1,10 +1,11 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { createClient } from "@libsql/client";
 import { eq, desc, and } from "drizzle-orm";
-import { analyses, users, faceScanHistory, savedProducts, productScans, subscribers } from "@shared/schema";
+import { analyses, users, faceScanHistory, savedProducts, productScans, subscribers, affiliateClicks, userPoints } from "@shared/schema";
 import type {
   InsertAnalysis, Analysis, InsertUser, User,
   FaceScanHistory, SavedProduct, ProductScan,
+  AffiliateClick, UserPoints,
 } from "@shared/schema";
 import bcrypt from "bcryptjs";
 
@@ -87,6 +88,25 @@ async function initDb() {
       name TEXT,
       skin_concerns TEXT,
       created_at INTEGER NOT NULL DEFAULT 0
+    )`);
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS affiliate_clicks (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      product_id TEXT,
+      product_name TEXT,
+      retailer TEXT,
+      affiliate_url TEXT,
+      points_earned INTEGER NOT NULL DEFAULT 10,
+      created_at INTEGER NOT NULL DEFAULT 0
+    )`);
+  await client.execute(`
+    CREATE TABLE IF NOT EXISTS user_points (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL UNIQUE,
+      total_points INTEGER NOT NULL DEFAULT 0,
+      lifetime_points INTEGER NOT NULL DEFAULT 0,
+      updated_at INTEGER NOT NULL DEFAULT 0
     )`);
 }
 initDb().catch(console.error);
@@ -214,6 +234,49 @@ export const storage = {
       .where(eq(productScans.userId, userId))
       .orderBy(desc(productScans.createdAt))
       .limit(30);
+  },
+
+  // ── Points ──
+  async getPoints(userId: number): Promise<UserPoints> {
+    const rows = await db.select().from(userPoints).where(eq(userPoints.userId, userId));
+    if (rows.length > 0) return rows[0];
+    // Auto-create row on first access
+    const created = await db.insert(userPoints).values({
+      userId, totalPoints: 0, lifetimePoints: 0, updatedAt: Date.now(),
+    }).returning();
+    return created[0];
+  },
+
+  async awardPoints(userId: number, points: number, data: {
+    productId?: string; productName?: string; retailer?: string; affiliateUrl?: string;
+  }): Promise<UserPoints> {
+    // Log the click
+    await db.insert(affiliateClicks).values({
+      userId, pointsEarned: points, createdAt: Date.now(),
+      productId: data.productId, productName: data.productName,
+      retailer: data.retailer, affiliateUrl: data.affiliateUrl,
+    });
+    // Upsert points balance
+    const existing = await db.select().from(userPoints).where(eq(userPoints.userId, userId));
+    if (existing.length > 0) {
+      const result = await db.update(userPoints).set({
+        totalPoints: existing[0].totalPoints + points,
+        lifetimePoints: existing[0].lifetimePoints + points,
+        updatedAt: Date.now(),
+      }).where(eq(userPoints.userId, userId)).returning();
+      return result[0];
+    }
+    const result = await db.insert(userPoints).values({
+      userId, totalPoints: points, lifetimePoints: points, updatedAt: Date.now(),
+    }).returning();
+    return result[0];
+  },
+
+  async getClickHistory(userId: number): Promise<AffiliateClick[]> {
+    return db.select().from(affiliateClicks)
+      .where(eq(affiliateClicks.userId, userId))
+      .orderBy(desc(affiliateClicks.createdAt))
+      .limit(50);
   },
 
   // ── Subscribers ──
