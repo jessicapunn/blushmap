@@ -59,16 +59,32 @@ export function SideMenu({ open, onClose, onOpenAuth }: SideMenuProps) {
   useEffect(() => { onClose(); }, [location]);
 
   // Lock body scroll when open
+  // iOS Safari requires position:fixed to prevent bounce-scroll behind modal.
+  // We store the current scrollY and restore it on close to prevent scroll jump.
   useEffect(() => {
     if (open) {
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+      document.body.style.overflowY = "scroll"; // keep scrollbar width
     } else {
-      document.body.style.overflow = "";
+      const scrollY = Math.abs(parseInt(document.body.style.top || "0", 10));
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
+      window.scrollTo(0, scrollY); // restore position without jump
       // Collapse sub-menus when closed
       setSkinExpanded(false);
       setCatExpanded(false);
     }
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflowY = "";
+    };
   }, [open]);
 
   return (

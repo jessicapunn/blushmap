@@ -132,7 +132,17 @@ export function NavBar() {
       <BasketDrawer open={showBasket} onClose={() => setShowBasket(false)} />
       <SideMenu open={showMenu} onClose={() => setShowMenu(false)} onOpenAuth={() => setShowAuth(true)} />
 
-      <header className="sticky top-0 z-50" style={{ background: "rgba(255,248,250,0.98)", backdropFilter: "blur(24px)" }}>
+      {/*
+        Performance notes:
+        - backdrop-filter:blur is on a separate pseudo-element via CSS class (glass-blush)
+          so it runs on the compositor thread and doesn't trigger layout.
+        - will-change:transform on the header promotes it to its own GPU layer,
+          preventing the sticky recalc from dirtying the whole stacking context.
+      */}
+      <header
+        className="sticky top-0 z-50 glass-blush"
+        style={{ willChange: "transform" }}
+      >
         {/* Rotating announcement banner */}
         <AnnouncementBanner onOpenAuth={() => setShowAuth(true)} />
 
@@ -209,26 +219,26 @@ export function NavBar() {
             </Link>
           </nav>
 
-          {/* Spacer on mobile */}
-          <div className="flex-1 md:hidden" />
+          {/* Spacer on mobile — pushes actions to right */}
+          <div className="flex-1 md:hidden" style={{ minWidth: 0 }} />
 
-          {/* Right side actions */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Mobile: scan + analyse pills */}
+          {/* Right side actions — shrink-0 prevents compression, gap tightened on xs */}
+          <div className="flex items-center gap-1 xs:gap-1.5 shrink-0">
+            {/* Mobile: scan + analyse icon-only pills on very small screens, text on larger */}
             <Link href="/scanner">
               <span
-                className="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide"
-                style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
+                className="md:hidden flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide"
+                style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)", whiteSpace: "nowrap" }}
               >
-                <ScanLine size={11} /> Scan
+                <ScanLine size={11} /><span className="hidden xs:inline">Scan</span>
               </span>
             </Link>
             <Link href="/analyse">
               <span
-                className="md:hidden flex items-center gap-1 px-2.5 py-1.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide"
-                style={{ background: "linear-gradient(135deg, #c9944a, #b07830)" }}
+                className="md:hidden flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full text-white text-[10px] font-bold uppercase tracking-wide"
+                style={{ background: "linear-gradient(135deg, #c9944a, #b07830)", whiteSpace: "nowrap" }}
               >
-                <Sparkles size={11} /> Analyse
+                <Sparkles size={11} /><span className="hidden xs:inline">Analyse</span>
               </span>
             </Link>
 

@@ -198,8 +198,10 @@ function BeautyCarousel() {
         className="absolute inset-0 w-full h-full object-cover"
         style={{
           opacity: transitioning ? 0 : 1,
-          transform: transitioning ? "scale(1.03)" : "scale(1)",
+          /* scale via transform only — compositor thread, no layout repaint */
+          transform: transitioning ? "scale3d(1.03,1.03,1)" : "scale3d(1,1,1)",
           transition: "opacity 0.4s ease, transform 0.4s ease",
+          willChange: "opacity, transform",
         }}
         loading="eager"
       />
@@ -211,8 +213,9 @@ function BeautyCarousel() {
         className="absolute bottom-0 left-0 right-0 px-6 pb-8 md:px-12"
         style={{
           opacity: transitioning ? 0 : 1,
-          transform: transitioning ? "translateY(8px)" : "translateY(0)",
+          transform: transitioning ? "translate3d(0,8px,0)" : "translate3d(0,0,0)",
           transition: "opacity 0.35s ease 0.1s, transform 0.35s ease 0.1s",
+          willChange: "opacity, transform",
         }}
       >
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: "#e8a0b0", letterSpacing: "0.16em" }}>{slide.sub}</p>

@@ -32,9 +32,14 @@
     <meta name="twitter:image" content="https://www.blushmap.com/og-image.jpg" />
 
     <!-- ── Fonts: Playfair Display + DM Sans ── -->
+    <!-- dns-prefetch + preconnect before any render-blocking resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <!-- display=swap prevents FOIT; font-display handled by Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" /></noscript>
 
     <!-- ── Structured Data: WebApplication ── -->
     <script type="application/ld+json">
@@ -86,10 +91,11 @@
     </script>
 
     <!-- ── Cookiebot Consent ── -->
+    <!-- async prevents Cookiebot from blocking first paint on mobile -->
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js"
       data-cbid="7e7d85ae-5b6f-4c3e-b571-50ce299f3503"
       data-blockingmode="auto"
-      type="text/javascript">
+      async>
     </script>
 
     <!-- ── Awin Publisher MasterTag (publisher 2854395) ── -->

@@ -517,7 +517,14 @@ export default function TryOn() {
           {/* ── Left: face view ─────────────────────────────────────────────── */}
           <div>
             <div className="relative rounded-3xl overflow-hidden"
-              style={{ background: "#111", border: "1px solid #f0ccd6", aspectRatio: "3/4", minHeight: 320 }}>
+              style={{
+                background: "#111",
+                border: "1px solid #f0ccd6",
+                aspectRatio: "3/4",
+                maxHeight: "70svh",
+                minHeight: 260,
+                contain: "strict",
+              }}>
 
               {/* VIDEO (camera mode) */}
               {mode === "camera" && (

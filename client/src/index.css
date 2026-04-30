@@ -88,9 +88,12 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth removed — causes jank / render-blocking on low-end Android */
     scroll-padding-top: 5rem;
-    text-rendering: optimizeLegibility;
+    /* text-rendering: optimizeLegibility removed — triggers layout+paint on every text repaint */
+    text-rendering: auto;
+    /* Prevent content shifting when scrollbar appears */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -101,6 +104,8 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-weight: 400;
+    /* Prevent iOS Safari bounce scroll from triggering layout */
+    overscroll-behavior-y: none;
   }
 
   h1, h2, h3, h4, h5 {
@@ -384,7 +389,7 @@
     border-color: #e8a0b0;
   }
 
-  /* ── Filled rose button ── */
+  /* ── Filled rose button — GPU-only hover (opacity/transform, no repaint) ── */
   .btn-rose {
     display: inline-flex;
     align-items: center;
@@ -398,6 +403,7 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
+    will-change: transform;
     transition: opacity var(--duration-fast) ease, transform var(--duration-fast) ease;
   }
   .btn-rose:hover {
