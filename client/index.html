@@ -91,26 +91,50 @@
     </script>
 
     <!-- ── Cookiebot Consent ── -->
-    <!-- async prevents Cookiebot from blocking first paint on mobile -->
+    <!-- manual mode: we fire scripts ourselves after consent — avoids auto-blocking React/GA4 -->
     <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js"
       data-cbid="7e7d85ae-5b6f-4c3e-b571-50ce299f3503"
-      data-blockingmode="auto"
+      data-blockingmode="manual"
       async>
     </script>
 
-    <!-- ── Awin Publisher MasterTag (publisher 2854395) ── -->
-    <!-- Note: only fires after cookie consent due to Cookiebot blocking -->
-    <script defer src="https://www.awin1.com/PRE_3853025.js" type="text/javascript"></script>
-
-    <!-- ── Google Analytics GA4 ── -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-75MW4WEXFD"></script>
+    <!-- ── Google Analytics GA4 — loaded after Cookiebot consent ── -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-75MW4WEXFD', {
-        'anonymize_ip': true,
-        'cookie_flags': 'SameSite=None;Secure'
+      // Only fire GA4 after statistics cookies are consented
+      window.addEventListener('CookiebotOnAccept', function() {
+        if (window.Cookiebot && window.Cookiebot.consent && window.Cookiebot.consent.statistics) {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-75MW4WEXFD';
+          document.head.appendChild(s);
+          gtag('js', new Date());
+          gtag('config', 'G-75MW4WEXFD', { 'anonymize_ip': true, 'cookie_flags': 'SameSite=None;Secure' });
+        }
+      });
+      // Also fire if Cookiebot fails to load (timeout) — degrade gracefully
+      window.addEventListener('CookiebotOnConsentReady', function() {
+        if (window.Cookiebot && window.Cookiebot.consented) {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-75MW4WEXFD';
+          document.head.appendChild(s);
+          gtag('js', new Date());
+          gtag('config', 'G-75MW4WEXFD', { 'anonymize_ip': true, 'cookie_flags': 'SameSite=None;Secure' });
+        }
+      });
+    </script>
+
+    <!-- ── Awin MasterTag — loaded lazily after page load to avoid 504 blocking ── -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var s = document.createElement('script');
+          s.src = 'https://www.awin1.com/PRE_3853025.js';
+          s.async = true;
+          document.body.appendChild(s);
+        }, 2000); // 2s delay — non-critical, avoids blocking page render
       });
     </script>
   </head>
