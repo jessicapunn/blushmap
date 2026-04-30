@@ -11,7 +11,7 @@ import { getProductImage } from "@/lib/productImages";
 interface Shade { name: string; hex: string; }
 interface TryProduct {
   id: string; name: string; brand: string; price: string;
-  category: "lipstick" | "lip-liner" | "blush" | "eyeshadow" | "highlighter" | "bronzer";
+  category: "lipstick" | "lip-liner" | "blush" | "eyeshadow" | "highlighter" | "bronzer" | "eyeliner";
   shades: Shade[];
   image: string; affiliateUrl: string;
   bestseller?: boolean; newIn?: boolean;
@@ -78,6 +78,18 @@ const MAKEUP: TryProduct[] = [
     image:"https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80",
     affiliateUrl: ctLink("Charlotte Tilbury Filmstar Bronze"), bestseller: true,
     shades:[{name:"Fair/Light",hex:"#c89060"},{name:"Light/Medium",hex:"#b87040"},{name:"Medium",hex:"#a86030"},{name:"Medium/Dark",hex:"#985030"}]},
+  { id:"ct-liner-1", name:"Eye Definer Liner", brand:"Charlotte Tilbury", price:"£23", category:"eyeliner",
+    image:"https://images.unsplash.com/photo-1583241800698-e8ab01830a52?w=400&q=80",
+    affiliateUrl: ctLink("Charlotte Tilbury eye liner"), bestseller: true,
+    shades:[{name:"Black Noir",hex:"#1a1a1a"},{name:"Brown",hex:"#4a3020"},{name:"Navy",hex:"#1a2040"},{name:"Forest",hex:"#1a3020"}]},
+  { id:"mac-liner-1", name:"Fluidline Gel Liner", brand:"MAC", price:"£21", category:"eyeliner",
+    image:"https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400&q=80",
+    affiliateUrl: lf("MAC Fluidline gel eyeliner"),
+    shades:[{name:"Blacktrack",hex:"#111111"},{name:"Bordeaux",hex:"#5a1020"},{name:"Dipdown",hex:"#2a1a10"}]},
+  { id:"nars-liner-1", name:"Eyeliner Stylo", brand:"NARS", price:"£22", category:"eyeliner",
+    image:"https://images.unsplash.com/photo-1583241800698-e8ab01830a52?w=400&q=80",
+    affiliateUrl: cult("NARS eyeliner stylo"),
+    shades:[{name:"Via Veneto",hex:"#181818"},{name:"Kohlhaven",hex:"#3a3030"},{name:"Mambo",hex:"#5a1030"},{name:"Outremer",hex:"#1a2050"}]},
 ];
 
 const BRANDS = ["All Brands", "Kylie Cosmetics", "Charlotte Tilbury", "NARS", "MAC", "Fenty Beauty", "Rare Beauty"];
@@ -88,6 +100,7 @@ const CATS: { id: string; label: string }[] = [
   { id: "eyeshadow", label: "Eyes" },
   { id: "highlighter", label: "Highlight" },
   { id: "bronzer", label: "Bronzer" },
+  { id: "eyeliner", label: "Liner" },
 ];
 
 // ── hex → rgba helper ──────────────────────────────────────────────────────────
@@ -98,18 +111,52 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r},${g},${b},${alpha})`;
 }
 
-// ── MediaPipe landmark indices ─────────────────────────────────────────────────
-// Lip outline (upper + lower combined, 478-point model)
-const UPPER_LIP = [61,185,40,39,37,0,267,269,270,409,291,308,415,310,311,312,13,82,81,80,191,78];
-const LOWER_LIP = [61,146,91,181,84,17,314,405,321,375,291,308,324,318,402,317,14,87,178,88,95,78];
-// Blush zones (cheek area landmarks)
-const LEFT_CHEEK  = [116,123,147,187,207,213,192,214,210,211,212,202];
-const RIGHT_CHEEK = [345,352,376,411,427,433,411,434,430,431,432,422];
-// Left/Right eyelid area for eyeshadow
-const LEFT_EYE_UPPER  = [246,161,160,159,158,157,173,133,155,154,153,145,144,163,7,33];
-const RIGHT_EYE_UPPER = [466,388,387,386,385,384,398,362,382,381,380,374,373,390,249,263];
-// Forehead highlight zone (approx)
-const FOREHEAD_ZONE = [10,338,297,332,284,251,389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162,21,54,103,67,109];
+// ── MediaPipe 468-point Face Mesh landmark indices (verified)
+// Outer lip silhouette — clockwise from left corner
+const LIP_OUTER = [61,185,40,39,37,0,267,269,270,409,291,375,321,405,314,17,84,181,91,146,61];
+// Inner lip (mouth opening) — for realistic lipstick that doesn't bleed into mouth
+const LIP_INNER = [78,191,80,81,82,13,312,311,310,415,308,324,318,402,317,14,87,178,88,95,78];
+// Upper lip only (outer top edge)
+const UPPER_LIP_OUTER = [61,185,40,39,37,0,267,269,270,409,291];
+// Lower lip only (outer bottom edge)
+const LOWER_LIP_OUTER = [61,146,91,181,84,17,314,405,321,375,291];
+
+// Cheek blush — mid-cheek apple area (NOT overlapping with nose/lips)
+const LEFT_CHEEK_BLUSH  = [117,118,101,100,142,36,205,50,205,187,123,116,143,156,70,63];
+const RIGHT_CHEEK_BLUSH = [346,347,330,329,371,266,425,280,425,411,352,345,372,383,300,293];
+
+// Eye lid crease area — upper eyelid only (verified 468-point indices)
+// Left eye: upper lid from inner to outer corner + crease
+const LEFT_LID   = [246,161,160,159,158,157,173,133,173,157,158,159,160,161,246,33,7,163,144,153,154,155,133];
+const RIGHT_LID  = [466,388,387,386,385,384,398,362,398,384,385,386,387,388,466,263,249,390,373,374,380,381,382,362];
+// Tight upper lid only for liner
+const LEFT_LASHLINE  = [33,246,161,160,159,158,157,173,133];
+const RIGHT_LASHLINE = [263,466,388,387,386,385,384,398,362];
+
+// Brow fill area
+const LEFT_BROW  = [70,63,105,66,107,55,65,52,53,46];
+const RIGHT_BROW = [300,293,334,296,336,285,295,282,283,276];
+
+// Cheekbone highlight — upper cheek, just below eye
+const LEFT_CHEEKBONE  = [116,123,147,213,192,214,210,211,212,202,204,194,32,171];
+const RIGHT_CHEEKBONE = [345,352,376,433,416,434,430,431,432,422,424,418,262,396];
+
+// Forehead + nose bridge for highlight
+const FOREHEAD_ZONE = [151,108,69,104,68,54,21,162,127,234,93,132,58,172,136,150,149,176,148,152];
+const NOSE_BRIDGE   = [168,6,197,195,5,4,1,19,94,2];
+
+// Helper: draw a smooth closed Bezier path through an array of {x,y} points
+function smoothPath(ctx: CanvasRenderingContext2D, pts: {x:number;y:number}[]) {
+  if (pts.length < 3) return;
+  ctx.beginPath();
+  ctx.moveTo((pts[0].x + pts[1].x) / 2, (pts[0].y + pts[1].y) / 2);
+  for (let i = 0; i < pts.length; i++) {
+    const p1 = pts[i];
+    const p2 = pts[(i + 1) % pts.length];
+    ctx.quadraticCurveTo(p1.x, p1.y, (p1.x + p2.x) / 2, (p1.y + p2.y) / 2);
+  }
+  ctx.closePath();
+}
 
 // ── Canvas makeup rendering ────────────────────────────────────────────────────
 function renderMakeup(
@@ -122,151 +169,184 @@ function renderMakeup(
   intensity: number,
   mirror: boolean
 ) {
+  // NOTE: The video element is CSS-mirrored (scaleX(-1)) and the canvas overlay
+  // is also CSS-mirrored, so landmark x coords map directly without any flip.
   const px = (lm: {x: number; y: number}) => ({
-    x: mirror ? w - lm.x * w : lm.x * w,
+    x: lm.x * w,
     y: lm.y * h,
   });
 
   ctx.save();
 
+  // ── LIPSTICK / LIP LINER ─────────────────────────────────────────────────────
   if (category === "lipstick" || category === "lip-liner") {
-    // Draw lips using fill path
-    const alpha = 0.65 + intensity * 0.25;
+    const alpha = 0.72 + intensity * 0.22;
+
+    // Step 1: fill outer lip silhouette
     ctx.globalCompositeOperation = "multiply";
     ctx.globalAlpha = alpha;
     ctx.fillStyle = hex;
-
-    // Upper lip
-    ctx.beginPath();
-    const ul = UPPER_LIP.map(i => px(landmarks[i]));
-    ctx.moveTo(ul[0].x, ul[0].y);
-    for (let i = 1; i < ul.length; i++) ctx.lineTo(ul[i].x, ul[i].y);
-    ctx.closePath();
+    const outerPts = LIP_OUTER.map(i => px(landmarks[i]));
+    smoothPath(ctx, outerPts);
     ctx.fill();
 
-    // Lower lip
-    ctx.beginPath();
-    const ll = LOWER_LIP.map(i => px(landmarks[i]));
-    ctx.moveTo(ll[0].x, ll[0].y);
-    for (let i = 1; i < ll.length; i++) ctx.lineTo(ll[i].x, ll[i].y);
-    ctx.closePath();
+    // Step 2: punch out the inner mouth opening so colour only sits on lips
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.globalAlpha = 1.0;
+    const innerPts = LIP_INNER.map(i => px(landmarks[i]));
+    smoothPath(ctx, innerPts);
     ctx.fill();
 
-    // Add gloss highlight
+    // Step 3: gloss highlight (cupid's bow + lower lip centre)
     ctx.globalCompositeOperation = "screen";
-    ctx.globalAlpha = 0.12;
-    ctx.fillStyle = "#ffffff";
-    const lip_center = px(landmarks[13]);
-    const gradH = ctx.createRadialGradient(lip_center.x, lip_center.y - 3, 1, lip_center.x, lip_center.y, 12);
-    gradH.addColorStop(0, "rgba(255,255,255,0.9)");
-    gradH.addColorStop(1, "rgba(255,255,255,0)");
-    ctx.fillStyle = gradH;
-    ctx.beginPath();
-    ctx.arc(lip_center.x, lip_center.y - 3, 12, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  if (category === "blush") {
-    const alpha = 0.3 + intensity * 0.3;
-    ctx.globalCompositeOperation = "multiply";
-
-    // Left cheek
-    const lc = LEFT_CHEEK.map(i => px(landmarks[i]));
-    const lcCx = lc.reduce((s, p) => s + p.x, 0) / lc.length;
-    const lcCy = lc.reduce((s, p) => s + p.y, 0) / lc.length;
-    const lcR = Math.max(...lc.map(p => Math.hypot(p.x - lcCx, p.y - lcCy))) * 1.4;
-    const lgL = ctx.createRadialGradient(lcCx, lcCy, 0, lcCx, lcCy, lcR);
-    lgL.addColorStop(0, hexToRgba(hex, alpha));
-    lgL.addColorStop(1, hexToRgba(hex, 0));
-    ctx.fillStyle = lgL;
-    ctx.beginPath();
-    ctx.ellipse(lcCx, lcCy, lcR, lcR * 0.65, -0.25, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Right cheek
-    const rc = RIGHT_CHEEK.map(i => px(landmarks[i]));
-    const rcCx = rc.reduce((s, p) => s + p.x, 0) / rc.length;
-    const rcCy = rc.reduce((s, p) => s + p.y, 0) / rc.length;
-    const rcR = Math.max(...rc.map(p => Math.hypot(p.x - rcCx, p.y - rcCy))) * 1.4;
-    const lgR = ctx.createRadialGradient(rcCx, rcCy, 0, rcCx, rcCy, rcR);
-    lgR.addColorStop(0, hexToRgba(hex, alpha));
-    lgR.addColorStop(1, hexToRgba(hex, 0));
-    ctx.fillStyle = lgR;
-    ctx.beginPath();
-    ctx.ellipse(rcCx, rcCy, rcR, rcR * 0.65, 0.25, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  if (category === "eyeshadow") {
-    const alpha = 0.45 + intensity * 0.35;
-    ctx.globalCompositeOperation = "multiply";
-
-    for (const zone of [LEFT_EYE_UPPER, RIGHT_EYE_UPPER]) {
-      const pts = zone.map(i => px(landmarks[i]));
-      const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-      const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length - 4;
-      const rx = Math.max(...pts.map(p => Math.abs(p.x - cx))) * 1.3;
-      const ry = rx * 0.5;
-
-      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
-      grad.addColorStop(0, hexToRgba(hex, alpha));
-      grad.addColorStop(0.6, hexToRgba(hex, alpha * 0.5));
-      grad.addColorStop(1, hexToRgba(hex, 0));
-      ctx.fillStyle = grad;
+    ctx.globalAlpha = 0.2 * intensity;
+    for (const idx of [0, 17]) {
+      const pt = px(landmarks[idx]);
+      const r = w * 0.022;
+      const g = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, r);
+      g.addColorStop(0, "rgba(255,255,255,0.95)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+      ctx.arc(pt.x, pt.y, r, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
+  // ── BLUSH ────────────────────────────────────────────────────────────────────
+  if (category === "blush") {
+    const alpha = 0.28 + intensity * 0.3;
+    ctx.globalCompositeOperation = "multiply";
+
+    for (const [zone, tilt] of [[LEFT_CHEEK_BLUSH, -0.3], [RIGHT_CHEEK_BLUSH, 0.3]] as const) {
+      const pts = (zone as number[]).map(i => px(landmarks[i]));
+      const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+      const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+      const rx = Math.max(...pts.map(p => Math.abs(p.x - cx))) * 1.6;
+      const ry = rx * 0.68;
+      const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(rx, ry));
+      grad.addColorStop(0,    hexToRgba(hex, alpha));
+      grad.addColorStop(0.45, hexToRgba(hex, alpha * 0.55));
+      grad.addColorStop(1,    hexToRgba(hex, 0));
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, tilt as number, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // ── EYESHADOW ────────────────────────────────────────────────────────────────
+  if (category === "eyeshadow") {
+    const alpha = 0.52 + intensity * 0.3;
+    ctx.globalCompositeOperation = "multiply";
+
+    for (const lidZone of [LEFT_LID, RIGHT_LID]) {
+      const pts = lidZone.map(i => px(landmarks[i]));
+      const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+      // Lid top Y = min Y in zone (topmost point)
+      const minY = Math.min(...pts.map(p => p.y));
+      const maxY = Math.max(...pts.map(p => p.y));
+      const rx   = Math.max(...pts.map(p => Math.abs(p.x - cx))) * 1.15;
+      const lidH = maxY - minY;
+
+      // Broad diffuse crease layer
+      const gradOuter = ctx.createRadialGradient(cx, minY + lidH * 0.3, 0, cx, minY + lidH * 0.3, rx * 1.1);
+      gradOuter.addColorStop(0,    hexToRgba(hex, alpha * 0.65));
+      gradOuter.addColorStop(0.6,  hexToRgba(hex, alpha * 0.25));
+      gradOuter.addColorStop(1,    hexToRgba(hex, 0));
+      ctx.fillStyle = gradOuter;
+      ctx.beginPath();
+      // Draw upper half of ellipse only (lid area)
+      ctx.ellipse(cx, minY + lidH * 0.5, rx, lidH * 1.1, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+
+      // Concentrated lid colour (tight to lash line)
+      const gradInner = ctx.createRadialGradient(cx, maxY, 0, cx, maxY, rx * 0.65);
+      gradInner.addColorStop(0,   hexToRgba(hex, alpha));
+      gradInner.addColorStop(0.7, hexToRgba(hex, alpha * 0.4));
+      gradInner.addColorStop(1,   hexToRgba(hex, 0));
+      ctx.fillStyle = gradInner;
+      ctx.beginPath();
+      ctx.ellipse(cx, maxY - lidH * 0.2, rx * 0.65, lidH * 0.6, 0, Math.PI, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // ── EYELINER ────────────────────────────────────────────────────────────────
+  if (category === "eyeliner") {
+    ctx.globalCompositeOperation = "multiply";
+    ctx.globalAlpha = 0.8 + intensity * 0.18;
+    ctx.strokeStyle = hex;
+    ctx.lineWidth = Math.max(1.5, w * 0.0045 * intensity);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+
+    for (const lashline of [LEFT_LASHLINE, RIGHT_LASHLINE]) {
+      const pts = lashline.map(i => px(landmarks[i]));
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length - 1; i++) {
+        const mx = (pts[i].x + pts[i+1].x) / 2;
+        const my = (pts[i].y + pts[i+1].y) / 2;
+        ctx.quadraticCurveTo(pts[i].x, pts[i].y, mx, my);
+      }
+      ctx.lineTo(pts[pts.length-1].x, pts[pts.length-1].y);
+      ctx.stroke();
+    }
+  }
+
+  // ── HIGHLIGHTER ───────────────────────────────────────────────────────────────
   if (category === "highlighter") {
-    const alpha = 0.25 + intensity * 0.3;
+    const alpha = 0.22 + intensity * 0.28;
     ctx.globalCompositeOperation = "screen";
 
-    // T-zone + cheekbones
-    const pts = FOREHEAD_ZONE.map(i => px(landmarks[i]));
-    const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
-    const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-    const r = Math.max(...pts.map(p => Math.hypot(p.x - cx, p.y - cy)));
-
-    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.5);
-    grad.addColorStop(0, hexToRgba(hex, alpha * 1.5));
-    grad.addColorStop(1, hexToRgba(hex, 0));
-    ctx.fillStyle = grad;
+    // Nose bridge
+    const nbPts = NOSE_BRIDGE.map(i => px(landmarks[i]));
+    const nbCx = nbPts.reduce((s, p) => s + p.x, 0) / nbPts.length;
+    const nbCy = nbPts.reduce((s, p) => s + p.y, 0) / nbPts.length;
+    const nbG = ctx.createRadialGradient(nbCx, nbCy, 0, nbCx, nbCy, w * 0.04);
+    nbG.addColorStop(0, hexToRgba(hex, alpha * 1.4));
+    nbG.addColorStop(1, hexToRgba(hex, 0));
+    ctx.fillStyle = nbG;
     ctx.beginPath();
-    ctx.ellipse(cx, cy, r * 0.45, r * 0.35, 0, 0, Math.PI * 2);
+    ctx.ellipse(nbCx, nbCy, w * 0.025, w * 0.06, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Cheekbone highlights
-    for (const zone of [LEFT_CHEEK, RIGHT_CHEEK]) {
+    for (const zone of [LEFT_CHEEKBONE, RIGHT_CHEEKBONE]) {
       const zPts = zone.map(i => px(landmarks[i]));
       const zcx = zPts.reduce((s, p) => s + p.x, 0) / zPts.length;
-      const zcy = zPts.reduce((s, p) => s + p.y, 0) / zPts.length - 8;
-      const zg = ctx.createRadialGradient(zcx, zcy, 0, zcx, zcy, 20);
-      zg.addColorStop(0, hexToRgba(hex, alpha * 1.2));
+      const zcy = zPts.reduce((s, p) => s + p.y, 0) / zPts.length;
+      const zrx = Math.max(...zPts.map(p => Math.abs(p.x - zcx))) * 1.3;
+      const zry = zrx * 0.45;
+      const zg = ctx.createRadialGradient(zcx, zcy, 0, zcx, zcy, zrx);
+      zg.addColorStop(0, hexToRgba(hex, alpha * 1.3));
       zg.addColorStop(1, hexToRgba(hex, 0));
       ctx.fillStyle = zg;
       ctx.beginPath();
-      ctx.ellipse(zcx, zcy, 20, 14, 0, 0, Math.PI * 2);
+      ctx.ellipse(zcx, zcy, zrx, zry, 0, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
+  // ── BRONZER ───────────────────────────────────────────────────────────────────
   if (category === "bronzer") {
-    const alpha = 0.2 + intensity * 0.25;
+    const alpha = 0.18 + intensity * 0.22;
     ctx.globalCompositeOperation = "multiply";
 
-    for (const zone of [LEFT_CHEEK, RIGHT_CHEEK]) {
+    // Temples, forehead sides, cheeks, jaw sweep
+    for (const zone of [LEFT_CHEEK_BLUSH, RIGHT_CHEEK_BLUSH]) {
       const pts = zone.map(i => px(landmarks[i]));
       const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
       const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
-      const r = Math.max(...pts.map(p => Math.hypot(p.x - cx, p.y - cy))) * 1.6;
+      const r = Math.max(...pts.map(p => Math.hypot(p.x - cx, p.y - cy))) * 2.0;
       const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
-      grad.addColorStop(0, hexToRgba(hex, alpha));
-      grad.addColorStop(1, hexToRgba(hex, 0));
+      grad.addColorStop(0,   hexToRgba(hex, alpha));
+      grad.addColorStop(0.5, hexToRgba(hex, alpha * 0.5));
+      grad.addColorStop(1,   hexToRgba(hex, 0));
       ctx.fillStyle = grad;
       ctx.beginPath();
-      ctx.ellipse(cx, cy, r, r * 0.7, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, cy, r, r * 0.75, 0, 0, Math.PI * 2);
       ctx.fill();
     }
   }
