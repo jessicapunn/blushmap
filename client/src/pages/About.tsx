@@ -320,12 +320,12 @@ export default function About() {
             Questions, feedback or partnership enquiries — reach us directly.
           </p>
           <a
-            href="mailto:contactus@blushmap.com"
+            href="mailto:blushmap@gmail.com"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
             style={{ background: "linear-gradient(135deg, #c9506e, #a3324e)" }}
           >
             <Mail size={15} />
-            contactus@blushmap.com
+            blushmap@gmail.com
           </a>
         </section>
 
@@ -351,7 +351,7 @@ export default function About() {
             </Link>
           </div>
           <p className="text-center text-[11px] mt-4" style={{ color: "#c9b0b8" }}>
-            © {new Date().getFullYear()} BlushMap · blushmap.com · contactus@blushmap.com
+            © {new Date().getFullYear()} BlushMap · blushmap.com · blushmap@gmail.com
           </p>
         </footer>
       </div>
